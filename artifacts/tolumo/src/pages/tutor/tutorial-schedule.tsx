@@ -371,65 +371,164 @@ function AvailRow({ day, info }: { day: DayKey; info: DayAvailability }) {
 }
 
 // ── Recordings & Attendance Tab ───────────────────────────────────────────────
-function RecordingsTab({ sessions }: { sessions: Session[] }) {
-  const completed = sessions.filter(s => s.status === 'completed');
+const PAST_SESSIONS = [
+  {
+    id: 'p1',
+    module: 'Constitutional Law',
+    title: 'Federalism & the Second Schedule — Deep Dive',
+    scheduledStart: 'Thu 10 Jul 2025 · 6:00 PM',
+    joinedAt: '5:58 PM',
+    punctuality: 'Early' as const,
+    studentsAttended: 6,
+    avgRating: 4.8,
+    totalRatings: 19,
+    onTimeEarly: 4,
+    late: 2,
+    stayedFull: 5,
+    recordingUrl: '#',
+  },
+  {
+    id: 'p2',
+    module: 'Constitutional Law',
+    title: 'Supremacy of the Constitution',
+    scheduledStart: 'Thu 3 Jul 2025 · 6:00 PM',
+    joinedAt: '6:00 PM',
+    punctuality: 'On Time' as const,
+    studentsAttended: 4,
+    avgRating: 4.9,
+    totalRatings: 16,
+    onTimeEarly: 3,
+    late: 1,
+    stayedFull: 4,
+    recordingUrl: '#',
+  },
+];
+
+function RecordingsTab({ sessions: _sessions }: { sessions: Session[] }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const stats = [
+    { label: 'Sessions Conducted', value: '3',    color: 'text-foreground' },
+    { label: 'Started On Time / Early', value: '2 / 3', color: 'text-primary' },
+    { label: 'Reliability Score',  value: '67%',  color: 'text-red-500' },
+    { label: 'Avg Student Rating', value: '4.8 / 5', color: 'text-amber-500' },
+  ];
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-stone-100 bg-stone-50/60">
-        <h2 className="font-serif font-semibold text-foreground">Past Sessions</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">Review recordings and mark attendance</p>
+    <div className="space-y-5">
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map(({ label, value, color }) => (
+          <div key={label} className="bg-white rounded-xl border border-stone-200 shadow-sm px-5 py-4 text-center">
+            <p className={`text-2xl font-bold font-serif ${color}`}>{value}</p>
+            <p className="text-xs text-muted-foreground mt-1">{label}</p>
+          </div>
+        ))}
       </div>
-      {completed.length === 0 ? (
-        <div className="py-16 text-center text-muted-foreground text-sm">No completed sessions yet.</div>
-      ) : (
-        <div className="divide-y divide-stone-100">
-          {completed.map(s => (
-            <RecordingRow key={s.id} session={s} />
-          ))}
+
+      {/* Past session cards */}
+      {PAST_SESSIONS.map(ps => (
+        <div key={ps.id} className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
+          {/* Dark header */}
+          <div className="bg-primary px-6 py-4 flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-1">
+                {ps.module} · Past Session
+              </p>
+              <h3 className="font-serif font-bold text-white text-lg leading-snug">{ps.title}</h3>
+            </div>
+            <span className={`shrink-0 text-xs font-semibold px-3 py-1 rounded-full ${
+              ps.punctuality === 'Early'
+                ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                : 'bg-white/10 text-white/70 border border-white/20'
+            }`}>
+              You: {ps.punctuality}
+            </span>
+          </div>
+
+          {/* Detail boxes */}
+          <div className="bg-white px-6 py-5 space-y-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                { label: 'Scheduled Start',   value: ps.scheduledStart },
+                { label: 'You Joined At',     value: ps.joinedAt },
+                { label: 'Students Attended', value: `${ps.studentsAttended} students` },
+                { label: 'Avg Rating',        value: `${ps.avgRating} / 5 (${ps.totalRatings} ratings)` },
+              ].map(({ label, value }) => (
+                <div key={label} className="bg-[#F5F2EB] rounded-lg px-4 py-3">
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
+                  <p className="text-sm font-semibold text-foreground">{value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Attendance dots */}
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-green-500 inline-block" />
+                {ps.onTimeEarly} on-time / early
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-red-400 inline-block" />
+                {ps.late} late
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-stone-400 inline-block" />
+                {ps.stayedFull} stayed full session
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-5 pt-1">
+              <a href={ps.recordingUrl}
+                className="flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                <Video className="h-4 w-4" /> Watch Recording
+              </a>
+              <button
+                onClick={() => setExpanded(expanded === ps.id ? null : ps.id)}
+                className="flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors"
+              >
+                <Users className="h-4 w-4" />
+                View Attendance Detail
+                <ChevronRight className={`h-4 w-4 transition-transform ${expanded === ps.id ? 'rotate-90' : ''}`} />
+              </button>
+            </div>
+
+            {/* Expanded attendance */}
+            {expanded === ps.id && (
+              <div className="border-t border-stone-100 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Student Attendance</p>
+                <div className="space-y-2">
+                  {[
+                    { name: 'Chisom Nwosu',     status: 'on-time', stayed: true  },
+                    { name: 'Babatunde Okafor', status: 'early',   stayed: true  },
+                    { name: 'Amina Ibrahim',    status: 'late',    stayed: true  },
+                    { name: 'Emeka Okafor',     status: 'on-time', stayed: false },
+                    { name: 'Tunde Adeleke',    status: 'early',   stayed: true  },
+                    { name: 'Funke Bello',      status: 'late',    stayed: true  },
+                  ].slice(0, ps.studentsAttended).map(s => (
+                    <div key={s.name} className="flex items-center justify-between text-sm">
+                      <span className="text-foreground font-medium">{s.name}</span>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          s.status === 'late'
+                            ? 'bg-red-100 text-red-600'
+                            : 'bg-green-100 text-green-700'
+                        }`}>
+                          {s.status}
+                        </span>
+                        <span className={`text-xs ${s.stayed ? 'text-green-600' : 'text-muted-foreground'}`}>
+                          {s.stayed ? 'Stayed full' : 'Left early'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  );
-}
-
-function RecordingRow({ session }: { session: Session }) {
-  const [attended, setAttended] = useState(session.attended ?? false);
-
-  return (
-    <div className="flex items-center gap-4 px-6 py-4">
-      <div className="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
-        <Video className="h-4 w-4 text-muted-foreground" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-sm text-foreground">{session.topic}</p>
-        <p className="text-xs text-muted-foreground flex items-center gap-2">
-          <Clock className="h-3 w-3" /> {session.day} · {session.time}
-          {session.student && <><Users className="h-3 w-3 ml-1" /> {session.student}</>}
-        </p>
-      </div>
-      <div className="flex items-center gap-3 shrink-0">
-        {/* Attendance toggle */}
-        <button
-          onClick={() => setAttended(v => !v)}
-          className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-            attended
-              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-              : 'bg-stone-100 text-muted-foreground hover:bg-stone-200'
-          }`}
-        >
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          {attended ? 'Attended' : 'Mark Attended'}
-        </button>
-
-        {/* Recording link */}
-        {session.recordingUrl && (
-          <a href={session.recordingUrl}
-            className="flex items-center gap-1 text-xs text-primary font-medium hover:underline">
-            <Video className="h-3.5 w-3.5" /> Recording
-          </a>
-        )}
-      </div>
+      ))}
     </div>
   );
 }
