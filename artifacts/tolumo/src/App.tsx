@@ -50,12 +50,12 @@ const clerkAppearance = {
   theme: shadcn,
   cssLayerName: "clerk",
   options: {
-    logoPlacement: "inside" as const,
+    logoPlacement: "none" as const,
     logoLinkUrl: basePath || "/",
     logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
   },
   variables: {
-    colorPrimary: "hsl(43, 74%, 49%)",
+    colorPrimary: "hsl(153, 54%, 15%)",
     colorForeground: "hsl(153, 54%, 15%)",
     colorMutedForeground: "hsl(153, 30%, 40%)",
     colorDanger: "hsl(0, 60%, 45%)",
@@ -67,53 +67,143 @@ const clerkAppearance = {
     borderRadius: "0.5rem",
   },
   elements: {
-    rootBox: "w-full flex justify-center",
-    cardBox: "bg-white rounded-2xl w-[440px] max-w-full overflow-hidden shadow-lg border border-border",
-    card: "!shadow-none !border-0 !bg-transparent !rounded-none",
-    footer: "!shadow-none !border-0 !bg-transparent !rounded-none bg-secondary/30",
+    rootBox: "w-full",
+    cardBox: "w-full shadow-none border-0",
+    card: "!shadow-none !border-0 !bg-transparent !rounded-none p-0",
+    footer: "!shadow-none !border-0 !bg-transparent !rounded-none",
     headerTitle: "font-serif text-2xl font-bold text-foreground",
-    headerSubtitle: "text-muted-foreground",
+    headerSubtitle: "text-muted-foreground text-sm",
     socialButtonsBlockButtonText: "font-medium text-foreground",
-    formFieldLabel: "text-foreground font-medium",
-    footerActionLink: "text-accent font-semibold hover:text-accent/80",
+    formFieldLabel: "text-xs font-semibold uppercase tracking-wider text-foreground",
+    footerActionLink: "text-primary font-semibold hover:text-primary/80",
     footerActionText: "text-muted-foreground",
-    dividerText: "text-muted-foreground bg-white px-2",
-    identityPreviewEditButton: "text-accent hover:text-accent/80",
+    dividerText: "text-muted-foreground bg-[#F5F2EB] px-2",
+    identityPreviewEditButton: "text-primary hover:text-primary/80",
     formFieldSuccessText: "text-primary",
     alertText: "text-sm",
-    logoBox: "h-12 flex items-center justify-center mb-4",
-    logoImage: "h-12 w-auto",
-    socialButtonsBlockButton: "border-border hover:bg-secondary/50",
-    formButtonPrimary: "bg-accent hover:bg-accent/90 text-white shadow-sm border border-transparent font-semibold",
-    formFieldInput: "bg-white border-border text-foreground focus:ring-accent",
+    logoBox: "hidden",
+    logoImage: "hidden",
+    socialButtonsBlockButton: "border-border hover:bg-white/80",
+    formButtonPrimary: "bg-primary hover:bg-primary/90 text-white shadow-sm border border-transparent font-semibold",
+    formFieldInput: "bg-white border-border text-foreground focus:ring-primary",
     footerAction: "flex items-center justify-center gap-1",
     dividerLine: "bg-border",
     alert: "bg-destructive/10 border-destructive/20 text-destructive",
-    otpCodeFieldInput: "border-border focus:ring-accent",
+    otpCodeFieldInput: "border-border focus:ring-primary",
     formFieldRow: "mb-4",
-    main: "p-6",
+    main: "p-0",
+    header: "pb-4",
   },
 };
 
-function SignInPage() {
+function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign-in' | 'sign-up' }) {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2400&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
-      <div className="relative z-10">
-        <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} />
+    <div className="flex min-h-[100dvh]">
+      {/* Left panel — dark green */}
+      <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-between p-10 relative overflow-hidden">
+        {/* Subtle texture overlay */}
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none" />
+
+        {/* Logo */}
+        <div className="relative flex items-center gap-2">
+          <img src={`${window.location.origin}${basePath}/logo.svg`} alt="Tolumo" className="h-8 w-8" />
+          <span className="font-serif font-bold text-xl tracking-tight text-white">Tolumo</span>
+        </div>
+
+        {/* Quote */}
+        <div className="relative max-w-sm">
+          <blockquote className="font-serif text-2xl md:text-3xl font-bold text-white leading-snug mb-8">
+            "The only platform that truly understands how African students learn."
+          </blockquote>
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-white font-bold text-sm shrink-0">E</div>
+            <div>
+              <p className="text-white font-semibold text-sm">Emeka Okafor</p>
+              <p className="text-white/50 text-xs">Law Year 3, University of Port Harcourt</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Star rating */}
+        <div className="relative flex items-center gap-2">
+          <div className="flex text-amber-400 text-sm">{'★★★★★'}</div>
+          <span className="text-white/60 text-xs">12,400+ students</span>
+        </div>
+      </div>
+
+      {/* Right panel — cream */}
+      <div className="flex-1 bg-[#F5F2EB] flex flex-col">
+        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 max-w-lg mx-auto w-full py-12">
+          {/* Back link */}
+          <a href={basePath || '/'} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-8">
+            ← Back
+          </a>
+
+          {/* Tab switcher */}
+          <div className="flex rounded-lg border border-border bg-white p-1 mb-8 w-fit">
+            <a
+              href={`${basePath}/sign-up`}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${mode === 'sign-up' ? 'bg-primary text-white' : 'text-muted-foreground hover:text-primary'}`}
+            >
+              Create Account
+            </a>
+            <a
+              href={`${basePath}/sign-in`}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${mode === 'sign-in' ? 'bg-primary text-white' : 'text-muted-foreground hover:text-primary'}`}
+            >
+              Sign In
+            </a>
+          </div>
+
+          {/* Clerk component */}
+          {children}
+
+          {/* Demo buttons */}
+          <div className="mt-6 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: 'Demo Student', href: `${basePath}/student` },
+                { label: 'Demo Tutor', href: `${basePath}/tutor` },
+                { label: 'Demo Admin', href: `${basePath}/admin` },
+              ].map(({ label, href }) => (
+                <a key={label} href={href} className="inline-flex items-center rounded-md border border-border bg-white px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+                  {label}
+                </a>
+              ))}
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-2">Agent Portals</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: 'Demo Sub-Agent', href: `${basePath}/agent` },
+                  { label: 'Demo Super Agent', href: `${basePath}/super-agent` },
+                ].map(({ label, href }) => (
+                  <a key={label} href={href} className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors border ${label === 'Demo Super Agent' ? 'bg-primary text-white border-primary hover:bg-primary/90' : 'border-border bg-white text-muted-foreground hover:border-primary hover:text-primary'}`}>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
+function SignInPage() {
+  return (
+    <AuthLayout mode="sign-in">
+      <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} appearance={clerkAppearance} />
+    </AuthLayout>
+  );
+}
+
 function SignUpPage() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2400&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
-      <div className="relative z-10">
-        <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
-      </div>
-    </div>
+    <AuthLayout mode="sign-up">
+      <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} appearance={clerkAppearance} />
+    </AuthLayout>
   );
 }
 
