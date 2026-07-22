@@ -78,14 +78,14 @@ const clerkAppearance = {
     logoImage: "hidden",
     socialButtons: "hidden",
     dividerRow: "hidden",
-    formFieldLabel: "text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1",
-    footerActionLink: "text-primary font-semibold hover:text-primary/80",
-    footerActionText: "text-muted-foreground text-sm",
-    identityPreviewEditButton: "text-primary hover:text-primary/80",
-    formFieldSuccessText: "text-primary",
+    formFieldLabel: "text-[11px] font-semibold uppercase tracking-widest text-white/70 mb-1",
+    footerActionLink: "text-accent font-semibold hover:text-accent/80",
+    footerActionText: "text-white/60 text-sm",
+    identityPreviewEditButton: "text-accent hover:text-accent/80",
+    formFieldSuccessText: "text-accent",
     alertText: "text-sm",
-    formButtonPrimary: "bg-primary hover:bg-primary/90 text-white shadow-sm border border-transparent font-semibold tracking-wide",
-    formFieldInput: "bg-white border border-stone-300 text-foreground focus:ring-primary focus:border-primary rounded-lg",
+    formButtonPrimary: "bg-accent hover:bg-accent/90 text-white shadow-sm border border-transparent font-semibold tracking-wide",
+    formFieldInput: "bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:ring-accent focus:border-accent rounded-lg",
     footerAction: "flex items-center justify-center gap-1 pt-2",
     dividerLine: "bg-border",
     alert: "bg-destructive/10 border-destructive/20 text-destructive",
@@ -162,7 +162,7 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
           </div>
 
           {/* Clerk component */}
-          <div className="rounded-xl border border-border px-6 py-6 border-t-[#124931] border-r-[#124931] border-b-[#124931] border-l-[#124931] bg-ring">
+          <div className="rounded-xl bg-primary px-6 py-6">
             {children}
           </div>
 
