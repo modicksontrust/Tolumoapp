@@ -10,7 +10,8 @@ import {
   HelpCircle, Settings, LogOut, Bell, Search,
   ChevronLeft, ChevronRight, Menu, X,
   Edit, Trash2, Plus, Clock, Users, TrendingUp,
-  CheckCircle2, Star, Award, Users2
+  CheckCircle2, Star, Award, Users2,
+  MessageCircle, Send, Bot, Minimize2
 } from 'lucide-react';
 import {
   useGetTutorSummary,
@@ -362,7 +363,167 @@ function TutorShell({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+
+      {/* AI Chat Widget */}
+      <AIChatWidget />
     </div>
+  );
+}
+
+// ── AI Chat Widget ────────────────────────────────────────────────────────────
+type ChatMsg = { role: 'ai' | 'user'; text: string };
+
+const AI_STARTERS: ChatMsg[] = [
+  {
+    role: 'ai',
+    text: "Hi Prof. Adeyemi 👋 I'm your Tolumo AI assistant. Ask me anything about your students, content, earnings, or the platform.",
+  },
+];
+
+const AI_REPLIES: Record<string, string> = {
+  default:
+    "I'm still learning more about that topic. For complex queries, try the Help & Support section or contact the Tolumo team.",
+  student:
+    'Your top-performing students this month are in the Constitutional Law module. Would you like a breakdown by topic or quiz score?',
+  booking:
+    'You have 3 upcoming bookings this week. The next session is Monday 14 Jul at 10:00am with Chisom Nwosu on Federalism & Devolution.',
+  earning:
+    'Your estimated earnings this month are ₦255,600 (gross). After the 15% platform fee, your net payout is approximately ₦217,260.',
+  content:
+    'Topic 4: Separation of Powers notes are still pending upload. Uploading them will unlock that module for all enrolled students.',
+  rating:
+    "Your current average rating is 4.8 ★ — excellent! Students most frequently highlight your clarity and responsiveness.",
+  help: 'You can reach Tolumo support via the Help & Support section in Settings, or email support@tolumo.com.',
+};
+
+function getAIReply(input: string): string {
+  const q = input.toLowerCase();
+  if (q.match(/student|quiz|performance|score/)) return AI_REPLIES.student;
+  if (q.match(/booking|session|schedule|appointment/)) return AI_REPLIES.booking;
+  if (q.match(/earn|payout|money|revenue|income|payment/)) return AI_REPLIES.earning;
+  if (q.match(/content|upload|notes|video|slide/)) return AI_REPLIES.content;
+  if (q.match(/rating|review|feedback|star/)) return AI_REPLIES.rating;
+  if (q.match(/help|support|contact|issue|problem/)) return AI_REPLIES.help;
+  return AI_REPLIES.default;
+}
+
+function AIChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [minimised, setMinimised] = useState(false);
+  const [msgs, setMsgs] = useState<ChatMsg[]>(AI_STARTERS);
+  const [input, setInput] = useState('');
+  const [typing, setTyping] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open && !minimised) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [msgs, open, minimised]);
+
+  const send = () => {
+    const text = input.trim();
+    if (!text) return;
+    setInput('');
+    setMsgs(prev => [...prev, { role: 'user', text }]);
+    setTyping(true);
+    setTimeout(() => {
+      setMsgs(prev => [...prev, { role: 'ai', text: getAIReply(text) }]);
+      setTyping(false);
+    }, 900);
+  };
+
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  };
+
+  return (
+    <>
+      {/* Chat panel */}
+      {open && (
+        <div className={`fixed bottom-24 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden z-50 transition-all ${minimised ? 'h-14' : 'h-[440px]'}`}>
+          {/* Header */}
+          <div className="flex items-center gap-3 px-4 py-3 bg-primary shrink-0">
+            <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+              <Bot className="h-4 w-4 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-white leading-none">Tolumo AI</p>
+              <p className="text-[10px] text-white/60 mt-0.5">Ask me anything</p>
+            </div>
+            <button onClick={() => setMinimised(v => !v)} className="text-white/70 hover:text-white transition-colors">
+              <Minimize2 className="h-4 w-4" />
+            </button>
+            <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white transition-colors">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          {!minimised && (
+            <>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-stone-50">
+                {msgs.map((m, i) => (
+                  <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {m.role === 'ai' && (
+                      <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center shrink-0 mr-2 mt-0.5">
+                        <Bot className="h-3 w-3 text-white" />
+                      </div>
+                    )}
+                    <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                      m.role === 'user'
+                        ? 'bg-primary text-white rounded-br-sm'
+                        : 'bg-white text-foreground border border-stone-200 rounded-bl-sm shadow-sm'
+                    }`}>
+                      {m.text}
+                    </div>
+                  </div>
+                ))}
+                {typing && (
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <Bot className="h-3 w-3 text-white" />
+                    </div>
+                    <div className="bg-white border border-stone-200 rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm">
+                      <div className="flex gap-1 items-center h-4">
+                        {[0, 1, 2].map(i => (
+                          <span key={i} className="h-1.5 w-1.5 rounded-full bg-stone-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={bottomRef} />
+              </div>
+
+              {/* Input */}
+              <div className="flex items-center gap-2 px-3 py-3 border-t border-stone-100 bg-white shrink-0">
+                <input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={handleKey}
+                  placeholder="Ask anything…"
+                  className="flex-1 text-sm px-3 py-2 rounded-xl border border-stone-200 outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 bg-stone-50"
+                />
+                <button
+                  onClick={send}
+                  disabled={!input.trim()}
+                  className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shrink-0 disabled:opacity-40 hover:bg-primary/90 transition-colors"
+                >
+                  <Send className="h-4 w-4 text-white" />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* FAB */}
+      <button
+        onClick={() => { setOpen(v => !v); setMinimised(false); }}
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center z-50"
+      >
+        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+      </button>
+    </>
   );
 }
 
