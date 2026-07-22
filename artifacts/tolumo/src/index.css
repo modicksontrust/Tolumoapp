@@ -210,3 +210,14 @@ html {
   border: none !important;
   background: transparent !important;
 }
+
+/* Force Continue/Sign In button to gold on dark green card */
+.cl-formButtonPrimary {
+  background-color: hsl(43, 74%, 49%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.cl-formButtonPrimary:hover {
+  background-color: hsl(43, 74%, 42%) !important;
+}
