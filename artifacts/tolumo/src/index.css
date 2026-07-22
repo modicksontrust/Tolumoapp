@@ -202,3 +202,11 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Strip Clerk's internal card shadow/border */
+.cl-cardBox,
+.cl-card {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}

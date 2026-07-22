@@ -68,8 +68,8 @@ const clerkAppearance = {
   },
   elements: {
     rootBox: "w-full",
-    cardBox: "w-full shadow-none border-0",
-    card: "!shadow-none !border-0 !bg-transparent !rounded-none p-0",
+    cardBox: "w-full !shadow-none !border-0 !bg-transparent",
+    card: "!shadow-none !border-0 !bg-transparent !rounded-none !p-0 !m-0",
     footer: "!shadow-none !border-0 !bg-transparent !rounded-none",
     headerTitle: "hidden",
     headerSubtitle: "hidden",
@@ -127,7 +127,6 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
           <span className="text-white/60 text-xs">12,400+ students</span>
         </div>
       </div>
-
       {/* Right panel — cream */}
       <div className="flex-1 bg-[#F5F2EB] flex flex-col">
         <div className="flex-1 flex flex-col justify-center px-8 md:px-16 max-w-lg mx-auto w-full py-12">
@@ -163,7 +162,7 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
           </div>
 
           {/* Clerk component */}
-          <div className="rounded-xl border border-border bg-white px-6 py-6">
+          <div className="rounded-xl border border-border px-6 py-6 bg-[#ffffff00] border-t-[#124931] border-r-[#124931] border-b-[#124931] border-l-[#124931]">
             {children}
           </div>
 
