@@ -14,6 +14,7 @@ import StudentSettings from './settings';
 import CurrentTopic from './current-topic';
 import Scholarships from './scholarships';
 import MyCertificate from './my-certificate';
+import TriaxLawLibrary from './triax-law-library';
 
 // ── Notification bell panel ────────────────────────────────────────────────────
 const BELL_NOTIFS = [
@@ -270,6 +271,8 @@ function StudentDashboard() {
   const { user } = useUser();
   const [, setLocation] = useLocation();
   const firstName = user?.firstName || 'Chisom';
+  const [lawLib, setLawLib] = useState<{ open: boolean; tab: 'home' | 'browse' | 'judgements' | 'saved' | 'notes' }>({ open: false, tab: 'home' });
+  const openLib = (tab: typeof lawLib.tab = 'home') => setLawLib({ open: true, tab });
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -281,6 +284,8 @@ function StudentDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-5">
+      <TriaxLawLibrary open={lawLib.open} onClose={() => setLawLib(s => ({ ...s, open: false }))} initialTab={lawLib.tab} />
+
       {/* Greeting row */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -288,7 +293,7 @@ function StudentDashboard() {
           <p className="text-sm text-muted-foreground mt-0.5">University of Lagos · Year 2 (200 Level)</p>
           <p className="text-sm text-foreground mt-1">You're on track — keep going. Your next test unlocks in 2 days.</p>
         </div>
-        <button onClick={() => setLocation('/student/topic')} className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors shadow-sm">
+        <button onClick={() => openLib('home')} className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors shadow-sm">
           <Search className="h-4 w-4" /> Triax Law Library
         </button>
       </div>
@@ -376,9 +381,13 @@ function StudentDashboard() {
           </div>
           <p className="text-xs text-white/60">1,840 cases · 312 statutes · 95 journals · Referenced directly in your lessons.</p>
           <div className="flex flex-wrap items-center gap-2 mt-3">
-            {['Search Library', 'Latest Judgements', 'Saved Cases'].map(btn => (
-              <button key={btn} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-medium hover:bg-white/10 transition-colors">
-                <Search className="h-3 w-3" /> {btn}
+            {([
+              { label: 'Search Library',    tab: 'browse'      },
+              { label: 'Latest Judgements', tab: 'judgements'  },
+              { label: 'Saved Cases',       tab: 'saved'       },
+            ] as { label: string; tab: typeof lawLib.tab }[]).map(btn => (
+              <button key={btn.label} onClick={() => openLib(btn.tab)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-medium hover:bg-white/10 transition-colors">
+                <Search className="h-3 w-3" /> {btn.label}
               </button>
             ))}
           </div>
