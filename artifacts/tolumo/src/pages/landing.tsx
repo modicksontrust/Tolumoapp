@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { useClerk } from '@clerk/react';
-import { LogOut, BookOpen, User, CheckCircle2, Search, HelpCircle, Mail, MapPin, Phone } from 'lucide-react';
+import { LogOut, BookOpen, User, CheckCircle2, Search, HelpCircle, Mail, MapPin, Phone, GraduationCap, Scale, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useListModules } from '@workspace/api-client-react';
 
 export default function LandingPage() {
+  const { data: modules } = useListModules();
+
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background selection:bg-accent selection:text-white">
       {/* Navigation */}
@@ -16,10 +19,10 @@ export default function LandingPage() {
           </div>
           
           <div className="hidden md:flex items-center gap-8 font-medium text-sm">
-            <a href="#modules" className="text-muted-foreground hover:text-primary transition-colors">Curriculum</a>
+            <a href="#modules" className="text-muted-foreground hover:text-primary transition-colors">Modules</a>
             <a href="#how-it-works" className="text-muted-foreground hover:text-primary transition-colors">How it Works</a>
-            <a href="#tutors" className="text-muted-foreground hover:text-primary transition-colors">Faculty</a>
-            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
+            <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
+            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About Us</a>
           </div>
 
           <div className="flex items-center gap-4">
@@ -152,8 +155,46 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Modules / Curriculum */}
+        <section id="modules" className="py-20 md:py-32 bg-white scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm text-accent mb-4 font-medium">
+                NUC Approved Curriculum
+              </div>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Explore Our Modules</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                A complete 5-year LL.B curriculum, from Legal Methods to Jurisprudence — taught by Nigeria's finest legal minds.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {(modules ?? []).slice(0, 9).map((mod) => (
+                <div key={mod.id} className="group rounded-xl border border-border bg-background p-6 transition-all hover:shadow-md hover:border-accent/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="inline-flex items-center rounded-md bg-primary/5 px-2.5 py-1 text-xs font-semibold text-primary tracking-wide">{mod.code}</span>
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Year {mod.year}</span>
+                  </div>
+                  <h3 className="font-serif text-xl font-bold text-primary mb-2">{mod.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{mod.description}</p>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" /> {mod.lessonCount} lessons</span>
+                    {mod.tutorName && <span className="inline-flex items-center gap-1"><User className="h-3.5 w-3.5" /> {mod.tutorName}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <Link href="/sign-up" className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-semibold text-white shadow transition-colors hover:bg-primary/90">
+                Enroll to Access All Modules
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Feature Highlights */}
-        <section id="how-it-works" className="py-20 md:py-32 bg-white">
+        <section id="how-it-works" className="py-20 md:py-32 bg-background scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
@@ -204,6 +245,122 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* Pricing */}
+        <section id="pricing" className="py-20 md:py-32 bg-white scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-16">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Simple, Transparent Pricing</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Invest in your legal career with plans built for every stage of your LL.B journey.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
+              <div className="rounded-2xl border border-border bg-background p-8 flex flex-col">
+                <h3 className="font-serif text-2xl font-bold text-primary mb-2">Per Module</h3>
+                <p className="text-sm text-muted-foreground mb-6">Perfect for retakes or focused study.</p>
+                <div className="mb-6">
+                  <span className="font-serif text-4xl font-bold text-primary">₦25,000</span>
+                  <span className="text-muted-foreground text-sm"> / module</span>
+                </div>
+                <ul className="space-y-3 text-sm text-muted-foreground mb-8 flex-1">
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Full video lecture library for one module</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> AI-guided revision & past questions</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Progress tracking</li>
+                </ul>
+                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-md border border-primary/20 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white">Get Started</Link>
+              </div>
+
+              <div className="relative rounded-2xl border-2 border-accent bg-primary p-8 flex flex-col shadow-xl shadow-primary/20">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">Most Popular</div>
+                <h3 className="font-serif text-2xl font-bold text-white mb-2">Full Year</h3>
+                <p className="text-sm text-white/70 mb-6">Everything you need to pass the year.</p>
+                <div className="mb-6">
+                  <span className="font-serif text-4xl font-bold text-white">₦180,000</span>
+                  <span className="text-white/70 text-sm"> / year</span>
+                </div>
+                <ul className="space-y-3 text-sm text-white/80 mb-8 flex-1">
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> All modules for your academic year</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Monthly 1-on-1 tutor sessions</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> AI Revision Coach with instant feedback</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Priority support</li>
+                </ul>
+                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accent text-sm font-semibold text-white shadow transition-colors hover:bg-accent/90">Enroll Now</Link>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-background p-8 flex flex-col">
+                <h3 className="font-serif text-2xl font-bold text-primary mb-2">Full Degree</h3>
+                <p className="text-sm text-muted-foreground mb-6">The complete 5-year LL.B pathway.</p>
+                <div className="mb-6">
+                  <span className="font-serif text-4xl font-bold text-primary">₦750,000</span>
+                  <span className="text-muted-foreground text-sm"> one-time</span>
+                </div>
+                <ul className="space-y-3 text-sm text-muted-foreground mb-8 flex-1">
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> All 5 years of the LL.B curriculum</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Unlimited tutor sessions</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Bar exam preparation resources</li>
+                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Dedicated academic advisor</li>
+                </ul>
+                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-md border border-primary/20 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white">Get Started</Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About Us */}
+        <section id="about" className="py-20 md:py-32 bg-background scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+              <div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-6">About Tolumo</h2>
+                <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                  Tolumo was founded on a simple belief: every aspiring Nigerian lawyer deserves access to
+                  world-class legal education, no matter where they live.
+                </p>
+                <p className="text-muted-foreground mb-8 leading-relaxed">
+                  We partner with Senior Advocates of Nigeria, esteemed professors, and practising barristers to
+                  deliver an NUC-approved curriculum entirely online. From Legal Methods in your first year to
+                  Jurisprudence in your final year, our platform pairs rigorous academics with modern technology —
+                  video lectures, AI-guided revision, and personal tutorship.
+                </p>
+                <div className="grid grid-cols-3 gap-6">
+                  <div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-3"><Scale className="h-5 w-5" /></div>
+                    <div className="font-bold text-primary mb-1">Rigour</div>
+                    <p className="text-xs text-muted-foreground">NUC-approved, exam-focused curriculum.</p>
+                  </div>
+                  <div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-3"><GraduationCap className="h-5 w-5" /></div>
+                    <div className="font-bold text-primary mb-1">Excellence</div>
+                    <p className="text-xs text-muted-foreground">Taught by Nigeria's top legal educators.</p>
+                  </div>
+                  <div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-3"><Users className="h-5 w-5" /></div>
+                    <div className="font-bold text-primary mb-1">Community</div>
+                    <p className="text-xs text-muted-foreground">12,400+ students learning together.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-2xl bg-primary p-10 md:p-12 text-white">
+                <div className="font-serif text-2xl md:text-3xl font-bold leading-snug mb-6">
+                  “Our mission is to raise the next generation of Nigerian legal minds — one student at a time.”
+                </div>
+                <p className="text-white/70 text-sm mb-8">— The Tolumo Faculty</p>
+                <div className="grid grid-cols-2 gap-6 border-t border-white/10 pt-8">
+                  <div>
+                    <div className="font-serif text-3xl font-bold text-accent mb-1">94%</div>
+                    <div className="text-xs text-white/70 uppercase tracking-wider">Exam Pass Rate</div>
+                  </div>
+                  <div>
+                    <div className="font-serif text-3xl font-bold text-accent mb-1">12,400+</div>
+                    <div className="text-xs text-white/70 uppercase tracking-wider">Students Enrolled</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
@@ -224,8 +381,8 @@ export default function LandingPage() {
               <h4 className="font-bold text-lg mb-4 font-serif">Platform</h4>
               <ul className="space-y-3 text-sm text-primary-foreground/70">
                 <li><Link href="/sign-up" className="hover:text-accent transition-colors">Apply Now</Link></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Our Curriculum</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Pricing & Plans</a></li>
+                <li><a href="#modules" className="hover:text-accent transition-colors">Our Curriculum</a></li>
+                <li><a href="#pricing" className="hover:text-accent transition-colors">Pricing & Plans</a></li>
                 <li><Link href="/sign-in" className="hover:text-accent transition-colors">Student Login</Link></li>
               </ul>
             </div>
@@ -233,7 +390,7 @@ export default function LandingPage() {
             <div>
               <h4 className="font-bold text-lg mb-4 font-serif">Company</h4>
               <ul className="space-y-3 text-sm text-primary-foreground/70">
-                <li><a href="#" className="hover:text-accent transition-colors">About Us</a></li>
+                <li><a href="#about" className="hover:text-accent transition-colors">About Us</a></li>
                 <li><a href="#" className="hover:text-accent transition-colors">Faculty Directory</a></li>
                 <li><a href="#" className="hover:text-accent transition-colors">Agent Program</a></li>
                 <li><a href="#" className="hover:text-accent transition-colors">Careers</a></li>

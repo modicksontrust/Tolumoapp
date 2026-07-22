@@ -198,3 +198,7 @@
   background-clip: text;
   color: transparent;
 }
+
+html {
+  scroll-behavior: smooth;
+}
