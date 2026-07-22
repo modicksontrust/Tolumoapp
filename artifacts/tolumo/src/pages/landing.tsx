@@ -472,54 +472,63 @@ export default function LandingPage() {
         </section>
 
         {/* About Us */}
-        <section id="about" className="py-20 md:py-32 bg-background scroll-mt-16">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+        <section id="about" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="grid md:grid-cols-2 gap-16 items-start">
+              {/* Left: story */}
               <div>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-6">About Tolumo</h2>
-                <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                  Tolumo was founded on a simple belief: every aspiring Nigerian lawyer deserves access to
-                  world-class legal education, no matter where they live.
-                </p>
-                <p className="text-muted-foreground mb-8 leading-relaxed">
-                  We partner with Senior Advocates of Nigeria, esteemed professors, and practising barristers to
-                  deliver an NUC-approved curriculum entirely online. From Legal Methods in your first year to
-                  Jurisprudence in your final year, our platform pairs rigorous academics with modern technology —
-                  video lectures, AI-guided revision, and personal tutorship.
-                </p>
-                <div className="grid grid-cols-3 gap-6">
-                  <div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-3"><Scale className="h-5 w-5" /></div>
-                    <div className="font-bold text-primary mb-1">Rigour</div>
-                    <p className="text-xs text-muted-foreground">NUC-approved, exam-focused curriculum.</p>
-                  </div>
-                  <div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-3"><GraduationCap className="h-5 w-5" /></div>
-                    <div className="font-bold text-primary mb-1">Excellence</div>
-                    <p className="text-xs text-muted-foreground">Taught by Nigeria's top legal educators.</p>
-                  </div>
-                  <div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-3"><Users className="h-5 w-5" /></div>
-                    <div className="font-bold text-primary mb-1">Community</div>
-                    <p className="text-xs text-muted-foreground">12,400+ students learning together.</p>
-                  </div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">Our Story</p>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-8 leading-snug">
+                  Built for the African University Experience
+                </h2>
+                <div className="space-y-5 text-sm text-muted-foreground leading-relaxed">
+                  <p>
+                    Tolumo was born from a simple observation: Nigerian law students are among the hardest-working students in the world, yet thousands fail preventable exams every year — not from lack of effort, but from lack of access to quality teaching resources.
+                  </p>
+                  <p>
+                    In Nigerian law faculties, a single lecturer often teaches hundreds of students with limited time for individual support. Textbooks are expensive, past questions are scattered, and revision support is inconsistent across institutions.
+                  </p>
+                  <p>
+                    Tolumo changes that. Built by <strong className="text-primary font-semibold">Solalina</strong> in partnership with practising lawyers and academics, we've built a structured, NUC-aligned learning platform that meets students where they are — whether studying in Lagos, Zaria, Nsukka or Port Harcourt.
+                  </p>
+                  <p>
+                    Every feature — from the AI Study Coach to the post-quiz feedback loop — was designed with one goal: to help more Nigerian law students pass their exams, graduate on time, and enter the profession with confidence.
+                  </p>
+                </div>
+
+                {/* Stat pills */}
+                <div className="mt-10 flex flex-wrap gap-3">
+                  {[
+                    { value: '2024', label: 'Founded' },
+                    { value: '7', label: 'Universities' },
+                    { value: '48', label: 'Verified Tutors' },
+                    { value: '94%', label: 'Student Pass Rate' },
+                  ].map(({ value, label }) => (
+                    <div key={label} className="rounded-xl border border-border bg-white px-5 py-3 text-center min-w-[90px]">
+                      <div className="font-serif text-xl font-bold text-primary">{value}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="rounded-2xl bg-primary p-10 md:p-12 text-white">
-                <div className="font-serif text-2xl md:text-3xl font-bold leading-snug mb-6">
-                  “Our mission is to raise the next generation of Nigerian legal minds — one student at a time.”
-                </div>
-                <p className="text-white/70 text-sm mb-8">— The Tolumo Faculty</p>
-                <div className="grid grid-cols-2 gap-6 border-t border-white/10 pt-8">
-                  <div>
-                    <div className="font-serif text-3xl font-bold text-accent mb-1">94%</div>
-                    <div className="text-xs text-white/70 uppercase tracking-wider">Exam Pass Rate</div>
-                  </div>
-                  <div>
-                    <div className="font-serif text-3xl font-bold text-accent mb-1">12,400+</div>
-                    <div className="text-xs text-white/70 uppercase tracking-wider">Students Enrolled</div>
-                  </div>
-                </div>
+
+              {/* Right: commitment card */}
+              <div className="rounded-2xl border border-border bg-white p-8">
+                <h3 className="font-bold text-primary text-base mb-6">Our Commitment to Quality</h3>
+                <ul className="space-y-4">
+                  {[
+                    'All modules aligned to the NUC Law curriculum',
+                    'Every lecturer vetted by Triax Solicitors',
+                    'Student feedback reviewed monthly to improve content',
+                    'Platform audited for accessibility across low-bandwidth connections',
+                    'Data protected under Nigerian Data Protection Act (NDPA) 2023',
+                  ].map(item => (
+                    <li key={item} className="flex gap-3 items-start text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
