@@ -165,41 +165,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Choose Your Path — all 6 portals */}
-        <section className="py-20 md:py-28 bg-background">
-          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-            <div className="mb-12">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-2">Portals</p>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">Choose Your Path</h2>
-              <p className="text-muted-foreground max-w-xl">
-                Tolumo provides tailored dashboards for every role — from students and lecturers to agents and administrators.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {[
-                { title: 'Student Portal', desc: 'Access modules, track progress, book tutor sessions, and master the law with AI-guided revision.', href: '/sign-up', icon: BookOpen, cta: 'Student Access' },
-                { title: 'Tutor Portal', desc: 'Upload lectures, manage your courses, track student performance, and run one-on-one sessions.', href: '/sign-in', icon: GraduationCap, cta: 'Tutor Access' },
-                { title: 'Admin Portal', desc: 'Full platform management — users, content, reports, billing, and system configuration.', href: '/sign-in', icon: Shield, cta: 'Admin Access' },
-                { title: 'Sub-Agent Portal', desc: 'Manage student acquisitions, track your referral pipeline, and view commission statements.', href: '/sign-in', icon: UserCheck, cta: 'Sub-Agent Access' },
-                { title: 'Super Agent Portal', desc: 'Oversee all sub-agents, approve acquisitions, and manage the full agent network.', href: '/sign-in', icon: Users, cta: 'Super Agent Access' },
-                { title: 'CRM / Support Portal', desc: 'Handle student support tickets, SLA management, and platform-wide communications.', href: '/sign-in', icon: Headphones, cta: 'CRM Access' },
-              ].map(({ title, desc, href, icon: Icon, cta }) => (
-                <div key={title} className="group rounded-2xl border border-border bg-white p-7 shadow-sm transition-all hover:shadow-md hover:border-primary/30 flex flex-col">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 text-primary mb-5 group-hover:bg-primary group-hover:text-white transition-all">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="font-serif text-xl font-bold text-primary mb-2">{title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6 flex-1">{desc}</p>
-                  <Link href={href} className="inline-flex items-center justify-between rounded-lg border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white hover:border-primary">
-                    {cta} <ChevronRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Modules / Curriculum */}
         <section id="modules" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
