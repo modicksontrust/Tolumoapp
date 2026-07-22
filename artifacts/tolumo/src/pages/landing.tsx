@@ -172,7 +172,7 @@ export default function LandingPage() {
             <div className="text-center mb-14">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">The Learning Journey</p>
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">How Tolumo Works</h2>
-              <p className="text-muted-foreground max-w-lg mx-auto">
+              <p className="text-foreground max-w-lg mx-auto">
                 We've rebuilt the university law learning experience from scratch — structured, progressive, and proven to improve exam results.
               </p>
             </div>
@@ -255,7 +255,7 @@ export default function LandingPage() {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-2">Currently Available</p>
                 <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">NUC-Approved Modules</h2>
-                <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+                <p className="text-foreground max-w-sm text-sm leading-relaxed">
                   All modules follow the National Universities Commission curriculum. Every video is recorded and reviewed by practising Nigerian lawyers and academics.
                 </p>
               </div>
