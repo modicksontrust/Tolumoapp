@@ -533,6 +533,80 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* Founder's Note */}
+        <section className="py-20 md:py-28 bg-white">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            {/* Header */}
+            <div className="text-center mb-14">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">From the Desk of the Founder</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">Founder's Note</h2>
+              <div className="mx-auto w-12 h-0.5 bg-accent rounded-full" />
+            </div>
+
+            <div className="grid md:grid-cols-[280px_1fr] gap-12 items-start">
+              {/* Left: sticky founder card */}
+              <div className="md:sticky md:top-24 space-y-5">
+                {/* Profile card */}
+                <div className="rounded-2xl bg-primary p-8 text-white text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent text-white font-serif text-2xl font-bold">
+                    M
+                  </div>
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/40 mb-3">Dr Moses Oruaze Dickson</p>
+                  <p className="text-[9px] text-white/40 tracking-wider">LLB · BL · LLM · MSc · LLM · PhD</p>
+                </div>
+                {/* Name + title below card */}
+                <div>
+                  <p className="font-bold text-primary text-sm">Dr Moses Oruaze Dickson</p>
+                  <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD</p>
+                  <p className="text-xs text-muted-foreground">Founder, Tolumo.</p>
+                </div>
+                {/* Pull quote */}
+                <blockquote className="border-l-4 border-accent pl-4 text-sm text-muted-foreground italic leading-relaxed">
+                  "Tolumo is the classroom I wish every student could have had: a place where complex ideas become crystal clear, where fear loosens its grip, and where every learner is reminded they are not a mistake, not an afterthought, and never too late."
+                </blockquote>
+              </div>
+
+              {/* Right: long-form letter */}
+              <div className="prose prose-sm prose-primary max-w-none text-muted-foreground leading-relaxed space-y-5 text-sm">
+                <p>I did not become a lawyer because the road was kind. I became one because I refused to let the road decide my name.</p>
+                <p>Like so many of you, I grew up at a time and home where nothing was promised and every chance had to be fought for. Hope was not something we found lying around; it was something we built, brick by brick, with trembling hands and stubborn hearts. Daily, we stared hardship in the face and chose not to bow. As students, we walked into admission offices with fear in our chests and faith in our feet. Some days, we sat through lectures on empty stomachs, listening for a voice that would say, "You can," when the world so often whispered, "You can't."</p>
+                <p>Some lecturers lit lamps inside us. Others tried to convince us that the light was not ours to carry. But we made a quiet promise: where we started would not write the final sentence of our story.</p>
+                <p><strong className="text-primary">By God's grace, after 5 years of toil, I graduated.</strong></p>
+                <p>Yet graduation was not the finish line; it was the beginning of a deeper hunger. I wanted more — not just for me, but for every student who had ever felt small in a big system. So, education carried me across oceans. I learned in classrooms near and far, in libraries that smelled of old paper and new dreams. And when it was time to choose what to do with all I had gathered, I chose to come back home to the very university where I earned my LLB.</p>
+                <p><strong className="text-primary">I came home to teach. To help others rise.</strong></p>
+                <p>One day, I walked into the exact classroom where I had once sat as a student — head bent, heart racing, wondering if I belonged. This time, I stood at the front as a lecturer. As I looked out at those faces, I saw my younger self in every row. Every lesson became a conversation with the student I used to be: the one who needed clarity instead of confusion, patience instead of pressure, and belief instead of doubt.</p>
+                <p><strong className="text-primary">So, I taught the way I wished I had been taught, encouraged and supported.</strong></p>
+                <p>I spoke as if every student mattered — because they do. I explained as if no one should be left behind — because no one should. Slowly, the room shifted. The classroom filled to capacity, not because the law had suddenly become easy, but because learning finally made sense. Hope had found a new address.</p>
+
+                {/* Pullquote block */}
+                <div className="rounded-xl bg-primary px-8 py-6 not-prose my-8">
+                  <p className="font-serif text-lg font-bold text-white leading-snug mb-2">"And then it struck me: if one classroom could change lives, what could a classroom without walls do?"</p>
+                  <p className="text-sm text-white/60 italic">That question became Tolumo.</p>
+                </div>
+
+                <p>In my native Ijaw language, <strong className="text-primary">Tolumo</strong> means "to teach." But to me, it is much more than a word; it is a promise. Tolumo is the classroom I wish every student could have had: a place where complex ideas become crystal clear, where fear loosens its grip, and where every learner is reminded that they are not a mistake, not an afterthought, and never "too late" or "too little." You are exactly who you need to be to begin.</p>
+                <p>Tolumo is not just a platform. It is a movement of second chances, of "try again," and of "you are closer than you think." It is built on the unwavering belief that while talent is everywhere, opportunity is not — and we are here to change that.</p>
+                <p>With the support of my old classmates who survived those early hardships alongside me, fellow academics, mentors, and partners who share this dream, we are turning what once lived only in my heart into something you can hold in your hands and use to build your future.</p>
+
+                <p className="font-semibold text-primary">This is our classroom without walls.</p>
+                <p className="font-semibold text-primary">This is where we teach like every student matters, because you do.</p>
+                <p className="font-semibold text-primary">This is where we learn like the future is listening, because it is.</p>
+
+                <p><strong className="text-primary">Welcome to Tolumo!<br />I am honored to walk this road with you.</strong></p>
+
+                {/* Signature */}
+                <div className="flex items-center gap-3 pt-6 border-t border-border not-prose">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white font-serif font-bold text-sm">M</div>
+                  <div>
+                    <p className="text-sm font-bold text-primary">Dr Moses Oruaze Dickson</p>
+                    <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD &nbsp;·&nbsp; Founder, Tolumo.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
