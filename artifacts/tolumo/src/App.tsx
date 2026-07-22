@@ -282,18 +282,9 @@ function HomeRedirect() {
   );
 }
 
-// Protected route wrapper
+// Auth guards off during development — restore before launch
 function ProtectedRoute({ component: Component }: { component: React.ComponentType<any> }) {
-  return (
-    <>
-      <Show when="signed-in">
-        <Component />
-      </Show>
-      <Show when="signed-out">
-        <Redirect to="/sign-in" />
-      </Show>
-    </>
-  );
+  return <Component />;
 }
 
 function ClerkProviderWithRoutes() {
