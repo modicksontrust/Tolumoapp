@@ -371,155 +371,250 @@ function TutorShell({ children }: { children: React.ReactNode }) {
 }
 
 // ── AI Chat Widget ────────────────────────────────────────────────────────────
-type ChatMsg = { role: 'ai' | 'user'; text: string };
+type ChatMsg = {
+  role: 'ai' | 'user';
+  text: string;
+  time: string;
+  chips?: string[];
+  helpful?: null | 'up' | 'down';
+};
 
-const AI_STARTERS: ChatMsg[] = [
+function nowTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+const AI_REPLIES: { text: string; chips?: string[] }[] = [
   {
-    role: 'ai',
-    text: "Hi Prof. Adeyemi 👋 I'm your Tolumo AI assistant. Ask me anything about your students, content, earnings, or the platform.",
+    text: "Thanks for your message, Prof. Adeyemi. I want to make sure I give you the right help. Could you tell me a bit more about what you're looking for? I can help with learning support, platform navigation, or connecting you with our support team.",
+    chips: ['Help with studying', 'Navigate the platform', 'Subscription help', 'Talk to support'],
+  },
+  {
+    text: 'You have 3 upcoming bookings this week. The next session is Monday 14 Jul at 10:00am with Chisom Nwosu on Federalism & Devolution.',
+    chips: ['View schedule', 'Reschedule a session'],
+  },
+  {
+    text: 'Your estimated earnings this month are ₦255,600 (gross). After the 15% platform fee, your net payout is approximately ₦217,260.',
+    chips: ['View payout details', 'Change payout schedule'],
+  },
+  {
+    text: 'Topic 4: Separation of Powers notes are still pending upload. Uploading them will unlock that module for all enrolled students.',
+    chips: ['Go to My Content', 'Upload now'],
+  },
+  {
+    text: "Your current average rating is 4.8 ★ — excellent! Students most frequently highlight your clarity and responsiveness.",
+    chips: ['View all feedback', 'View analytics'],
+  },
+  {
+    text: 'You can reach Tolumo support via the Help & Support section in Settings, or email support@tolumo.com. Our team responds within 24 hours.',
+    chips: ['Open Help & Support', 'Submit a ticket'],
   },
 ];
 
-const AI_REPLIES: Record<string, string> = {
-  default:
-    "I'm still learning more about that topic. For complex queries, try the Help & Support section or contact the Tolumo team.",
-  student:
-    'Your top-performing students this month are in the Constitutional Law module. Would you like a breakdown by topic or quiz score?',
-  booking:
-    'You have 3 upcoming bookings this week. The next session is Monday 14 Jul at 10:00am with Chisom Nwosu on Federalism & Devolution.',
-  earning:
-    'Your estimated earnings this month are ₦255,600 (gross). After the 15% platform fee, your net payout is approximately ₦217,260.',
-  content:
-    'Topic 4: Separation of Powers notes are still pending upload. Uploading them will unlock that module for all enrolled students.',
-  rating:
-    "Your current average rating is 4.8 ★ — excellent! Students most frequently highlight your clarity and responsiveness.",
-  help: 'You can reach Tolumo support via the Help & Support section in Settings, or email support@tolumo.com.',
-};
-
-function getAIReply(input: string): string {
+let replyIdx = 0;
+function getAIReply(input: string): { text: string; chips?: string[] } {
   const q = input.toLowerCase();
-  if (q.match(/student|quiz|performance|score/)) return AI_REPLIES.student;
-  if (q.match(/booking|session|schedule|appointment/)) return AI_REPLIES.booking;
-  if (q.match(/earn|payout|money|revenue|income|payment/)) return AI_REPLIES.earning;
-  if (q.match(/content|upload|notes|video|slide/)) return AI_REPLIES.content;
-  if (q.match(/rating|review|feedback|star/)) return AI_REPLIES.rating;
-  if (q.match(/help|support|contact|issue|problem/)) return AI_REPLIES.help;
-  return AI_REPLIES.default;
+  if (q.match(/booking|session|schedule|appointment/)) return AI_REPLIES[1];
+  if (q.match(/earn|payout|money|revenue|income|payment/)) return AI_REPLIES[2];
+  if (q.match(/content|upload|notes|video|slide/)) return AI_REPLIES[3];
+  if (q.match(/rating|review|feedback|star/)) return AI_REPLIES[4];
+  if (q.match(/help|support|contact|issue|problem/)) return AI_REPLIES[5];
+  // For chips / anything else, cycle through contextual replies
+  const r = AI_REPLIES[replyIdx % AI_REPLIES.length];
+  replyIdx++;
+  return r;
 }
 
 function AIChatWidget() {
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
   const [open, setOpen] = useState(false);
-  const [minimised, setMinimised] = useState(false);
-  const [msgs, setMsgs] = useState<ChatMsg[]>(AI_STARTERS);
+  const [msgs, setMsgs] = useState<ChatMsg[]>([
+    {
+      role: 'ai',
+      text: "Hi Prof. Adeyemi 👋 I'm your Tolumo AI assistant. Ask me anything about your students, content, earnings, or the platform.",
+      time: nowTime(),
+      chips: ['View my schedule', 'Check my earnings', 'Pending content', 'Student feedback'],
+      helpful: null,
+    },
+  ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open && !minimised) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [msgs, open, minimised]);
+    if (open) setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+  }, [msgs, open, typing]);
 
-  const send = () => {
-    const text = input.trim();
-    if (!text) return;
+  const sendText = (text: string) => {
+    if (!text.trim()) return;
     setInput('');
-    setMsgs(prev => [...prev, { role: 'user', text }]);
+    const userMsg: ChatMsg = { role: 'user', text, time: nowTime() };
+    setMsgs(prev => [...prev, userMsg]);
     setTyping(true);
     setTimeout(() => {
-      setMsgs(prev => [...prev, { role: 'ai', text: getAIReply(text) }]);
+      const { text: aiText, chips } = getAIReply(text);
+      setMsgs(prev => [
+        ...prev,
+        { role: 'ai', text: aiText, time: nowTime(), chips, helpful: null },
+      ]);
       setTyping(false);
-    }, 900);
+    }, 1000);
   };
 
+  const setHelpful = (idx: number, val: 'up' | 'down') =>
+    setMsgs(prev => prev.map((m, i) => (i === idx ? { ...m, helpful: val } : m)));
+
   const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendText(input); }
   };
+
+  // Logo icon component (matches the reference's building mark)
+  const TolumoMark = () => (
+    <img src={`${basePath}/logo.svg`} alt="" className="h-full w-full object-contain" />
+  );
 
   return (
     <>
-      {/* Chat panel */}
+      {/* Panel */}
       {open && (
-        <div className={`fixed bottom-24 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden z-50 transition-all ${minimised ? 'h-14' : 'h-[440px]'}`}>
-          {/* Header */}
+        <div className="fixed bottom-24 right-6 w-[340px] h-[520px] bg-white rounded-2xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden z-50">
+
+          {/* ── Header ── */}
           <div className="flex items-center gap-3 px-4 py-3 bg-primary shrink-0">
-            <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-              <Bot className="h-4 w-4 text-white" />
+            {/* Logo mark */}
+            <div className="h-9 w-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0 overflow-hidden p-1">
+              <TolumoMark />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white leading-none">Tolumo AI</p>
-              <p className="text-[10px] text-white/60 mt-0.5">Ask me anything</p>
+              <p className="text-sm font-bold text-white leading-tight">Tolumo AI</p>
+              <p className="flex items-center gap-1.5 text-[11px] text-white/70 mt-0.5">
+                <span className="h-2 w-2 rounded-full bg-green-400 shrink-0" />
+                Online · Tolumo Assistant
+              </p>
             </div>
-            <button onClick={() => setMinimised(v => !v)} className="text-white/70 hover:text-white transition-colors">
-              <Minimize2 className="h-4 w-4" />
-            </button>
-            <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white transition-colors">
+            <button
+              onClick={() => setOpen(false)}
+              className="h-7 w-7 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/15 transition-colors"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          {!minimised && (
-            <>
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-stone-50">
-                {msgs.map((m, i) => (
-                  <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    {m.role === 'ai' && (
-                      <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center shrink-0 mr-2 mt-0.5">
-                        <Bot className="h-3 w-3 text-white" />
-                      </div>
-                    )}
-                    <div className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
-                      m.role === 'user'
-                        ? 'bg-primary text-white rounded-br-sm'
-                        : 'bg-white text-foreground border border-stone-200 rounded-bl-sm shadow-sm'
-                    }`}>
+          {/* ── Messages ── */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-white">
+            {msgs.map((m, i) => (
+              <div key={i}>
+                {/* Timestamp */}
+                <p className="text-[10px] text-stone-400 text-center mb-2">{m.time}</p>
+
+                {m.role === 'user' ? (
+                  /* User bubble */
+                  <div className="flex items-end justify-end gap-2">
+                    <div className="max-w-[75%] bg-primary text-white text-sm px-4 py-2.5 rounded-2xl rounded-br-sm leading-relaxed">
                       {m.text}
                     </div>
-                  </div>
-                ))}
-                {typing && (
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center shrink-0">
-                      <Bot className="h-3 w-3 text-white" />
+                    {/* Gold avatar */}
+                    <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center shrink-0">
+                      <Users className="h-4 w-4 text-white" />
                     </div>
-                    <div className="bg-white border border-stone-200 rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm">
-                      <div className="flex gap-1 items-center h-4">
-                        {[0, 1, 2].map(i => (
-                          <span key={i} className="h-1.5 w-1.5 rounded-full bg-stone-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-                        ))}
+                  </div>
+                ) : (
+                  /* AI bubble */
+                  <div className="flex items-start gap-2">
+                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden p-1 mt-0.5">
+                      <TolumoMark />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="bg-stone-100 text-foreground text-sm px-4 py-3 rounded-2xl rounded-tl-sm leading-relaxed">
+                        {m.text}
                       </div>
+                      {/* Quick-reply chips */}
+                      {m.chips && m.chips.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {m.chips.map(chip => (
+                            <button
+                              key={chip}
+                              onClick={() => sendText(chip)}
+                              className="px-3 py-1.5 rounded-full border border-stone-300 text-xs font-medium text-foreground bg-white hover:border-primary hover:text-primary transition-colors"
+                            >
+                              {chip}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {/* Helpful? */}
+                      {m.helpful !== undefined && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-[11px] text-stone-400">Was this helpful?</span>
+                          <button
+                            onClick={() => setHelpful(i, 'up')}
+                            className={`p-1 rounded transition-colors ${m.helpful === 'up' ? 'text-green-600' : 'text-stone-400 hover:text-green-600'}`}
+                          >
+                            <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+                          </button>
+                          <button
+                            onClick={() => setHelpful(i, 'down')}
+                            className={`p-1 rounded transition-colors ${m.helpful === 'down' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+                          >
+                            <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
-                <div ref={bottomRef} />
               </div>
+            ))}
 
-              {/* Input */}
-              <div className="flex items-center gap-2 px-3 py-3 border-t border-stone-100 bg-white shrink-0">
-                <input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={handleKey}
-                  placeholder="Ask anything…"
-                  className="flex-1 text-sm px-3 py-2 rounded-xl border border-stone-200 outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 bg-stone-50"
-                />
-                <button
-                  onClick={send}
-                  disabled={!input.trim()}
-                  className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shrink-0 disabled:opacity-40 hover:bg-primary/90 transition-colors"
-                >
-                  <Send className="h-4 w-4 text-white" />
-                </button>
+            {/* Typing indicator */}
+            {typing && (
+              <div>
+                <p className="text-[10px] text-stone-400 text-center mb-2">{nowTime()}</p>
+                <div className="flex items-start gap-2">
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden p-1">
+                    <TolumoMark />
+                  </div>
+                  <div className="bg-stone-100 rounded-2xl rounded-tl-sm px-4 py-3">
+                    <div className="flex gap-1 items-center">
+                      {[0, 1, 2].map(j => (
+                        <span key={j} className="h-2 w-2 rounded-full bg-stone-400 animate-bounce" style={{ animationDelay: `${j * 0.18}s` }} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </>
-          )}
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* ── Input ── */}
+          <div className="shrink-0 border-t border-stone-100 bg-white">
+            <div className="flex items-center gap-2 px-3 py-3">
+              <input
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder="Type a message..."
+                className="flex-1 text-sm px-4 py-2.5 rounded-full border border-stone-200 outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 bg-stone-50 placeholder:text-stone-400"
+              />
+              <button
+                onClick={() => sendText(input)}
+                disabled={!input.trim()}
+                className="h-9 w-9 rounded-full bg-primary flex items-center justify-center shrink-0 disabled:opacity-35 hover:bg-primary/90 transition-colors"
+              >
+                <Send className="h-4 w-4 text-white" />
+              </button>
+            </div>
+            <p className="text-[10px] text-stone-400 text-center pb-2.5">
+              Powered by Tolumo AI · Responses may be imperfect
+            </p>
+          </div>
         </div>
       )}
 
       {/* FAB */}
       <button
-        onClick={() => { setOpen(v => !v); setMinimised(false); }}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center z-50"
+        onClick={() => setOpen(v => !v)}
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center z-50"
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </button>
