@@ -86,42 +86,139 @@ const MODULE_IMAGES: Record<number, string> = {
   501: 'https://images.unsplash.com/photo-1521587765099-8835e7201186?w=600&h=340&fit=crop',
 };
 
+// ── Carryover module descriptions ─────────────────────────────────────────────
+const CARRYOVER_DESC: Record<number, string> = {
+  101: 'Foundations of the Nigerian legal system: sources of law, the court hierarchy, customary law, and the reception of English law into Nigeria.',
+  102: 'Legal reasoning, statutory interpretation, case analysis, citation formats, and the fundamentals of legal research and writing.',
+  103: 'Legal personality, capacity, domicile, nationality, and the status of natural and artificial persons under Nigerian law.',
+  104: 'A historical account of Nigeria\'s constitutional development from colonial rule to the 1999 Constitution, including military interventions.',
+};
+
 // ── Carryover modal ────────────────────────────────────────────────────────────
-function CarryoverModal({ mod, onClose }: { mod: typeof ALL_MODULES[0]; onClose: () => void }) {
+function CarryoverModal({ onClose }: { onClose: () => void }) {
+  const [selected, setSelected] = useState<typeof ALL_MODULES[0] | null>(null);
   const [paid, setPaid] = useState(false);
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
-          <h2 className="font-serif font-bold text-foreground">Add Carryover Module</h2>
-          <button onClick={onClose} className="h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-stone-100"><X className="h-4 w-4" /></button>
+
+  const carryovers = ALL_MODULES.filter(m => m.status === 'carryover');
+
+  // Payment step
+  if (selected) {
+    const img = MODULE_IMAGES[selected.id];
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+          {/* Header */}
+          <div className="bg-[#1a4d35] px-6 py-5">
+            <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-1">Law Programme · Year 1 Add-Ons</p>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-serif font-bold text-white">Confirm Payment</h2>
+              <button onClick={onClose} className="text-white/60 hover:text-white transition-colors"><X className="h-5 w-5" /></button>
+            </div>
+          </div>
+
+          {paid ? (
+            <div className="px-6 py-10 text-center">
+              <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="h-7 w-7 text-green-600" />
+              </div>
+              <h3 className="font-serif font-bold text-foreground text-lg mb-1">Module Added!</h3>
+              <p className="text-sm text-muted-foreground mb-6">{selected.title} has been added to your library. You now have instant access.</p>
+              <button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Start Learning</button>
+            </div>
+          ) : (
+            <div className="px-6 py-5 space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-stone-50 border border-stone-200 rounded-xl">
+                <div className="h-14 w-14 rounded-xl overflow-hidden shrink-0 bg-stone-200">
+                  {img && <img src={img} alt={selected.title} className="w-full h-full object-cover" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold text-muted-foreground">{selected.code}</p>
+                  <p className="font-semibold text-foreground text-sm leading-snug">{selected.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{selected.tutor} · {selected.topics} topics</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                <span className="text-sm font-medium text-amber-900">One-time add-on fee</span>
+                <span className="text-xl font-bold text-accent">₦7,500</span>
+              </div>
+              <p className="text-xs text-muted-foreground text-center">Secure payment · Instant access after payment · No refunds on digital content</p>
+              <div className="flex gap-3">
+                <button onClick={() => setSelected(null)} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">← Back</button>
+                <button onClick={() => setPaid(true)} className="flex-1 py-2.5 rounded-xl bg-accent text-white font-bold text-sm hover:bg-accent/90 transition-colors">Pay ₦7,500</button>
+              </div>
+            </div>
+          )}
         </div>
-        {paid ? (
-          <div className="px-6 py-10 text-center">
-            <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="h-7 w-7 text-green-600" />
-            </div>
-            <h3 className="font-serif font-bold text-foreground text-lg mb-1">Module Added!</h3>
-            <p className="text-sm text-muted-foreground mb-6">{mod.title} has been added to your library. You now have instant access.</p>
-            <button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Start Learning</button>
+      </div>
+    );
+  }
+
+  // Module list step
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Dark green header */}
+        <div className="bg-[#1a4d35] px-6 py-5 shrink-0">
+          <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-1">Law Programme · Year 1 Add-Ons</p>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-serif font-bold text-white">Add a Carryover Module</h2>
+            <button onClick={onClose} className="text-white/60 hover:text-white transition-colors ml-4 shrink-0"><X className="h-5 w-5" /></button>
           </div>
-        ) : (
-          <div className="px-6 py-5 space-y-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-              <p className="font-semibold text-amber-900 mb-0.5">{mod.code}: {mod.title}</p>
-              <p className="text-xs text-amber-700">{mod.tutor} · {mod.topics} topics · Year {mod.year}, Semester {mod.sem}</p>
-            </div>
-            <p className="text-sm text-muted-foreground">This is a Year 1 carryover module. Add it as a one-time add-on for instant access.</p>
-            <div className="flex items-center justify-between bg-stone-50 border border-stone-200 rounded-xl p-4">
-              <span className="text-sm font-medium text-foreground">One-time add-on fee</span>
-              <span className="text-xl font-bold text-primary">₦7,500</span>
-            </div>
-            <button onClick={() => setPaid(true)} className="w-full py-3 rounded-xl bg-accent text-white font-bold hover:bg-accent/90 transition-colors">
-              Pay ₦7,500 — Add Module
-            </button>
-            <p className="text-[10px] text-muted-foreground text-center">Secure payment · Instant access after payment · No refunds</p>
-          </div>
-        )}
+        </div>
+
+        {/* Subtitle */}
+        <div className="px-6 pt-5 pb-3 shrink-0">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Select a failed Year 1 module to add it to your current dashboard. Payment is the only gate — access is instant.
+          </p>
+        </div>
+
+        {/* Scrollable list */}
+        <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-3">
+          {carryovers.map(m => {
+            const img = MODULE_IMAGES[m.id];
+            const desc = CARRYOVER_DESC[m.id] || '';
+            return (
+              <div key={m.id} className="flex gap-3 p-4 rounded-2xl border border-stone-200 hover:border-stone-300 transition-colors">
+                {/* Thumbnail */}
+                <div className="h-20 w-20 rounded-xl overflow-hidden shrink-0 bg-stone-200">
+                  {img && <img src={img} alt={m.title} className="w-full h-full object-cover" />}
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-bold text-foreground">{m.code}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">Year {m.year} · Sem {m.sem}</span>
+                    </div>
+                    <button
+                      onClick={() => setSelected(m)}
+                      className="shrink-0 px-4 py-1.5 rounded-full bg-[#1a4d35] text-white text-xs font-bold hover:bg-[#1a4d35]/90 transition-colors"
+                    >
+                      Select
+                    </button>
+                  </div>
+                  <p className="font-semibold text-foreground text-sm leading-snug mb-1">{m.title}</p>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+                    <div className="h-4 w-4 rounded-full bg-stone-300 overflow-hidden shrink-0">
+                      {img && <img src={img} alt="" className="w-full h-full object-cover" />}
+                    </div>
+                    {m.tutor} · {m.topics} topics
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer */}
+        <div className="shrink-0 px-6 py-4 border-t border-stone-100">
+          <button onClick={onClose} className="w-full py-3 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -244,7 +341,7 @@ function ModuleDetail({ moduleId, onBack }: { moduleId: number; onBack: () => vo
 export default function MyModules({ moduleId }: { moduleId?: number }) {
   const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
   const [search, setSearch] = useState('');
-  const [carryoverMod, setCarryoverMod] = useState<typeof ALL_MODULES[0] | null>(null);
+  const [showCarryover, setShowCarryover] = useState(false);
   const [detailId, setDetailId] = useState<number | null>(moduleId || null);
 
   if (detailId) {
@@ -266,7 +363,7 @@ export default function MyModules({ moduleId }: { moduleId?: number }) {
           <h1 className="text-2xl font-serif font-bold text-foreground">Module Library</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Law Programme · NUC-approved modules · Complete all Year 2 modules for certificate</p>
         </div>
-        <button className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors shadow-sm">
+        <button onClick={() => setShowCarryover(true)} className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors shadow-sm">
           <Plus className="h-4 w-4" /> Add Carryover Module
         </button>
       </div>
@@ -281,7 +378,7 @@ export default function MyModules({ moduleId }: { moduleId?: number }) {
           <p className="text-xs text-amber-800 mt-0.5">Add failed modules from your previous year as a one-time add-on — ₦7,500 per module, instant access after payment.</p>
         </div>
         <button
-          onClick={() => setCarryoverMod(ALL_MODULES.find(m => m.status === 'carryover') || null)}
+          onClick={() => setShowCarryover(true)}
           className="shrink-0 px-4 py-2 rounded-xl bg-[#1a4d35] text-white text-xs font-bold hover:bg-[#1a4d35]/90 transition-colors"
         >
           Add Module
@@ -313,7 +410,7 @@ export default function MyModules({ moduleId }: { moduleId?: number }) {
             <div
               key={m.id}
               onClick={() => {
-                if (m.status === 'carryover') { setCarryoverMod(m); return; }
+                if (m.status === 'carryover') { setShowCarryover(true); return; }
                 if (m.status === 'enrolled') { setDetailId(m.id); }
               }}
               className={`bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col transition-shadow ${m.status !== 'locked' ? 'cursor-pointer hover:shadow-md' : 'opacity-80'}`}
@@ -391,7 +488,7 @@ export default function MyModules({ moduleId }: { moduleId?: number }) {
       </div>
 
       {/* Carryover modal */}
-      {carryoverMod && <CarryoverModal mod={carryoverMod} onClose={() => setCarryoverMod(null)} />}
+      {showCarryover && <CarryoverModal onClose={() => setShowCarryover(false)} />}
     </div>
   );
 }
