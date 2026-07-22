@@ -31,21 +31,10 @@ const QUIZ_RESULTS = [
   { name: 'Amara Diallo',     initials: 'AD', institution: 'UNN',       module: 'LAW 201', topic: 'Topic 5', mcq: '4/5', essay: '79%', pass: true  },
 ];
 
-const EARNINGS_MONTHS = [
-  { month: 'Jan', amount: 42500 },
-  { month: 'Feb', amount: 51000 },
-  { month: 'Mar', amount: 48200 },
-  { month: 'Apr', amount: 63400 },
-  { month: 'May', amount: 58900 },
-  { month: 'Jun', amount: 71200 },
-  { month: 'Jul', amount: 66800 },
-];
-
-const EARNINGS_BREAKDOWN = [
-  { label: 'Session Fees',       amount: 312000, pct: 62 },
-  { label: 'Module Royalties',   amount: 124000, pct: 25 },
-  { label: 'Quiz Premium',       amount: 45000,  pct:  9 },
-  { label: 'Referral Bonus',     amount: 20000,  pct:  4 },
+const SESSION_EARNINGS = [
+  { topic: 'Federalism & the Second Schedule', module: 'LAW 201', date: '10 Jul 2025', students: 22, gross: 55000 },
+  { topic: 'Supremacy of the Constitution',    module: 'LAW 201', date: '3 Jul 2025',  students: 18, gross: 45000 },
+  { topic: 'Offer & Acceptance — Postal Rule', module: 'LAW 202', date: '25 Jun 2025', students: 14, gross: 21000 },
 ];
 
 const FEEDBACK = [
@@ -164,80 +153,76 @@ function StudentPerformance() {
 }
 
 // ── Tab: My Earnings ──────────────────────────────────────────────────────────
+const PLATFORM_RATE = 0.15;
+
 function MyEarnings() {
-  const maxAmount = Math.max(...EARNINGS_MONTHS.map(e => e.amount));
-  const totalEarned = EARNINGS_BREAKDOWN.reduce((s, e) => s + e.amount, 0);
+  const rows = SESSION_EARNINGS.map(s => ({
+    ...s,
+    platform: Math.round(s.gross * PLATFORM_RATE),
+    net: Math.round(s.gross * (1 - PLATFORM_RATE)),
+  }));
+  const totalGross    = rows.reduce((sum, r) => sum + r.gross,    0);
+  const totalPlatform = rows.reduce((sum, r) => sum + r.platform, 0);
+  const totalNet      = rows.reduce((sum, r) => sum + r.net,      0);
+  const totalStudents = rows.reduce((sum, r) => sum + r.students, 0);
+
+  const fmt = (n: number) => `₦${n.toLocaleString()}`;
 
   return (
     <div className="space-y-6">
-      {/* Summary */}
+      {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Earned (2025)"  value="₦501,000" color="text-primary" />
-        <StatCard label="This Month"           value="₦66,800"  color="text-primary" />
-        <StatCard label="Avg Per Session"      value="₦8,500"   />
-        <StatCard label="Sessions This Month"  value="8"        />
+        <StatCard label="Total Net Earnings" value={fmt(totalNet)}      color="text-foreground" />
+        <StatCard label="Gross Revenue"      value={fmt(totalGross)}    color="text-primary" />
+        <StatCard label="Platform Fee (15%)" value={fmt(totalPlatform)} color="text-amber-500" />
+        <StatCard label="Students Taught"    value={String(totalStudents)} color="text-violet-600" />
       </div>
 
-      {/* Bar chart */}
-      <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="font-serif font-semibold text-foreground">Monthly Earnings</h3>
-          <div className="flex items-center gap-1.5 text-xs text-green-600 font-semibold bg-green-50 px-2.5 py-1 rounded-full">
-            <TrendingUp className="h-3.5 w-3.5" /> +12% vs last month
-          </div>
+      {/* Breakdown table */}
+      <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-stone-100">
+          <h3 className="font-serif font-semibold text-foreground">Session Earnings Breakdown</h3>
         </div>
-        <div className="flex items-end gap-3 h-40">
-          {EARNINGS_MONTHS.map(({ month, amount }) => {
-            const pct = (amount / maxAmount) * 100;
-            const isLatest = month === 'Jul';
-            return (
-              <div key={month} className="flex-1 flex flex-col items-center gap-1.5">
-                <span className="text-[10px] font-semibold text-muted-foreground">
-                  ₦{(amount / 1000).toFixed(0)}k
-                </span>
-                <div
-                  className={`w-full rounded-t-md transition-all ${isLatest ? 'bg-primary' : 'bg-primary/20'}`}
-                  style={{ height: `${pct}%` }}
-                />
-                <span className="text-[10px] text-muted-foreground">{month}</span>
-              </div>
-            );
-          })}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[700px]">
+            <thead>
+              <tr className="border-b border-stone-100 bg-stone-50/60">
+                {['Topic', 'Module', 'Date', 'Students', 'Gross', 'Platform (15%)', 'Your Net'].map(h => (
+                  <th key={h} className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-stone-100">
+              {rows.map(r => (
+                <tr key={r.topic} className="hover:bg-stone-50/50 transition-colors">
+                  <td className="px-5 py-3.5 font-medium text-foreground">{r.topic}</td>
+                  <td className="px-5 py-3.5 text-muted-foreground">{r.module}</td>
+                  <td className="px-5 py-3.5 text-muted-foreground">{r.date}</td>
+                  <td className="px-5 py-3.5 text-foreground font-semibold">{r.students}</td>
+                  <td className="px-5 py-3.5 text-foreground font-semibold">{fmt(r.gross)}</td>
+                  <td className="px-5 py-3.5 text-red-500 font-semibold">-{fmt(r.platform)}</td>
+                  <td className="px-5 py-3.5 text-foreground font-bold">{fmt(r.net)}</td>
+                </tr>
+              ))}
+              {/* Total row */}
+              <tr className="bg-stone-50/80 border-t-2 border-stone-200">
+                <td className="px-5 py-3.5 font-bold text-foreground" colSpan={4}>Total</td>
+                <td className="px-5 py-3.5 font-bold text-foreground">{fmt(totalGross)}</td>
+                <td className="px-5 py-3.5 font-bold text-red-500">-{fmt(totalPlatform)}</td>
+                <td className="px-5 py-3.5 font-bold text-foreground">{fmt(totalNet)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
 
-      {/* Breakdown */}
-      <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
-        <h3 className="font-serif font-semibold text-foreground mb-5">Earnings Breakdown</h3>
-        <div className="space-y-4">
-          {EARNINGS_BREAKDOWN.map(({ label, amount, pct }) => (
-            <div key={label}>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm font-medium text-foreground">{label}</span>
-                <span className="text-sm font-semibold text-foreground">
-                  ₦{amount.toLocaleString()} <span className="text-muted-foreground font-normal text-xs">({pct}%)</span>
-                </span>
-              </div>
-              <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-                <div className="h-full bg-primary rounded-full" style={{ width: `${pct}%` }} />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-5 pt-4 border-t border-stone-100 flex items-center justify-between">
-          <span className="font-semibold text-foreground">Total</span>
-          <span className="font-bold text-lg font-serif text-primary">₦{totalEarned.toLocaleString()}</span>
-        </div>
-      </div>
-
-      {/* Payout info */}
-      <div className="bg-primary/5 border border-primary/20 rounded-xl px-6 py-4 flex items-center gap-4">
-        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <DollarSign className="h-5 w-5 text-primary" />
-        </div>
-        <div>
-          <p className="font-semibold text-foreground text-sm">Next Payout: 31 Jul 2025</p>
-          <p className="text-xs text-muted-foreground mt-0.5">Estimated ₦66,800 · GTBank ····4821</p>
+        {/* Policy notice */}
+        <div className="px-6 py-4 border-t border-stone-100 bg-stone-50/40">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            <span className="font-semibold text-foreground">Earnings policy:</span>{' '}
+            Tolumo retains 15% of each tutorial session fee as a platform service charge.
+            Your net earnings are transferred to your registered bank account within 3 working
+            days after each session concludes.
+          </p>
         </div>
       </div>
     </div>
