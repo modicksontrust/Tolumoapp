@@ -347,7 +347,7 @@ function TutorShell({ children }: { children: React.ReactNode }) {
 
             {/* Avatar */}
             <div className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-full bg-accent text-white flex items-center justify-center text-sm font-bold">
+              <div className="h-9 w-9 rounded-full bg-[#1a4d35] text-white flex items-center justify-center text-sm font-bold">
                 {initials}
               </div>
               <div className="hidden md:block leading-none">
