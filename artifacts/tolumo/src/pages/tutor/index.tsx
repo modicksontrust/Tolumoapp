@@ -242,7 +242,7 @@ function TutorShell({ children }: { children: React.ReactNode }) {
       `}>
         {/* Logo */}
         <div className="px-6 pt-6 pb-4 flex items-center gap-3">
-          <img src={`${basePath}/logo.svg`} alt="" className="h-8 w-8 brightness-0 invert" />
+          <img src={`${basePath}/logo.svg`} alt="" className="h-8 w-8" />
           <span className="font-serif font-bold text-xl text-white tracking-tight">Tolumo</span>
         </div>
 
