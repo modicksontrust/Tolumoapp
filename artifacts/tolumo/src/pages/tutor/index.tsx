@@ -3,6 +3,7 @@ import { Route, Switch, useLocation, Link } from 'wouter';
 import MyContent from './my-content';
 import TutorialSchedule from './tutorial-schedule';
 import StudentAnalytics from './student-analytics';
+import SettingsPage, { HelpSupportPage } from './settings';
 import { useClerk, useUser } from '@clerk/react';
 import {
   LayoutDashboard, BookOpen, Calendar, BarChart2,
@@ -431,8 +432,8 @@ export default function TutorPortal() {
         <Route path="/tutor/content/:id" component={LessonManager} />
         <Route path="/tutor/schedule" component={TutorialSchedule} />
         <Route path="/tutor/analytics" component={StudentAnalytics} />
-        <Route path="/tutor/help">{() => <Placeholder title="Help & Support" />}</Route>
-        <Route path="/tutor/settings">{() => <Placeholder title="Settings" />}</Route>
+        <Route path="/tutor/help">{() => <div className="max-w-6xl mx-auto"><HelpSupportPage /></div>}</Route>
+        <Route path="/tutor/settings">{() => <SettingsPage />}</Route>
       </Switch>
     </TutorShell>
   );
