@@ -3,9 +3,9 @@ import { useLocation } from 'wouter';
 import {
   CheckCircle2, Lock, ChevronLeft, ChevronRight, ChevronDown,
   Play, Pause, SkipBack, SkipForward, Volume2,
-  MessageCircle, Search, ClipboardList, AlertCircle,
+  MessageCircle, Search, AlertCircle,
   Headphones, BookOpen, Scale, FileText, Gavel, Newspaper,
-  Clock, Plus,
+  Clock, Plus, XCircle, RefreshCw, Info,
 } from 'lucide-react';
 
 // ── Module & topics ────────────────────────────────────────────────────────────
@@ -730,17 +730,58 @@ export default function CurrentTopic() {
               </div>
             )}
 
-            {/* Failed */}
-            {submitted && !quizPassed && (
-              <div className="p-10 text-center space-y-4">
-                <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
-                  <AlertCircle className="h-8 w-8 text-red-500" />
+            {/* Failed — detailed review */}
+            {submitted && !quizPassed && (() => {
+              const score = MCQ.filter((q, i) => selected[i] === q.ans).length;
+              return (
+                <div className="p-6 space-y-4">
+                  {/* Score header */}
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="h-14 w-14 rounded-full bg-red-100 flex items-center justify-center">
+                      <XCircle className="h-7 w-7 text-red-500" />
+                    </div>
+                    <p className="text-2xl font-serif font-bold text-foreground">{score}/5 Correct</p>
+                    <p className="text-sm text-muted-foreground">Not quite — review the answers below and try again.</p>
+                  </div>
+
+                  {/* Per-question result cards */}
+                  <div className="space-y-2">
+                    {MCQ.map((q, qi) => {
+                      const correct = selected[qi] === q.ans;
+                      return (
+                        <div key={qi} className={`rounded-xl px-4 py-3 border ${correct ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                          <p className={`text-sm font-semibold mb-1.5 ${correct ? 'text-green-900' : 'text-red-900'}`}>{q.q}</p>
+                          <p className="text-xs text-green-700 flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3 shrink-0" />
+                            Correct: {q.opts[q.ans]}
+                          </p>
+                          {!correct && selected[qi] !== undefined && (
+                            <p className="text-xs text-red-600 flex items-center gap-1 mt-0.5">
+                              <XCircle className="h-3 w-3 shrink-0" />
+                              Your answer: {q.opts[selected[qi]]}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Warning */}
+                  <div className="rounded-xl bg-amber-50 border border-amber-100 px-5 py-4 flex items-start gap-3">
+                    <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-800 leading-relaxed text-center">
+                      You need 3/5 to pass. You must retake this topic from the beginning — watch the video, review notes, and complete the Q&A before attempting the test again.
+                    </p>
+                  </div>
+
+                  {/* Retake button */}
+                  <button onClick={resetAll}
+                    className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
+                    <RefreshCw className="h-4 w-4" /> Retake Topic from Beginning
+                  </button>
                 </div>
-                <h3 className="text-xl font-serif font-bold text-foreground">Not quite — try again</h3>
-                <p className="text-sm text-muted-foreground">You scored {MCQ.filter((q, i) => selected[i] === q.ans).length}/5. Re-read the notes and retry.</p>
-                <button onClick={resetAll} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Start Topic Again</button>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Quiz form */}
             {!submitted && (
