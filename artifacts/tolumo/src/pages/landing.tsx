@@ -12,7 +12,7 @@ export default function LandingPage() {
     <div className="min-h-[100dvh] flex flex-col bg-background selection:bg-accent selection:text-white">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Tolumo" className="h-8 w-8" />
             <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumo</span>
