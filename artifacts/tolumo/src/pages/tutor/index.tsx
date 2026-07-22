@@ -285,9 +285,9 @@ function TutorDashboard() {
       <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
           <h2 className="font-serif font-bold text-lg text-foreground">Upcoming Tutorial Sessions</h2>
-          <button className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
+          <Link href="/tutor/schedule" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
             View all <ChevronRight className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
         <div className="divide-y divide-stone-100">
           {SESSIONS.map(({ name, topic, date, status, initials }) => (
