@@ -101,8 +101,6 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
     <div className="flex min-h-[100dvh]">
       {/* Left panel — dark green */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-between p-10 relative overflow-hidden">
-        {/* Subtle texture overlay */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none" />
 
         {/* Logo */}
         <div className="relative flex items-center gap-2">
