@@ -229,65 +229,189 @@ function MyEarnings() {
   );
 }
 
+// ── Rating Trend sparkline (pure SVG) ─────────────────────────────────────────
+function RatingTrend({ values }: { values: number[] }) {
+  const W = 700, H = 80, PAD = 12;
+  const minV = 1, maxV = 5;
+  const xs = values.map((_, i) => PAD + (i / (values.length - 1)) * (W - PAD * 2));
+  const ys = values.map(v => H - PAD - ((v - minV) / (maxV - minV)) * (H - PAD * 2));
+  const path = xs.map((x, i) => `${i === 0 ? 'M' : 'L'} ${x} ${ys[i]}`).join(' ');
+
+  return (
+    <div>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Rating Trend (Last 5 Weeks)</p>
+      <div className="relative">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-20">
+          {/* Y axis guides */}
+          {[1,2,3,4,5].map(v => {
+            const y = H - PAD - ((v - minV) / (maxV - minV)) * (H - PAD * 2);
+            return (
+              <g key={v}>
+                <line x1={PAD} y1={y} x2={W - PAD} y2={y} stroke="#e7e5e4" strokeWidth="1" />
+                <text x={0} y={y + 4} fontSize="10" fill="#a8a29e">{v}</text>
+              </g>
+            );
+          })}
+          {/* Line */}
+          <path d={path} fill="none" stroke="hsl(153,54%,15%)" strokeWidth="2" strokeLinejoin="round" />
+          {/* Dots */}
+          {xs.map((x, i) => (
+            <circle key={i} cx={x} cy={ys[i]} r="4" fill="hsl(153,54%,15%)" />
+          ))}
+        </svg>
+        {/* X axis labels */}
+        <div className="flex justify-between px-3 -mt-1">
+          {values.map((_, i) => (
+            <span key={i} className="text-[10px] text-muted-foreground">Wk {i + 1}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Topic feedback data ───────────────────────────────────────────────────────
+const TOPIC_FEEDBACK = [
+  {
+    topic: 'Topic 1: Origins of Federalism',
+    module: 'LAW 201',
+    avgRating: 4.3,
+    responses: 87,
+    trend: [4.1, 4.0, 4.4, 4.5, 4.3],
+    notes: [
+      { initial: 'C', name: 'Chisom N.', institution: 'UNILAG', date: '12 Jul', rating: 5, comment: '"The historical timeline was brilliant. I finally understand why the 1954 Lyttelton Constitution matters so much."' },
+      { initial: 'E', name: 'Emeka O.',  institution: 'UniPort', date: '11 Jul', rating: 4, comment: '"Good lecture overall. Would be better with more Nigerian case law referenced, especially recent SCNJ decisions."' },
+      { initial: 'F', name: 'Fatima A.', institution: 'ABU Zaria', date: '10 Jul', rating: 4, comment: '"Very clear explanation of the Richards and Macpherson constitutions. Notes are well-structured."' },
+      { initial: 'N', name: 'Ngozi E.',  institution: 'OAU',     date: '9 Jul',  rating: 5, comment: '"Loved the comparative approach with other federal systems. Made the material click immediately."' },
+      { initial: 'T', name: 'Tunde A.',  institution: 'LASU',    date: '8 Jul',  rating: 4, comment: '"Session was engaging. Would appreciate a practice Q&A session before the exam."' },
+    ],
+  },
+  {
+    topic: 'Topic 2: Supremacy of the Constitution',
+    module: 'LAW 201',
+    avgRating: 4.6,
+    responses: 91,
+    trend: [4.4, 4.5, 4.6, 4.7, 4.6],
+    notes: [
+      { initial: 'A', name: 'Amara D.',  institution: 'UNN',     date: '5 Jul',  rating: 5, comment: '"The section 1 CFRN breakdown was spot-on. Finally understand the supremacy clause in context."' },
+      { initial: 'C', name: 'Chisom N.', institution: 'UNILAG',  date: '4 Jul',  rating: 5, comment: '"Best session yet. Real cases used throughout. Very helpful for bar prep."' },
+      { initial: 'E', name: 'Emeka O.',  institution: 'UniPort', date: '3 Jul',  rating: 4, comment: '"Solid content. Slides could use a bit more visual hierarchy but the explanations are top-tier."' },
+    ],
+  },
+  {
+    topic: 'Topic 3: Offer & Acceptance — Postal Rule',
+    module: 'LAW 202',
+    avgRating: 4.1,
+    responses: 74,
+    trend: [3.9, 4.0, 4.2, 4.0, 4.3],
+    notes: [
+      { initial: 'F', name: 'Fatima A.', institution: 'ABU Zaria', date: '28 Jun', rating: 4, comment: '"Adams v Lindsell was explained really well. The Nigerian equivalents were a nice touch."' },
+      { initial: 'N', name: 'Ngozi E.',  institution: 'OAU',       date: '27 Jun', rating: 4, comment: '"Good pace. The hypothetical scenarios made it easy to apply the rule."' },
+    ],
+  },
+];
+
+const AVATAR_COLORS = [
+  'bg-emerald-100 text-emerald-700',
+  'bg-blue-100 text-blue-700',
+  'bg-amber-100 text-amber-700',
+  'bg-violet-100 text-violet-700',
+  'bg-rose-100 text-rose-700',
+];
+
 // ── Tab: Student Feedback ─────────────────────────────────────────────────────
 function StudentFeedback() {
-  const avg = (FEEDBACK.reduce((s, f) => s + f.rating, 0) / FEEDBACK.length).toFixed(1);
-  const dist = [5, 4, 3, 2, 1].map(r => ({
-    stars: r,
-    count: FEEDBACK.filter(f => f.rating === r).length,
-    pct: Math.round((FEEDBACK.filter(f => f.rating === r).length / FEEDBACK.length) * 100),
-  }));
+  const [open, setOpen] = useState<string | null>(TOPIC_FEEDBACK[0].topic);
+
+  const totalResponses = TOPIC_FEEDBACK.reduce((s, t) => s + t.responses, 0);
+  const overallAvg = (
+    TOPIC_FEEDBACK.reduce((s, t) => s + t.avgRating * t.responses, 0) / totalResponses
+  ).toFixed(1);
 
   return (
     <div className="space-y-6">
-      {/* Rating summary */}
-      <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
-        <div className="flex items-start gap-10">
-          {/* Big number */}
-          <div className="text-center shrink-0">
-            <p className="text-5xl font-bold font-serif text-amber-500">{avg}</p>
-            <Stars rating={5} />
-            <p className="text-xs text-muted-foreground mt-1">{FEEDBACK.length} reviews</p>
-          </div>
-          {/* Distribution */}
-          <div className="flex-1 space-y-2 pt-1">
-            {dist.map(({ stars, count, pct }) => (
-              <div key={stars} className="flex items-center gap-3">
-                <span className="text-xs text-muted-foreground w-4 text-right">{stars}</span>
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400 shrink-0" />
-                <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
-                </div>
-                <span className="text-xs text-muted-foreground w-8">{count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Summary */}
+      <div className="grid grid-cols-3 gap-4">
+        <StatCard label="Overall Avg. Rating" value={`${overallAvg} / 5`} color="text-foreground" />
+        <StatCard label="Total Responses"     value={totalResponses.toString()} color="text-primary" />
+        <StatCard label="Topics with Feedback" value={TOPIC_FEEDBACK.length.toString()} color="text-violet-600" />
       </div>
 
-      {/* Individual reviews */}
-      <div className="space-y-4">
-        {FEEDBACK.map(f => (
-          <div key={f.name} className="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
-            <div className="flex items-start gap-3">
-              <Avatar initials={f.initials} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-semibold text-foreground text-sm">{f.name}</p>
-                  <span className="text-xs text-muted-foreground shrink-0">{f.date}</span>
+      {/* Per-topic accordions */}
+      <div className="space-y-3">
+        {TOPIC_FEEDBACK.map((t, ti) => {
+          const isOpen = open === t.topic;
+          return (
+            <div key={t.topic} className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+              {/* Header row */}
+              <button
+                onClick={() => setOpen(isOpen ? null : t.topic)}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-stone-50/50 transition-colors text-left"
+              >
+                <div className="flex items-start gap-4">
+                  {/* Stars */}
+                  <div className="flex items-center gap-1 mt-0.5">
+                    {[1,2,3,4,5].map(i => (
+                      <Star key={i} className={`h-4 w-4 ${i <= Math.round(t.avgRating) ? 'fill-amber-400 text-amber-400' : 'text-stone-200 fill-stone-200'}`} />
+                    ))}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">{t.topic}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {t.avgRating} avg · {t.responses} responses
+                      <span className="ml-2 bg-stone-100 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider">{t.module}</span>
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 mt-0.5 mb-2">
-                  <Stars rating={f.rating} />
-                  <span className="text-xs text-muted-foreground">{f.module}</span>
+                <span className={`text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+                  ▾
+                </span>
+              </button>
+
+              {/* Expanded */}
+              {isOpen && (
+                <div className="border-t border-stone-100 px-6 pb-6 pt-5 space-y-6 bg-[#FAFAF8]">
+                  {/* Trend chart */}
+                  <RatingTrend values={t.trend} />
+
+                  {/* Notes */}
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                      Student Notes ({t.notes.length})
+                    </p>
+                    <div className="space-y-3">
+                      {t.notes.map((n, ni) => (
+                        <div key={ni} className="bg-white rounded-lg border border-stone-100 px-5 py-4">
+                          <div className="flex items-center justify-between gap-3 mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${AVATAR_COLORS[(ti + ni) % AVATAR_COLORS.length]}`}>
+                                {n.initial}
+                              </div>
+                              <div>
+                                <span className="font-semibold text-sm text-foreground">{n.name}</span>
+                                <span className="text-xs text-muted-foreground ml-2">{n.institution}</span>
+                                <span className="text-xs text-muted-foreground ml-2">{n.date}</span>
+                              </div>
+                            </div>
+                            {/* Stars right-aligned */}
+                            <div className="flex items-center gap-0.5 shrink-0">
+                              {[1,2,3,4,5].map(i => (
+                                <Star key={i} className={`h-3.5 w-3.5 ${i <= n.rating ? 'fill-amber-400 text-amber-400' : 'text-stone-200 fill-stone-200'}`} />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{n.comment}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">"{f.comment}"</p>
-              </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Footer note */}
       <div className="bg-stone-50 border border-stone-200 rounded-xl px-5 py-3 flex items-center gap-3">
         <MessageSquare className="h-4 w-4 text-muted-foreground shrink-0" />
         <p className="text-xs text-muted-foreground">Feedback is submitted anonymously by students after each session. Ratings impact your visibility on the platform.</p>
