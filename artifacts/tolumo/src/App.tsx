@@ -169,9 +169,9 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
           <div className="mt-6 space-y-3">
             <div className="flex flex-wrap gap-2">
               {[
-                { label: 'Demo Student', href: `${basePath}/student` },
-                { label: 'Demo Tutor', href: `${basePath}/tutor` },
-                { label: 'Demo Admin', href: `${basePath}/admin` },
+                { label: 'Student', href: `${basePath}/student` },
+                { label: 'Tutor', href: `${basePath}/tutor` },
+                { label: 'Admin', href: `${basePath}/admin` },
               ].map(({ label, href }) => (
                 <a key={label} href={href} className="inline-flex items-center rounded-md border border-border bg-white px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors">
                   {label}
@@ -182,8 +182,8 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-2">Agent Portals</p>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label: 'Demo Sub-Agent', href: `${basePath}/agent` },
-                  { label: 'Demo Super Agent', href: `${basePath}/super-agent` },
+                  { label: 'Sub-Agent', href: `${basePath}/agent` },
+                  { label: 'Super Agent', href: `${basePath}/super-agent` },
                 ].map(({ label, href }) => (
                   <a key={label} href={href} className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors border ${label === 'Demo Super Agent' ? 'bg-primary text-white border-primary hover:bg-primary/90' : 'border-border bg-white text-muted-foreground hover:border-primary hover:text-primary'}`}>
                     {label}
