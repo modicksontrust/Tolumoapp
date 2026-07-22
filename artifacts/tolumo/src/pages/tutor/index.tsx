@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
 import MyContent from './my-content';
+import TutorialSchedule from './tutorial-schedule';
 import { useClerk, useUser } from '@clerk/react';
 import {
   LayoutDashboard, BookOpen, Calendar, BarChart2,
@@ -427,7 +428,7 @@ export default function TutorPortal() {
         <Route path="/tutor" component={TutorDashboard} />
         <Route path="/tutor/content" component={MyContent} />
         <Route path="/tutor/content/:id" component={LessonManager} />
-        <Route path="/tutor/schedule">{() => <Placeholder title="Tutorial Schedule" />}</Route>
+        <Route path="/tutor/schedule" component={TutorialSchedule} />
         <Route path="/tutor/analytics">{() => <Placeholder title="Student Analytics" />}</Route>
         <Route path="/tutor/help">{() => <Placeholder title="Help & Support" />}</Route>
         <Route path="/tutor/settings">{() => <Placeholder title="Settings" />}</Route>
