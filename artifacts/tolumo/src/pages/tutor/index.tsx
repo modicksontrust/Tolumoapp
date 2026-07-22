@@ -219,15 +219,14 @@ function TutorShell({ children }: { children: React.ReactNode }) {
   const unreadCount = notifs.filter(n => n.unread).length;
   const markAllRead = () => setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
 
-  const initials = [user?.firstName, user?.lastName]
-    .filter(Boolean)
-    .map(s => s![0])
-    .join('')
-    .toUpperCase() || 'T';
-
   const displayName = user?.fullName ||
     (user?.unsafeMetadata as any)?.firstName ||
-    'Prof. Adeyemi';
+    'Adeyemi Oluwaseun';
+
+  const initials = (
+    [user?.firstName, user?.lastName].filter(Boolean).map(s => s![0]).join('').toUpperCase() ||
+    displayName.split(' ').map((s: string) => s[0]).join('').toUpperCase().slice(0, 2)
+  );
 
   const isActive = (href: string) =>
     href === '/tutor' ? location === '/tutor' : location.startsWith(href);

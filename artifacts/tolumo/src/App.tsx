@@ -59,8 +59,8 @@ const clerkAppearance = {
   },
   variables: {
     colorPrimary: "hsl(153, 54%, 15%)",
-    colorForeground: "hsl(153, 54%, 15%)",
-    colorMutedForeground: "hsl(153, 30%, 40%)",
+    colorForeground: "hsl(0, 0%, 11%)",
+    colorMutedForeground: "hsl(0, 0%, 42%)",
     colorDanger: "hsl(0, 60%, 45%)",
     colorBackground: "hsl(40, 33%, 96%)",
     colorInput: "hsl(0, 0%, 100%)",
