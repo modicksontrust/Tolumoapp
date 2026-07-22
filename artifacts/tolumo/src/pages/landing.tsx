@@ -165,8 +165,90 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* How It Works */}
+        <section id="how-it-works" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            {/* Header */}
+            <div className="text-center mb-14">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">The Learning Journey</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">How Tolumo Works</h2>
+              <p className="text-muted-foreground max-w-lg mx-auto">
+                We've rebuilt the university law learning experience from scratch — structured, progressive, and proven to improve exam results.
+              </p>
+            </div>
+
+            {/* 4 numbered steps */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+              {[
+                {
+                  n: '01', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
+                  title: 'Subscribe & Select Your Year',
+                  body: 'Choose your current academic year (Year 1–5) and subscribe monthly at ₦3,500. Every NUC-approved module for that year unlocks instantly. Failed a module? Add it as a carryover for ₦7,500 extra.',
+                },
+                {
+                  n: '02', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M15 10l4.553-2.277A1 1 0 0121 8.677V15.5a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>,
+                  title: 'Watch Expert Video Lectures',
+                  body: 'Each topic opens with a high-quality video lecture from verified Nigerian law lecturers. Pause, rewind, and rewatch as many times as you need. Downloadable lecture notes and slides included.',
+                },
+                {
+                  n: '03', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>,
+                  title: 'Revise With Your AI Study Coach',
+                  body: 'After each video, your AI coach asks you up to 5 guided questions to test your understanding before the quiz. It adapts to your answers, deepening comprehension where you need it most.',
+                },
+                {
+                  n: '04', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>,
+                  title: 'Pass Quizzes & Earn Your Certificate',
+                  body: 'Complete the MCQ and practical essay quiz for each topic. Pass all modules in your year to earn a shareable, LinkedIn-ready certificate co-signed by our partner institutions.',
+                },
+              ].map(({ n, icon, title, body }) => (
+                <div key={n} className="rounded-2xl border border-border bg-white p-7 flex flex-col gap-5">
+                  <div className="flex items-start justify-between">
+                    <span className="font-serif text-5xl font-bold text-primary/10 leading-none select-none">{n}</span>
+                  </div>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary">
+                    {icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-primary text-[0.95rem] leading-snug mb-2">{title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 3 feature cards */}
+            <div className="grid sm:grid-cols-3 gap-5">
+              {[
+                {
+                  icon: <BookOpen className="h-5 w-5" />,
+                  title: 'Topic-by-Topic Progression',
+                  body: 'Topics unlock sequentially. Complete the video, notes, AI Q&A, and quiz for each topic before advancing. If you fail a quiz, the topic resets — ensuring genuine mastery, not just memorisation.',
+                },
+                {
+                  icon: <GraduationCap className="h-5 w-5" />,
+                  title: 'Book One-on-One Tutorial Sessions',
+                  body: 'Access a live marketplace of tutorial sessions hosted by verified lecturers across multiple universities. Filter by topic, see ratings, compare prices, and book with one click. Video call link provided on confirmation.',
+                },
+                {
+                  icon: <HelpCircle className="h-5 w-5" />,
+                  title: 'Your Feedback Shapes Teaching',
+                  body: "After every quiz, you're invited to rate your lecturer and leave a short note. Lecturers see aggregated feedback and trend data per topic, enabling continuous improvement across the platform.",
+                },
+              ].map(({ icon, title, body }) => (
+                <div key={title} className="rounded-2xl border border-border bg-white/60 p-7">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary mb-5">
+                    {icon}
+                  </div>
+                  <h3 className="font-bold text-primary text-[0.95rem] mb-2">{title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Modules / Curriculum */}
-        <section id="modules" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
+        <section id="modules" className="py-20 md:py-28 bg-white scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
             {/* Section header */}
             <div className="flex items-end justify-between mb-10">
@@ -246,59 +328,6 @@ export default function LandingPage() {
               <Link href="/sign-up" className="shrink-0 inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-primary shadow transition-colors hover:bg-white/90">
                 Get Early Access
               </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Feature Highlights */}
-        <section id="how-it-works" className="py-20 md:py-32 bg-background scroll-mt-16">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-              <div>
-                <img 
-                  src="https://images.unsplash.com/photo-1505664177941-bd93952ba19e?q=80&w=1200&auto=format&fit=crop" 
-                  alt="Law student studying" 
-                  className="rounded-2xl shadow-2xl"
-                />
-              </div>
-              <div>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-6">The Future of Legal Education in Nigeria</h2>
-                <p className="text-lg text-muted-foreground mb-8">
-                  Tolumo blends traditional academic rigor with modern technology. Our curriculum is built specifically for the Nigerian Legal System.
-                </p>
-                
-                <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                      <CheckCircle2 className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-primary text-xl mb-1">Pre-recorded Lectures</h4>
-                      <p className="text-muted-foreground">High-quality video content from Senior Advocates and esteemed professors.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                      <CheckCircle2 className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-primary text-xl mb-1">Interactive Tutorials</h4>
-                      <p className="text-muted-foreground">Book 1-on-1 sessions to drill down into complex topics like Customary Law or Evidence.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                      <CheckCircle2 className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-primary text-xl mb-1">AI-Guided Revision</h4>
-                      <p className="text-muted-foreground">Practice past questions and get instant feedback on your answers.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
