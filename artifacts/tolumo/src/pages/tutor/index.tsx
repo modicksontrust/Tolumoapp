@@ -199,7 +199,7 @@ const NAV_BOTTOM = [
 function TutorShell({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const { signOut } = useClerk();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifs, setNotifs] = useState(INITIAL_NOTIFS);
@@ -285,7 +285,7 @@ function TutorShell({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
           <button
-            onClick={() => signOut({ redirectUrl: basePath || '/' })}
+            onClick={() => signOut().then(() => setLocation('/sign-in'))}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 transition-colors"
           >
             <LogOut className="h-[18px] w-[18px] shrink-0" />
