@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
 import MyContent from './my-content';
 import TutorialSchedule from './tutorial-schedule';
@@ -10,7 +10,7 @@ import {
   HelpCircle, Settings, LogOut, Bell, Search,
   ChevronLeft, ChevronRight, Menu, X,
   Edit, Trash2, Plus, Clock, Users, TrendingUp,
-  CheckCircle2
+  CheckCircle2, Star, Award, Users2
 } from 'lucide-react';
 import {
   useGetTutorSummary,
@@ -34,6 +34,154 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+// ── Notification data ─────────────────────────────────────────────────────────
+type Notif = {
+  id: number;
+  icon: React.FC<{ className?: string }>;
+  iconBg: string;
+  iconColor: string;
+  title: string;
+  body: string;
+  time: string;
+  cta: string;
+  ctaHref: string;
+  unread: boolean;
+};
+
+const INITIAL_NOTIFS: Notif[] = [
+  {
+    id: 1,
+    icon: Users2,
+    iconBg: 'bg-stone-100',
+    iconColor: 'text-stone-500',
+    title: '3 new tutorial bookings',
+    body: 'Chisom, Emeka, and Fatima have booked your Federalism session on 17 Jul.',
+    time: '1h ago',
+    cta: 'View schedule',
+    ctaHref: '/tutor/schedule',
+    unread: true,
+  },
+  {
+    id: 2,
+    icon: Star,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-400',
+    title: 'New student rating',
+    body: "You received a 5-star rating from a student on 'Supremacy of the Constitution'.",
+    time: '4h ago',
+    cta: 'View analytics',
+    ctaHref: '/tutor/analytics',
+    unread: true,
+  },
+  {
+    id: 3,
+    icon: Bell,
+    iconBg: 'bg-purple-50',
+    iconColor: 'text-purple-500',
+    title: 'Topic 4 notes still pending',
+    body: 'Topic 4: Separation of Powers is missing notes. Upload to unlock for students.',
+    time: '1d ago',
+    cta: 'Go to content',
+    ctaHref: '/tutor/content',
+    unread: true,
+  },
+  {
+    id: 4,
+    icon: Award,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-500',
+    title: 'High-rating credits earned',
+    body: 'Your 4.8★ average earned you 60 bonus credits this month. Redeem anytime.',
+    time: '2d ago',
+    cta: 'View earnings',
+    ctaHref: '/tutor/analytics',
+    unread: false,
+  },
+];
+
+// ── Notification popup ────────────────────────────────────────────────────────
+function NotificationPanel({
+  notifs,
+  onMarkAll,
+  onClose,
+}: {
+  notifs: Notif[];
+  onMarkAll: () => void;
+  onClose: () => void;
+}) {
+  const unreadCount = notifs.filter(n => n.unread).length;
+  const [, setLocation] = useLocation();
+
+  const navigate = (href: string) => {
+    setLocation(href);
+    onClose();
+  };
+
+  return (
+    <div className="absolute right-0 top-full mt-2 w-[360px] bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-50">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-stone-100">
+        <div className="flex items-center gap-2.5">
+          <span className="font-serif font-bold text-base text-foreground">Notifications</span>
+          {unreadCount > 0 && (
+            <span className="px-2.5 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold">
+              {unreadCount} new
+            </span>
+          )}
+        </div>
+        <button
+          onClick={onMarkAll}
+          className="text-xs font-semibold text-primary hover:underline"
+        >
+          Mark all read
+        </button>
+      </div>
+
+      {/* Items */}
+      <div className="max-h-[380px] overflow-y-auto divide-y divide-stone-100">
+        {notifs.map(n => {
+          const Icon = n.icon;
+          return (
+            <div key={n.id} className="relative px-5 py-4 hover:bg-stone-50 transition-colors">
+              {/* Unread dot */}
+              {n.unread && (
+                <span className="absolute top-4 right-4 h-2.5 w-2.5 rounded-full bg-green-500" />
+              )}
+              <div className="flex gap-3">
+                {/* Icon */}
+                <div className={`h-9 w-9 rounded-full ${n.iconBg} flex items-center justify-center shrink-0`}>
+                  <Icon className={`h-4 w-4 ${n.iconColor}`} />
+                </div>
+                {/* Content */}
+                <div className="flex-1 min-w-0 pr-4">
+                  <p className="text-sm font-semibold text-foreground leading-snug">{n.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{n.body}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-muted-foreground">{n.time}</span>
+                    <button
+                      onClick={() => navigate(n.ctaHref)}
+                      className="text-xs font-semibold text-primary hover:underline"
+                    >
+                      {n.cta} →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer */}
+      <div className="px-5 py-3 border-t border-stone-100 bg-stone-50">
+        <p className="text-xs text-muted-foreground text-center">
+          Notifications are cleared after 7 days.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ── Sidebar nav config ────────────────────────────────────────────────────────
 const NAV = [
   { href: '/tutor', label: 'Dashboard', icon: LayoutDashboard },
@@ -53,6 +201,23 @@ function TutorShell({ children }: { children: React.ReactNode }) {
   const { signOut } = useClerk();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifs, setNotifs] = useState(INITIAL_NOTIFS);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    };
+    if (notifOpen) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [notifOpen]);
+
+  const unreadCount = notifs.filter(n => n.unread).length;
+  const markAllRead = () => setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
 
   const initials = [user?.firstName, user?.lastName]
     .filter(Boolean)
@@ -159,10 +324,26 @@ function TutorShell({ children }: { children: React.ReactNode }) {
 
           <div className="ml-auto flex items-center gap-3">
             {/* Notification bell */}
-            <button className="relative h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:bg-stone-100 transition-colors">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">3</span>
-            </button>
+            <div className="relative" ref={notifRef}>
+              <button
+                onClick={() => setNotifOpen(v => !v)}
+                className="relative h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:bg-stone-100 transition-colors"
+              >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              {notifOpen && (
+                <NotificationPanel
+                  notifs={notifs}
+                  onMarkAll={markAllRead}
+                  onClose={() => setNotifOpen(false)}
+                />
+              )}
+            </div>
 
             {/* Avatar */}
             <div className="flex items-center gap-2">
