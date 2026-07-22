@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { useClerk } from '@clerk/react';
-import { LogOut, BookOpen, User, CheckCircle2, Search, HelpCircle, Mail, MapPin, Phone, GraduationCap, Scale, Users } from 'lucide-react';
+import { LogOut, BookOpen, User, CheckCircle2, Search, HelpCircle, Mail, MapPin, Phone, GraduationCap, Scale, Users, ChevronRight, Play, Shield, Headphones, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useListModules } from '@workspace/api-client-react';
 
@@ -37,120 +37,165 @@ export default function LandingPage() {
       </nav>
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden bg-primary pt-24 pb-32 md:pt-32 md:pb-40">
-          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/95 to-primary/80" />
-          
-          <div className="container relative mx-auto px-4 md:px-6">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm text-accent mb-6 backdrop-blur-sm">
-                <span className="flex h-2 w-2 rounded-full bg-accent mr-2 animate-pulse"></span>
-                NUC Approved Curriculum
+        {/* Hero Section — two-column layout */}
+        <section className="relative overflow-hidden bg-primary">
+          {/* subtle radial gradient: darker bottom-left, lighter top-right */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-primary via-primary to-[#2d5a3d]/90" />
+
+          <div className="container relative mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="grid md:grid-cols-2 gap-12 items-center min-h-[92vh] py-24 md:py-32">
+
+              {/* Left: copy */}
+              <div>
+                <div className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/80 mb-8 backdrop-blur-sm gap-2">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-accent animate-pulse"></span>
+                  Now live — Law Faculty, University of Lagos
+                </div>
+
+                <h1 className="font-serif text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.08]">
+                  Learn Law From{' '}
+                  <span className="italic text-accent">Nigeria's Top</span>{' '}
+                  Lecturers
+                </h1>
+
+                <p className="text-white/70 text-lg leading-relaxed mb-10 max-w-md">
+                  Complete your 5-year LL.B with expert video tutorials, AI-guided revision, and one-on-one tutorial sessions — every module fully NUC-approved.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3 mb-10">
+                  <Link href="/sign-up" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-accent px-7 text-sm font-bold text-white shadow-lg shadow-accent/30 transition-all hover:bg-accent/90 hover:scale-[1.02]">
+                    Start Learning Today →
+                  </Link>
+                  <a href="#modules" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-7 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/10">
+                    <Play className="h-4 w-4 fill-white" /> Watch a Sample Lecture
+                  </a>
+                </div>
+
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60">
+                  {['AI Revision Coach', 'Expert Tutors', 'NUC-Approved Modules', 'Certificate on Completion'].map(f => (
+                    <span key={f} className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-accent/80 shrink-0" /> {f}
+                    </span>
+                  ))}
+                </div>
               </div>
-              
-              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-                Learn Law From <br />
-                <span className="font-serif italic text-gold-gradient block mt-2">Nigeria's Top</span>
-                Lecturers.
-              </h1>
-              
-              <p className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl leading-relaxed">
-                Complete your 5-year LL.B degree online with expert video tutorials, AI-guided revision, and personalized one-on-one sessions.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/sign-up" className="inline-flex h-12 items-center justify-center rounded-md bg-accent px-8 py-3 text-base font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:bg-accent/90 hover:scale-105">
-                  Try the Platform
-                </Link>
-                <a href="#modules" className="inline-flex h-12 items-center justify-center rounded-md border border-white/20 bg-white/5 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white">
-                  View Curriculum
-                </a>
+
+              {/* Right: portal card panel */}
+              <div className="hidden md:block">
+                <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden shadow-2xl">
+                  {/* Header */}
+                  <div className="px-5 py-4 border-b border-white/10">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Try the Platform</p>
+                  </div>
+
+                  {/* Platform portals */}
+                  <div className="divide-y divide-white/5">
+                    {[
+                      { label: 'Student View', sub: 'Browse modules & learn', href: '/sign-up', icon: BookOpen },
+                      { label: 'Tutor View', sub: 'Manage content & bookings', href: '/sign-in', icon: GraduationCap },
+                      { label: 'Admin View', sub: 'Platform management', href: '/sign-in', icon: Shield },
+                    ].map(({ label, sub, href, icon: Icon }) => (
+                      <Link key={label} href={href} className="flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors group">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white/70 group-hover:bg-white/15 transition-colors">
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white">{label}</p>
+                          <p className="text-xs text-white/50">{sub}</p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-white/30 group-hover:text-white/60 transition-colors" />
+                      </Link>
+                    ))}
+                  </div>
+
+                  {/* Agent portals divider */}
+                  <div className="px-5 py-2 border-y border-white/10 bg-white/5">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40">Agent Portals</p>
+                  </div>
+
+                  <div className="divide-y divide-white/5">
+                    {[
+                      { label: 'Sub-Agent', sub: 'Acquisition & commission', href: '/sign-in', accent: true },
+                      { label: 'Super Agent', sub: 'Manage all Sub-Agents', href: '/sign-in', accent: true },
+                      { label: 'CRM Portal', sub: 'Support, SLA & ticketing system', href: '/sign-in', accent: false },
+                    ].map(({ label, sub, href, accent }) => (
+                      <Link key={label} href={href} className={`flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors group ${accent ? 'bg-accent/10' : ''}`}>
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${accent ? 'bg-accent/20 text-accent group-hover:bg-accent/30' : 'bg-white/10 text-white/70 group-hover:bg-white/15'}`}>
+                          {label === 'CRM Portal' ? <Headphones className="h-4 w-4" /> : <Users className="h-4 w-4" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-semibold ${accent ? 'text-accent' : 'text-white'}`}>{label}</p>
+                          <p className="text-xs text-white/50">{sub}</p>
+                        </div>
+                        <ChevronRight className={`h-4 w-4 transition-colors ${accent ? 'text-accent/50 group-hover:text-accent' : 'text-white/30 group-hover:text-white/60'}`} />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
         </section>
 
         {/* Stats Band */}
-        <section className="border-b border-border bg-white shadow-sm relative z-10 -mt-10 mx-4 md:mx-auto md:max-w-5xl rounded-xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border/50">
-            <div className="p-6 text-center">
-              <div className="text-3xl font-bold text-primary font-serif mb-1">12,400+</div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Students Enrolled</div>
-            </div>
-            <div className="p-6 text-center">
-              <div className="text-3xl font-bold text-accent font-serif mb-1">94%</div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Exam Pass Rate</div>
-            </div>
-            <div className="p-6 text-center">
-              <div className="text-3xl font-bold text-primary font-serif mb-1">5 Years</div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Full LL.B Coverage</div>
-            </div>
-            <div className="p-6 text-center">
-              <div className="text-3xl font-bold text-primary font-serif mb-1 flex items-center justify-center gap-2">
-                <CheckCircle2 className="h-6 w-6 text-accent" />
-                NUC
+        <section className="border-b border-border bg-white shadow-sm">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border/50">
+              <div className="p-6 text-center">
+                <div className="text-3xl font-bold text-primary font-serif mb-1">12,400+</div>
+                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Students Enrolled</div>
               </div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Approved Curriculum</div>
+              <div className="p-6 text-center">
+                <div className="text-3xl font-bold text-accent font-serif mb-1">94%</div>
+                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Exam Pass Rate</div>
+              </div>
+              <div className="p-6 text-center">
+                <div className="text-3xl font-bold text-primary font-serif mb-1">5 Years</div>
+                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Full LL.B Coverage</div>
+              </div>
+              <div className="p-6 text-center">
+                <div className="text-3xl font-bold text-primary font-serif mb-1 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-6 w-6 text-accent" />
+                  NUC
+                </div>
+                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Approved Curriculum</div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Try the Platform (Portal Links) */}
-        <section className="py-20 md:py-32 bg-background">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Choose Your Path</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Tolumo provides tailored experiences for students, educators, and partners. 
-                Log in to the portal that fits your role.
+        {/* Choose Your Path — all 6 portals */}
+        <section className="py-20 md:py-28 bg-background">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="mb-12">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-2">Portals</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">Choose Your Path</h2>
+              <p className="text-muted-foreground max-w-xl">
+                Tolumo provides tailored dashboards for every role — from students and lecturers to agents and administrators.
               </p>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {/* Student Portal */}
-              <div className="group relative rounded-2xl border border-border bg-white p-8 shadow-sm transition-all hover:shadow-md hover:border-accent/50 text-center overflow-hidden">
-                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-accent/5 transition-transform group-hover:scale-150"></div>
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/5 text-primary mb-6">
-                  <BookOpen className="h-8 w-8" />
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                { title: 'Student Portal', desc: 'Access modules, track progress, book tutor sessions, and master the law with AI-guided revision.', href: '/sign-up', icon: BookOpen, cta: 'Student Access' },
+                { title: 'Tutor Portal', desc: 'Upload lectures, manage your courses, track student performance, and run one-on-one sessions.', href: '/sign-in', icon: GraduationCap, cta: 'Tutor Access' },
+                { title: 'Admin Portal', desc: 'Full platform management — users, content, reports, billing, and system configuration.', href: '/sign-in', icon: Shield, cta: 'Admin Access' },
+                { title: 'Sub-Agent Portal', desc: 'Manage student acquisitions, track your referral pipeline, and view commission statements.', href: '/sign-in', icon: UserCheck, cta: 'Sub-Agent Access' },
+                { title: 'Super Agent Portal', desc: 'Oversee all sub-agents, approve acquisitions, and manage the full agent network.', href: '/sign-in', icon: Users, cta: 'Super Agent Access' },
+                { title: 'CRM / Support Portal', desc: 'Handle student support tickets, SLA management, and platform-wide communications.', href: '/sign-in', icon: Headphones, cta: 'CRM Access' },
+              ].map(({ title, desc, href, icon: Icon, cta }) => (
+                <div key={title} className="group rounded-2xl border border-border bg-white p-7 shadow-sm transition-all hover:shadow-md hover:border-primary/30 flex flex-col">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 text-primary mb-5 group-hover:bg-primary group-hover:text-white transition-all">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="font-serif text-xl font-bold text-primary mb-2">{title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6 flex-1">{desc}</p>
+                  <Link href={href} className="inline-flex items-center justify-between rounded-lg border border-primary/20 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white hover:border-primary">
+                    {cta} <ChevronRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-primary mb-3">Student Portal</h3>
-                <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                  Access your modules, track progress, book tutor sessions, and master the law with AI-guided revision.
-                </p>
-                <Link href="/sign-up" className="inline-flex w-full items-center justify-center rounded-md border border-primary/20 bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-white">
-                  Student Access →
-                </Link>
-              </div>
-              
-              {/* Tutor Portal */}
-              <div className="group relative rounded-2xl border border-border bg-white p-8 shadow-sm transition-all hover:shadow-md hover:border-accent/50 text-center overflow-hidden">
-                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-accent/5 transition-transform group-hover:scale-150"></div>
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/5 text-primary mb-6">
-                  <User className="h-8 w-8" />
-                </div>
-                <h3 className="font-serif text-2xl font-bold text-primary mb-3">Faculty Portal</h3>
-                <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                  Manage your courses, upload lectures, track student performance, and conduct one-on-one sessions.
-                </p>
-                <Link href="/sign-in" className="inline-flex w-full items-center justify-center rounded-md border border-primary/20 bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-white">
-                  Tutor Access →
-                </Link>
-              </div>
-              
-              {/* Agent Portal */}
-              <div className="group relative rounded-2xl border border-border bg-white p-8 shadow-sm transition-all hover:shadow-md hover:border-accent/50 text-center overflow-hidden">
-                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-accent/5 transition-transform group-hover:scale-150"></div>
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/5 text-primary mb-6">
-                  <Search className="h-8 w-8" />
-                </div>
-                <h3 className="font-serif text-2xl font-bold text-primary mb-3">Partner Network</h3>
-                <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                  Join our agent network. Manage acquisitions, track your pipeline, and view your commission statements.
-                </p>
-                <Link href="/sign-in" className="inline-flex w-full items-center justify-center rounded-md border border-primary/20 bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-white">
-                  Partner Access →
-                </Link>
-              </div>
+              ))}
             </div>
           </div>
         </section>
