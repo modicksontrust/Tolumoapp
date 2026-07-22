@@ -477,40 +477,66 @@ function StudentDashboard() {
   );
 }
 
-// ── Subscription (simple page) ────────────────────────────────────────────────
+// ── Subscription & Billing ────────────────────────────────────────────────────
 function Subscription() {
+  const HISTORY = [
+    { date: '19 Jun 2025', amount: '₦3,500' },
+    { date: '19 May 2025', amount: '₦3,500' },
+    { date: '19 Apr 2025', amount: '₦3,500' },
+  ];
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-serif font-bold text-foreground">Subscription</h1>
-        <p className="text-muted-foreground mt-0.5">Manage your Tolumo learning plan.</p>
-      </div>
-      <div className="border-2 border-primary rounded-2xl p-6">
-        <div className="flex items-start justify-between mb-4">
+      <h1 className="text-2xl font-serif font-bold text-foreground">Subscription &amp; Billing</h1>
+
+      {/* Current plan card */}
+      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-5">
+        {/* Plan header */}
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="inline-block px-2.5 py-1 rounded-full bg-accent text-white text-[10px] font-bold uppercase mb-2">Active</span>
-            <h2 className="font-serif font-bold text-xl text-foreground">Monthly Plan</h2>
-            <p className="text-muted-foreground text-sm">Full Year 2 (200 Level) access</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Current Plan</p>
+            <h2 className="font-serif font-bold text-xl text-foreground">Monthly — ₦3,500/month</h2>
           </div>
-          <span className="text-2xl font-bold text-primary">₦3,500<span className="text-sm font-normal text-muted-foreground">/mo</span></span>
+          <span className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-semibold border border-green-200 shrink-0">Active</span>
         </div>
-        <ul className="space-y-2 mb-5">
-          {['All 6 Year 2 module video lectures', 'Downloadable notes & slides per topic', 'AI Q&A per topic (unlimited)', 'MCQ & essay quiz per topic', 'Tutorial session marketplace', 'Triax Law Library (demo access)', 'Certificate of completion'].map(f => (
-            <li key={f} className="flex items-center gap-2 text-sm text-foreground"><CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" /> {f}</li>
+
+        {/* Detail rows */}
+        <div className="space-y-3 text-sm border-t border-stone-100 pt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Next renewal</span>
+            <span className="font-medium text-foreground">19 July 2025</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Payment method</span>
+            <span className="font-medium text-foreground tracking-wider">•••• •••• •••• 4523</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Content access</span>
+            <span className="font-medium text-foreground">Sequential unlock (3-day gate)</span>
+          </div>
+        </div>
+
+        {/* CTAs */}
+        <div className="flex items-center gap-3 pt-1">
+          <button className="px-5 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#1a4d35]/90 transition-colors">
+            Upgrade to Semester
+          </button>
+          <button className="px-5 py-2.5 rounded-xl border border-stone-200 text-foreground text-sm font-semibold hover:bg-stone-50 transition-colors">
+            Cancel Plan
+          </button>
+        </div>
+
+        {/* Billing History */}
+        <div className="border-t border-stone-100 pt-5 space-y-3">
+          <p className="font-semibold text-foreground text-sm">Billing History</p>
+          {HISTORY.map(h => (
+            <div key={h.date} className="flex items-center justify-between text-sm border-b border-stone-50 pb-3 last:border-0 last:pb-0">
+              <span className="text-foreground">{h.date}</span>
+              <span className="font-medium text-foreground">{h.amount}</span>
+              <span className="text-green-600 font-medium">Paid</span>
+            </div>
           ))}
-        </ul>
-        <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 rounded-xl border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors">Cancel Plan</button>
-          <span className="text-xs text-muted-foreground">Renews 14 Aug 2025</span>
         </div>
-      </div>
-      <div className="bg-stone-900 text-white rounded-2xl p-6 flex items-start justify-between gap-4">
-        <div>
-          <span className="inline-block px-2.5 py-1 rounded-full bg-accent/80 text-white text-[10px] font-bold uppercase mb-2">Save ₦7,000</span>
-          <h3 className="font-semibold text-lg">Switch to Annual</h3>
-          <p className="text-white/60 text-sm">₦35,000/year · equivalent to 2 months free</p>
-        </div>
-        <button className="shrink-0 px-5 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors">Upgrade Now</button>
       </div>
     </div>
   );
