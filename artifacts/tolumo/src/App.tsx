@@ -85,7 +85,7 @@ const clerkAppearance = {
     formFieldSuccessText: "text-primary",
     alertText: "text-sm",
     formButtonPrimary: "bg-primary hover:bg-primary/90 text-white shadow-sm border border-transparent font-semibold tracking-wide",
-    formFieldInput: "bg-white border-border text-foreground focus:ring-primary rounded-lg",
+    formFieldInput: "bg-white border border-stone-300 text-foreground focus:ring-primary focus:border-primary rounded-lg",
     footerAction: "flex items-center justify-center gap-1 pt-2",
     dividerLine: "bg-border",
     alert: "bg-destructive/10 border-destructive/20 text-destructive",
