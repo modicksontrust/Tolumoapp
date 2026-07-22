@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk, useUser } from '@clerk/react';
+import CustomSignUpForm from './pages/sign-up-form';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
 import { Switch, Route, useLocation, Router as WouterRouter, Redirect } from 'wouter';
@@ -210,7 +211,7 @@ function SignInPage() {
 function SignUpPage() {
   return (
     <AuthLayout mode="sign-up">
-      <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} appearance={clerkAppearance} />
+      <CustomSignUpForm />
     </AuthLayout>
   );
 }
