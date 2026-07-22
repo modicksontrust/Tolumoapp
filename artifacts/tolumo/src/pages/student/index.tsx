@@ -198,9 +198,8 @@ function StudentShell({ children }: { children: React.ReactNode }) {
           {topNav.map(item => <NavItem key={item.href} {...item} active={isActive(item.href)} />)}
         </nav>
         <div className="px-2.5 pt-2 pb-5 border-t border-white/10 space-y-0.5">
-          {[{ href: '/student/settings', label: 'Help & Support', icon: HelpCircle }, { href: '/student/settings', label: 'Settings', icon: Settings }].map(item => (
-            <NavItem key={item.label} {...item} active={false} />
-          ))}
+          <NavItem href="/student/help"     label="Help & Support" icon={HelpCircle} active={isActive('/student/help')} />
+          <NavItem href="/student/settings" label="Settings"       icon={Settings}   active={isActive('/student/settings')} />
           <button onClick={() => signOut().then(() => setLocation('/sign-in'))} className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white transition-colors">
             <LogOut className="h-4 w-4 shrink-0 text-white/50" />Sign out
           </button>
@@ -542,6 +541,37 @@ function Subscription() {
   );
 }
 
+// ── Help & Support ────────────────────────────────────────────────────────────
+function HelpPage() {
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-serif font-bold text-foreground">Help &amp; Support</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Find answers, report issues, or reach our team.</p>
+      </div>
+      <div className="space-y-3">
+        {[
+          { label: 'Help Centre',       desc: 'Browse FAQs and how-to guides' },
+          { label: 'Contact Support',   desc: 'Open a ticket with our team' },
+          { label: 'Report a Bug',      desc: 'Tell us what went wrong' },
+          { label: 'Request a Feature', desc: 'Suggest improvements to Tolumo' },
+          { label: 'Privacy Policy',    desc: 'How we handle your data' },
+          { label: 'Terms of Service',  desc: 'Platform rules and agreements' },
+        ].map(item => (
+          <button key={item.label}
+            className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-stone-200 hover:border-primary/30 hover:bg-stone-50 transition-colors text-left">
+            <div>
+              <p className="text-sm font-medium text-foreground">{item.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Router ─────────────────────────────────────────────────────────────────────
 export default function StudentPortal() {
   return (
@@ -556,6 +586,7 @@ export default function StudentPortal() {
         <Route path="/student/subscription" component={Subscription} />
         <Route path="/student/certificate" component={MyCertificate} />
         <Route path="/student/settings" component={StudentSettings} />
+        <Route path="/student/help" component={HelpPage} />
         <Route component={StudentDashboard} />
       </Switch>
     </StudentShell>
