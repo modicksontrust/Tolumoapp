@@ -610,64 +610,68 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-primary text-primary-foreground border-t border-primary-foreground/10 pt-16 pb-8">
+      <footer className="bg-white border-t border-border pt-14 pb-8">
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div className="md:col-span-1">
-              <div className="flex items-center gap-2 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto_auto] gap-12 mb-12">
+            {/* Brand */}
+            <div className="max-w-xs">
+              <div className="flex items-center gap-2 mb-4">
                 <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Tolumo" className="h-8 w-8" />
-                <span className="font-serif font-bold text-xl tracking-tight">Tolumo</span>
+                <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumo</span>
               </div>
-              <p className="text-primary-foreground/70 text-sm leading-relaxed mb-6">
-                Nigeria's premier digital law academy. Learn from the best, at your own pace.
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                Africa's premier law tutorial platform. Real tutors. AI-guided revision, and a proven learning structure built for the Nigerian university experience.
               </p>
+              <div className="flex flex-wrap gap-2">
+                {['Twitter / X', 'LinkedIn', 'Instagram', 'Facebook'].map(s => (
+                  <a key={s} href="#" className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+                    {s}
+                  </a>
+                ))}
+              </div>
             </div>
-            
+
+            {/* Platform */}
             <div>
-              <h4 className="font-bold text-lg mb-4 font-serif">Platform</h4>
-              <ul className="space-y-3 text-sm text-primary-foreground/70">
-                <li><Link href="/sign-up" className="hover:text-accent transition-colors">Apply Now</Link></li>
-                <li><a href="#modules" className="hover:text-accent transition-colors">Our Curriculum</a></li>
-                <li><a href="#pricing" className="hover:text-accent transition-colors">Pricing & Plans</a></li>
-                <li><Link href="/sign-in" className="hover:text-accent transition-colors">Student Login</Link></li>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-5">Platform</p>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
+                <li><a href="#modules" className="hover:text-primary transition-colors">NUC Modules</a></li>
+                <li><a href="#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+                <li><Link href="/sign-in" className="hover:text-primary transition-colors">Tutorial Marketplace</Link></li>
+                <li><Link href="/sign-up" className="hover:text-primary transition-colors">Become a Tutor</Link></li>
               </ul>
             </div>
-            
+
+            {/* Support */}
             <div>
-              <h4 className="font-bold text-lg mb-4 font-serif">Company</h4>
-              <ul className="space-y-3 text-sm text-primary-foreground/70">
-                <li><a href="#about" className="hover:text-accent transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Faculty Directory</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Agent Program</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Careers</a></li>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-5">Support</p>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-primary transition-colors">Help Centre</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Terms of Use</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">NDPA Compliance</a></li>
               </ul>
             </div>
-            
+
+            {/* Company */}
             <div>
-              <h4 className="font-bold text-lg mb-4 font-serif">Contact</h4>
-              <ul className="space-y-3 text-sm text-primary-foreground/70">
-                <li className="flex items-start gap-3">
-                  <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-accent" />
-                  <span>14 Law School Drive,<br />Victoria Island, Lagos</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 shrink-0 text-accent" />
-                  <span>+234 800 TOLUMO</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 shrink-0 text-accent" />
-                  <span>admissions@tolumo.edu.ng</span>
-                </li>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-5">Company</p>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><a href="#about" className="hover:text-primary transition-colors">About Tolumo</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Solalina</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Triax Solicitors</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Goldcoast Foundation</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Press Enquiries</a></li>
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-primary-foreground/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
-            <p>© {new Date().getFullYear()} Tolumo Educational Services. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+            <p>© 2025 Tolumo · Operated by Solalina. All rights reserved.</p>
+            <p>Built for African students, by educators who care.</p>
           </div>
         </div>
       </footer>
