@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk, useUser } from '@clerk/react';
 import CustomSignUpForm from './pages/sign-up-form';
+import CustomSignInForm from './pages/sign-in-form';
 import TokenSignIn from './pages/token-signin';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
@@ -202,7 +203,7 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
 function SignInPage() {
   return (
     <AuthLayout mode="sign-in">
-      <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} appearance={clerkAppearance} />
+      <CustomSignInForm />
     </AuthLayout>
   );
 }
