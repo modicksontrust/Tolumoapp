@@ -1,5 +1,87 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, Play, Star, Video } from 'lucide-react';
+import { Calendar, Clock, Play, Star, Video, X } from 'lucide-react';
+
+// ── Rating Modal ──────────────────────────────────────────────────────────────
+function RatingModal({
+  session,
+  onSubmit,
+  onClose,
+}: {
+  session: PastSession;
+  onSubmit: (id: number, stars: number, comment: string) => void;
+  onClose: () => void;
+}) {
+  const [stars, setStars] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState('');
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        {/* Green header */}
+        <div className="bg-[#1a4d35] px-6 py-5 relative">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-1">{session.module}</p>
+          <p className="font-serif font-bold text-white text-base mb-0.5">{session.title}</p>
+          <p className="text-sm text-white/70">{session.tutor}</p>
+          <button onClick={onClose} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-6 space-y-5">
+          <p className="font-semibold text-foreground text-base text-center">How would you rate this tutorial session?</p>
+
+          {/* Stars */}
+          <div className="flex items-center justify-center gap-2">
+            {[1, 2, 3, 4, 5].map(n => (
+              <button
+                key={n}
+                onMouseEnter={() => setHover(n)}
+                onMouseLeave={() => setHover(0)}
+                onClick={() => setStars(n)}
+                className="transition-transform hover:scale-110"
+              >
+                <Star
+                  className={`h-8 w-8 transition-colors ${n <= (hover || stars) ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}`}
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Comment */}
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Comment (optional)</p>
+            <textarea
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+              rows={4}
+              placeholder="Share what you found most helpful..."
+              className="w-full rounded-xl bg-stone-100 border-0 px-4 py-3 text-sm text-foreground placeholder:text-stone-400 outline-none resize-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => { if (stars > 0) onSubmit(session.id, stars, comment); }}
+              disabled={stars === 0}
+              className="flex-1 py-3 rounded-xl bg-[#5a8a72] text-white font-semibold text-sm hover:bg-[#4a7a62] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Submit Rating
+            </button>
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Past sessions ─────────────────────────────────────────────────────────────
 type PastSession = {
@@ -111,7 +193,7 @@ function Badge({ session }: { session: PastSession }) {
 export default function TutorialSessions() {
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming');
   const [ratings, setRatings] = useState<Record<number, number>>({});
-  const [ratingHover, setRatingHover] = useState<Record<number, number>>({});
+  const [ratingSession, setRatingSession] = useState<PastSession | null>(null);
 
   return (
     <div className="max-w-4xl mx-auto space-y-5">
@@ -287,8 +369,7 @@ export default function TutorialSessions() {
                   ) : (
                     <button
                       className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-200 text-sm font-semibold text-foreground hover:border-amber-400 hover:text-amber-600 transition-colors group"
-                      onClick={() => setRatings(r => ({ ...r, [s.id]: ratingHover[s.id] || 5 }))}
-                      onMouseLeave={() => setRatingHover(r => ({ ...r, [s.id]: 0 }))}
+                      onClick={() => setRatingSession(s)}
                     >
                       <Star className="h-3.5 w-3.5 text-stone-400 group-hover:text-amber-500 transition-colors" />
                       Rate this Lecturer
@@ -299,6 +380,18 @@ export default function TutorialSessions() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Rating modal */}
+      {ratingSession && (
+        <RatingModal
+          session={ratingSession}
+          onSubmit={(id, stars, _comment) => {
+            setRatings(r => ({ ...r, [id]: stars }));
+            setRatingSession(null);
+          }}
+          onClose={() => setRatingSession(null)}
+        />
       )}
     </div>
   );
