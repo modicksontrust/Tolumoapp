@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" width="200" height="200">
+  <!-- Circle Background -->
+  <circle cx="100" cy="100" r="100" fill="#0B3020" />
+  <!-- Pillar Left -->
+  <rect x="65" y="80" width="15" height="60" fill="#F9F6F0" />
+  <!-- Pillar Right -->
+  <rect x="120" y="80" width="15" height="60" fill="#F9F6F0" />
+  <!-- Pillar Center -->
+  <rect x="92.5" y="80" width="15" height="60" fill="#D4A336" />
+  <!-- Base -->
+  <path d="M50 140 L150 140 L160 160 L40 160 Z" fill="#F9F6F0" />
+  <rect x="30" y="160" width="140" height="10" fill="#D4A336" />
+  <!-- Roof / Pediment -->
+  <path d="M100 30 L40 80 L160 80 Z" fill="#D4A336" />
+  <rect x="35" y="70" width="130" height="10" fill="#F9F6F0" />
+</svg>

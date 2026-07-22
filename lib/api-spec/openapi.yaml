@@ -3,20 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Tolumo API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: modules
+  - name: lessons
+  - name: enrollments
+  - name: bookings
+  - name: users
+  - name: agents
+  - name: tickets
+  - name: summaries
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +31,894 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user's profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: No profile yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: upsertMe
+      tags: [auth]
+      summary: Create or update current user's profile (role selection at onboarding)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: Profile saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /tutors:
+    get:
+      operationId: listTutors
+      tags: [users]
+      summary: List tutors
+      responses:
+        "200":
+          description: Tutors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin)
+      responses:
+        "200":
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /users/{id}:
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /modules:
+    get:
+      operationId: listModules
+      tags: [modules]
+      summary: List modules, optionally filtered by LL.B year
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Modules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Module"
+    post:
+      operationId: createModule
+      tags: [modules]
+      summary: Create a module (tutor/admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModuleInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+  /modules/{id}:
+    get:
+      operationId: getModule
+      tags: [modules]
+      summary: Get module with lessons
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Module detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModuleDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateModule
+      tags: [modules]
+      summary: Update a module (tutor/admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModuleUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+    delete:
+      operationId: deleteModule
+      tags: [modules]
+      summary: Delete a module (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+  /modules/{id}/lessons:
+    post:
+      operationId: createLesson
+      tags: [lessons]
+      summary: Add a lesson to a module (tutor/admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LessonInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lesson"
+  /lessons/{id}:
+    patch:
+      operationId: updateLesson
+      tags: [lessons]
+      summary: Update a lesson (tutor/admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LessonUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lesson"
+    delete:
+      operationId: deleteLesson
+      tags: [lessons]
+      summary: Delete a lesson (tutor/admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+  /lessons/{id}/progress:
+    post:
+      operationId: setLessonProgress
+      tags: [lessons]
+      summary: Mark a lesson complete/incomplete for current student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgressInput"
+      responses:
+        "200":
+          description: Progress saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LessonProgress"
+  /enrollments:
+    get:
+      operationId: listEnrollments
+      tags: [enrollments]
+      summary: List current student's enrollments with progress
+      responses:
+        "200":
+          description: Enrollments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Enrollment"
+    post:
+      operationId: createEnrollment
+      tags: [enrollments]
+      summary: Enroll current student in a module
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnrollmentInput"
+      responses:
+        "201":
+          description: Enrolled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enrollment"
+  /bookings:
+    get:
+      operationId: listBookings
+      tags: [bookings]
+      summary: List bookings (role-scoped; students see theirs, tutors see theirs, admin sees all)
+      responses:
+        "200":
+          description: Bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Book a one-on-one tutorial session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Booked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+  /bookings/{id}:
+    patch:
+      operationId: updateBooking
+      tags: [bookings]
+      summary: Update a booking's status or notes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+  /acquisitions:
+    get:
+      operationId: listAcquisitions
+      tags: [agents]
+      summary: List acquisitions (sub-agent sees own; super-agent/admin see all)
+      responses:
+        "200":
+          description: Acquisitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Acquisition"
+    post:
+      operationId: createAcquisition
+      tags: [agents]
+      summary: Record a new student acquisition/lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AcquisitionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Acquisition"
+  /acquisitions/{id}:
+    patch:
+      operationId: updateAcquisition
+      tags: [agents]
+      summary: Update an acquisition's status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AcquisitionUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Acquisition"
+  /sub-agents:
+    get:
+      operationId: listSubAgents
+      tags: [agents]
+      summary: List sub-agents with performance stats (super-agent/admin)
+      responses:
+        "200":
+          description: Sub-agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubAgentStats"
+  /tickets:
+    get:
+      operationId: listTickets
+      tags: [tickets]
+      summary: List support tickets
+      responses:
+        "200":
+          description: Tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ticket"
+    post:
+      operationId: createTicket
+      tags: [tickets]
+      summary: Create a support ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+  /tickets/{id}:
+    patch:
+      operationId: updateTicket
+      tags: [tickets]
+      summary: Update a ticket (status, priority, assignee)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+  /summaries/student:
+    get:
+      operationId: getStudentSummary
+      tags: [summaries]
+      summary: Current student's dashboard summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentSummary"
+  /summaries/tutor:
+    get:
+      operationId: getTutorSummary
+      tags: [summaries]
+      summary: Current tutor's dashboard summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TutorSummary"
+  /summaries/admin:
+    get:
+      operationId: getAdminSummary
+      tags: [summaries]
+      summary: Platform-wide admin summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSummary"
+  /summaries/agent:
+    get:
+      operationId: getAgentSummary
+      tags: [summaries]
+      summary: Current sub-agent's commission summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentSummary"
+  /summaries/super-agent:
+    get:
+      operationId: getSuperAgentSummary
+      tags: [summaries]
+      summary: Super-agent network summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuperAgentSummary"
+  /summaries/crm:
+    get:
+      operationId: getCrmSummary
+      tags: [summaries]
+      summary: CRM ticket/SLA summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrmSummary"
 components:
   schemas:
     HealthStatus:
       type: object
       properties:
+        status: { type: string }
+      required: [status]
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+      required: [error]
+    User:
+      type: object
+      required: [id, clerkId, name, email, role, createdAt]
+      properties:
+        id: { type: integer }
+        clerkId: { type: string }
+        name: { type: string }
+        email: { type: string }
+        role:
+          type: string
+          enum: [student, tutor, admin, sub_agent, super_agent, support]
+        title: { type: ["string", "null"] }
+        bio: { type: ["string", "null"] }
+        avatarUrl: { type: ["string", "null"] }
+        createdAt: { type: string }
+    ProfileInput:
+      type: object
+      required: [name, role]
+      properties:
+        name: { type: string, minLength: 1 }
+        role:
+          type: string
+          enum: [student, tutor, admin, sub_agent, super_agent, support]
+        title: { type: string }
+        bio: { type: string }
+    UserUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        role:
+          type: string
+          enum: [student, tutor, admin, sub_agent, super_agent, support]
+        title: { type: string }
+        bio: { type: string }
+    Module:
+      type: object
+      required: [id, code, title, year, description, nucApproved, lessonCount, enrolledCount]
+      properties:
+        id: { type: integer }
+        code: { type: string }
+        title: { type: string }
+        year: { type: integer }
+        description: { type: string }
+        nucApproved: { type: boolean }
+        tutorId: { type: ["integer", "null"] }
+        tutorName: { type: ["string", "null"] }
+        lessonCount: { type: integer }
+        enrolledCount: { type: integer }
+        imageUrl: { type: ["string", "null"] }
+    ModuleInput:
+      type: object
+      required: [code, title, year, description]
+      properties:
+        code: { type: string, minLength: 1 }
+        title: { type: string, minLength: 1 }
+        year: { type: integer, minimum: 1, maximum: 5 }
+        description: { type: string }
+        nucApproved: { type: boolean }
+        tutorId: { type: integer }
+        imageUrl: { type: string }
+    ModuleUpdate:
+      type: object
+      properties:
+        code: { type: string, minLength: 1 }
+        title: { type: string, minLength: 1 }
+        year: { type: integer, minimum: 1, maximum: 5 }
+        description: { type: string }
+        nucApproved: { type: boolean }
+        tutorId: { type: integer }
+        imageUrl: { type: string }
+    Lesson:
+      type: object
+      required: [id, moduleId, title, position, durationMinutes]
+      properties:
+        id: { type: integer }
+        moduleId: { type: integer }
+        title: { type: string }
+        position: { type: integer }
+        durationMinutes: { type: integer }
+        description: { type: ["string", "null"] }
+        videoUrl: { type: ["string", "null"] }
+        completed: { type: ["boolean", "null"] }
+    LessonInput:
+      type: object
+      required: [title, position, durationMinutes]
+      properties:
+        title: { type: string, minLength: 1 }
+        position: { type: integer }
+        durationMinutes: { type: integer }
+        description: { type: string }
+        videoUrl: { type: string }
+    LessonUpdate:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        position: { type: integer }
+        durationMinutes: { type: integer }
+        description: { type: string }
+        videoUrl: { type: string }
+    ModuleDetail:
+      type: object
+      required: [id, code, title, year, description, nucApproved, lessonCount, enrolledCount, lessons, enrolled]
+      properties:
+        id: { type: integer }
+        code: { type: string }
+        title: { type: string }
+        year: { type: integer }
+        description: { type: string }
+        nucApproved: { type: boolean }
+        tutorId: { type: ["integer", "null"] }
+        tutorName: { type: ["string", "null"] }
+        lessonCount: { type: integer }
+        enrolledCount: { type: integer }
+        imageUrl: { type: ["string", "null"] }
+        enrolled: { type: boolean }
+        lessons:
+          type: array
+          items:
+            $ref: "#/components/schemas/Lesson"
+    ProgressInput:
+      type: object
+      required: [completed]
+      properties:
+        completed: { type: boolean }
+    LessonProgress:
+      type: object
+      required: [lessonId, completed]
+      properties:
+        lessonId: { type: integer }
+        completed: { type: boolean }
+        completedAt: { type: ["string", "null"] }
+    Enrollment:
+      type: object
+      required: [id, moduleId, moduleTitle, moduleCode, year, enrolledAt, lessonCount, completedLessons]
+      properties:
+        id: { type: integer }
+        moduleId: { type: integer }
+        moduleTitle: { type: string }
+        moduleCode: { type: string }
+        year: { type: integer }
+        enrolledAt: { type: string }
+        lessonCount: { type: integer }
+        completedLessons: { type: integer }
+        imageUrl: { type: ["string", "null"] }
+    EnrollmentInput:
+      type: object
+      required: [moduleId]
+      properties:
+        moduleId: { type: integer }
+    Booking:
+      type: object
+      required: [id, studentId, tutorId, studentName, tutorName, scheduledAt, status]
+      properties:
+        id: { type: integer }
+        studentId: { type: integer }
+        tutorId: { type: integer }
+        studentName: { type: string }
+        tutorName: { type: string }
+        moduleId: { type: ["integer", "null"] }
+        moduleTitle: { type: ["string", "null"] }
+        scheduledAt: { type: string }
         status:
           type: string
-      required:
-        - status
-
+          enum: [pending, confirmed, completed, cancelled]
+        notes: { type: ["string", "null"] }
+    BookingInput:
+      type: object
+      required: [tutorId, scheduledAt]
+      properties:
+        tutorId: { type: integer }
+        moduleId: { type: integer }
+        scheduledAt: { type: string }
+        notes: { type: string }
+    BookingUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        scheduledAt: { type: string }
+        notes: { type: string }
+    Acquisition:
+      type: object
+      required: [id, subAgentId, subAgentName, studentName, status, commissionAmount, createdAt]
+      properties:
+        id: { type: integer }
+        subAgentId: { type: integer }
+        subAgentName: { type: string }
+        studentName: { type: string }
+        studentEmail: { type: ["string", "null"] }
+        status:
+          type: string
+          enum: [lead, contacted, enrolled, paid]
+        commissionAmount: { type: number }
+        createdAt: { type: string }
+    AcquisitionInput:
+      type: object
+      required: [studentName]
+      properties:
+        studentName: { type: string, minLength: 1 }
+        studentEmail: { type: string }
+        status:
+          type: string
+          enum: [lead, contacted, enrolled, paid]
+        commissionAmount: { type: number }
+    AcquisitionUpdate:
+      type: object
+      properties:
+        studentName: { type: string, minLength: 1 }
+        studentEmail: { type: string }
+        status:
+          type: string
+          enum: [lead, contacted, enrolled, paid]
+        commissionAmount: { type: number }
+    SubAgentStats:
+      type: object
+      required: [userId, name, email, totalAcquisitions, enrolledCount, totalCommission]
+      properties:
+        userId: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        totalAcquisitions: { type: integer }
+        enrolledCount: { type: integer }
+        totalCommission: { type: number }
+    Ticket:
+      type: object
+      required: [id, subject, description, requesterName, priority, status, slaDueAt, createdAt, slaBreached]
+      properties:
+        id: { type: integer }
+        subject: { type: string }
+        description: { type: string }
+        requesterName: { type: string }
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        status:
+          type: string
+          enum: [open, in_progress, resolved, closed]
+        assigneeId: { type: ["integer", "null"] }
+        assigneeName: { type: ["string", "null"] }
+        slaDueAt: { type: string }
+        slaBreached: { type: boolean }
+        createdAt: { type: string }
+    TicketInput:
+      type: object
+      required: [subject, description, requesterName, priority]
+      properties:
+        subject: { type: string, minLength: 1 }
+        description: { type: string }
+        requesterName: { type: string }
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+    TicketUpdate:
+      type: object
+      properties:
+        subject: { type: string, minLength: 1 }
+        description: { type: string }
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        status:
+          type: string
+          enum: [open, in_progress, resolved, closed]
+        assigneeId: { type: integer }
+    StudentSummary:
+      type: object
+      required: [enrolledModules, completedLessons, totalLessons, upcomingBookings, overallProgress]
+      properties:
+        enrolledModules: { type: integer }
+        completedLessons: { type: integer }
+        totalLessons: { type: integer }
+        upcomingBookings: { type: integer }
+        overallProgress: { type: number }
+    TutorSummary:
+      type: object
+      required: [moduleCount, lessonCount, pendingBookings, upcomingBookings, totalStudents]
+      properties:
+        moduleCount: { type: integer }
+        lessonCount: { type: integer }
+        pendingBookings: { type: integer }
+        upcomingBookings: { type: integer }
+        totalStudents: { type: integer }
+    AdminSummary:
+      type: object
+      required: [totalStudents, totalTutors, totalModules, totalBookings, totalEnrollments, openTickets, byYear]
+      properties:
+        totalStudents: { type: integer }
+        totalTutors: { type: integer }
+        totalModules: { type: integer }
+        totalBookings: { type: integer }
+        totalEnrollments: { type: integer }
+        openTickets: { type: integer }
+        byYear:
+          type: array
+          items:
+            $ref: "#/components/schemas/YearCount"
+    YearCount:
+      type: object
+      required: [year, moduleCount, enrollmentCount]
+      properties:
+        year: { type: integer }
+        moduleCount: { type: integer }
+        enrollmentCount: { type: integer }
+    AgentSummary:
+      type: object
+      required: [totalAcquisitions, enrolledCount, pipelineCount, totalCommission, pendingCommission]
+      properties:
+        totalAcquisitions: { type: integer }
+        enrolledCount: { type: integer }
+        pipelineCount: { type: integer }
+        totalCommission: { type: number }
+        pendingCommission: { type: number }
+    SuperAgentSummary:
+      type: object
+      required: [subAgentCount, totalAcquisitions, totalEnrolled, networkCommission]
+      properties:
+        subAgentCount: { type: integer }
+        totalAcquisitions: { type: integer }
+        totalEnrolled: { type: integer }
+        networkCommission: { type: number }
+    CrmSummary:
+      type: object
+      required: [openTickets, inProgressTickets, resolvedTickets, breachedSla, avgResolutionHours, byPriority]
+      properties:
+        openTickets: { type: integer }
+        inProgressTickets: { type: integer }
+        resolvedTickets: { type: integer }
+        breachedSla: { type: integer }
+        avgResolutionHours: { type: number }
+        byPriority:
+          type: array
+          items:
+            $ref: "#/components/schemas/PriorityCount"
+    PriorityCount:
+      type: object
+      required: [priority, count]
+      properties:
+        priority: { type: string }
+        count: { type: integer }
