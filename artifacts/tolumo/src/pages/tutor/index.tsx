@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
+import MyContent from './my-content';
 import { useClerk, useUser } from '@clerk/react';
 import {
   LayoutDashboard, BookOpen, Calendar, BarChart2,
@@ -315,112 +316,6 @@ function TutorDashboard() {
   );
 }
 
-// ── My Content (Modules) ──────────────────────────────────────────────────────
-function MyContent() {
-  const { data: user } = useGetMe();
-  const { data: allModules, isLoading } = useListModules({});
-  const createModule = useCreateModule();
-  const deleteModule = useDeleteModule();
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const [, setLocation] = useLocation();
-
-  const modules = allModules?.filter((m: any) => m.tutorId === user?.id) || [];
-
-  const handleCreate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    createModule.mutate({
-      data: {
-        code: fd.get('code') as string,
-        title: fd.get('title') as string,
-        year: parseInt(fd.get('year') as string),
-        description: fd.get('description') as string,
-        nucApproved: fd.get('nucApproved') === 'on',
-        tutorId: user?.id,
-      }
-    }, {
-      onSuccess: () => {
-        toast({ title: 'Module Created' });
-        queryClient.invalidateQueries({ queryKey: getListModulesQueryKey() });
-        (e.target as HTMLFormElement).reset();
-      }
-    });
-  };
-
-  return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-serif font-bold text-foreground">My Content</h1>
-        <p className="text-muted-foreground mt-1">Create and manage your course modules.</p>
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm sticky top-24">
-            <h2 className="text-xl font-serif font-bold text-foreground mb-6">New Module</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
-              {[
-                { name: 'code', label: 'Code (e.g. LAW101)', type: 'text' },
-                { name: 'title', label: 'Title', type: 'text' },
-                { name: 'year', label: 'LL.B Year (1-5)', type: 'number' },
-                { name: 'description', label: 'Description', type: 'textarea' },
-              ].map(f => (
-                <div key={f.name}>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">{f.label}</label>
-                  {f.type === 'textarea' ? (
-                    <textarea name={f.name} rows={3} required className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
-                  ) : (
-                    <input type={f.type} name={f.name} required min={f.name === 'year' ? 1 : undefined} max={f.name === 'year' ? 5 : undefined}
-                      className="w-full h-10 px-3 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
-                  )}
-                </div>
-              ))}
-              <div className="flex items-center gap-2">
-                <input type="checkbox" name="nucApproved" id="nuc" defaultChecked className="rounded border-stone-300" />
-                <label htmlFor="nuc" className="text-sm font-medium">NUC Approved</label>
-              </div>
-              <Button type="submit" className="w-full" disabled={createModule.isPending}>Create Module</Button>
-            </form>
-          </div>
-        </div>
-
-        <div className="lg:col-span-2 space-y-4">
-          {isLoading ? (
-            <div className="animate-pulse text-muted-foreground p-8">Loading modules…</div>
-          ) : !modules.length ? (
-            <div className="bg-white p-12 text-center rounded-xl border border-stone-200 text-muted-foreground">
-              You haven't created any modules yet.
-            </div>
-          ) : modules.map((m: any) => (
-            <div key={m.id} className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col sm:flex-row justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold">{m.code}</span>
-                  <span className="text-sm text-muted-foreground">Year {m.year}</span>
-                </div>
-                <h3 className="font-serif font-bold text-lg text-foreground mb-2">{m.title}</h3>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> {m.lessonCount} Lessons</span>
-                  <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {m.enrolledCount} Enrolled</span>
-                </div>
-              </div>
-              <div className="flex flex-row sm:flex-col justify-end gap-2 shrink-0">
-                <Button variant="outline" onClick={() => setLocation(`/tutor/content/${m.id}`)}>Manage</Button>
-                <Button variant="ghost" className="text-destructive hover:bg-destructive/10"
-                  onClick={() => confirm('Delete module?') && deleteModule.mutate({ id: m.id }, {
-                    onSuccess: () => queryClient.invalidateQueries({ queryKey: getListModulesQueryKey() })
-                  })}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ── Lesson manager ────────────────────────────────────────────────────────────
 function LessonManager({ params }: { params: { id: string } }) {
