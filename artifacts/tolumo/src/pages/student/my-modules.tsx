@@ -94,110 +94,63 @@ const CARRYOVER_DESC: Record<number, string> = {
   104: 'A historical account of Nigeria\'s constitutional development from colonial rule to the 1999 Constitution, including military interventions.',
 };
 
-// ── Carryover modal ────────────────────────────────────────────────────────────
+// ── Carryover modal — 4-step flow ─────────────────────────────────────────────
+// step: 'list' → 'detail' → 'payment' → 'success'
+type Step = 'list' | 'detail' | 'payment' | 'success';
+
+function ModalHeader({ label, title, onClose }: { label: string; title: string; onClose: () => void }) {
+  return (
+    <div className="bg-[#1a4d35] px-6 py-5 shrink-0">
+      <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-1">{label}</p>
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-xl font-serif font-bold text-white">{title}</h2>
+        <button onClick={onClose} className="text-white/60 hover:text-white transition-colors shrink-0"><X className="h-5 w-5" /></button>
+      </div>
+    </div>
+  );
+}
+
 function CarryoverModal({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState<Step>('list');
   const [selected, setSelected] = useState<typeof ALL_MODULES[0] | null>(null);
-  const [paid, setPaid] = useState(false);
+  const [cardNum, setCardNum] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [lastAdded, setLastAdded] = useState<typeof ALL_MODULES[0] | null>(null);
 
   const carryovers = ALL_MODULES.filter(m => m.status === 'carryover');
+  const LABEL = 'Law Programme · Year 1 Add-Ons';
 
-  // Payment step
-  if (selected) {
-    const img = MODULE_IMAGES[selected.id];
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-          {/* Header */}
-          <div className="bg-[#1a4d35] px-6 py-5">
-            <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-1">Law Programme · Year 1 Add-Ons</p>
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-serif font-bold text-white">Confirm Payment</h2>
-              <button onClick={onClose} className="text-white/60 hover:text-white transition-colors"><X className="h-5 w-5" /></button>
-            </div>
-          </div>
+  const handleSelect = (m: typeof ALL_MODULES[0]) => { setSelected(m); setStep('detail'); };
+  const handleProceed = () => setStep('payment');
+  const handlePay = () => { setLastAdded(selected); setStep('success'); };
+  const handleAddAnother = () => { setSelected(null); setCardNum(''); setExpiry(''); setCvv(''); setStep('list'); };
 
-          {paid ? (
-            <div className="px-6 py-10 text-center">
-              <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="h-7 w-7 text-green-600" />
-              </div>
-              <h3 className="font-serif font-bold text-foreground text-lg mb-1">Module Added!</h3>
-              <p className="text-sm text-muted-foreground mb-6">{selected.title} has been added to your library. You now have instant access.</p>
-              <button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Start Learning</button>
-            </div>
-          ) : (
-            <div className="px-6 py-5 space-y-4">
-              <div className="flex items-center gap-3 p-3 bg-stone-50 border border-stone-200 rounded-xl">
-                <div className="h-14 w-14 rounded-xl overflow-hidden shrink-0 bg-stone-200">
-                  {img && <img src={img} alt={selected.title} className="w-full h-full object-cover" />}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold text-muted-foreground">{selected.code}</p>
-                  <p className="font-semibold text-foreground text-sm leading-snug">{selected.title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{selected.tutor} · {selected.topics} topics</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                <span className="text-sm font-medium text-amber-900">One-time add-on fee</span>
-                <span className="text-xl font-bold text-accent">₦7,500</span>
-              </div>
-              <p className="text-xs text-muted-foreground text-center">Secure payment · Instant access after payment · No refunds on digital content</p>
-              <div className="flex gap-3">
-                <button onClick={() => setSelected(null)} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">← Back</button>
-                <button onClick={() => setPaid(true)} className="flex-1 py-2.5 rounded-xl bg-accent text-white font-bold text-sm hover:bg-accent/90 transition-colors">Pay ₦7,500</button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // Module list step
-  return (
+  // ── Step: list ──────────────────────────────────────────────────────────────
+  if (step === 'list') return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Dark green header */}
-        <div className="bg-[#1a4d35] px-6 py-5 shrink-0">
-          <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-1">Law Programme · Year 1 Add-Ons</p>
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-serif font-bold text-white">Add a Carryover Module</h2>
-            <button onClick={onClose} className="text-white/60 hover:text-white transition-colors ml-4 shrink-0"><X className="h-5 w-5" /></button>
-          </div>
-        </div>
-
-        {/* Subtitle */}
+        <ModalHeader label={LABEL} title="Add a Carryover Module" onClose={onClose} />
         <div className="px-6 pt-5 pb-3 shrink-0">
           <p className="text-sm text-muted-foreground leading-relaxed">
             Select a failed Year 1 module to add it to your current dashboard. Payment is the only gate — access is instant.
           </p>
         </div>
-
-        {/* Scrollable list */}
         <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-3">
           {carryovers.map(m => {
             const img = MODULE_IMAGES[m.id];
-            const desc = CARRYOVER_DESC[m.id] || '';
             return (
               <div key={m.id} className="flex gap-3 p-4 rounded-2xl border border-stone-200 hover:border-stone-300 transition-colors">
-                {/* Thumbnail */}
                 <div className="h-20 w-20 rounded-xl overflow-hidden shrink-0 bg-stone-200">
                   {img && <img src={img} alt={m.title} className="w-full h-full object-cover" />}
                 </div>
-
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-bold text-foreground">{m.code}</span>
                       <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">Year {m.year} · Sem {m.sem}</span>
                     </div>
-                    <button
-                      onClick={() => setSelected(m)}
-                      className="shrink-0 px-4 py-1.5 rounded-full bg-[#1a4d35] text-white text-xs font-bold hover:bg-[#1a4d35]/90 transition-colors"
-                    >
-                      Select
-                    </button>
+                    <button onClick={() => handleSelect(m)} className="shrink-0 px-4 py-1.5 rounded-full bg-[#1a4d35] text-white text-xs font-bold hover:bg-[#1a4d35]/90 transition-colors">Select</button>
                   </div>
                   <p className="font-semibold text-foreground text-sm leading-snug mb-1">{m.title}</p>
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
@@ -206,18 +159,181 @@ function CarryoverModal({ onClose }: { onClose: () => void }) {
                     </div>
                     {m.tutor} · {m.topics} topics
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{CARRYOVER_DESC[m.id] || ''}</p>
                 </div>
               </div>
             );
           })}
         </div>
-
-        {/* Footer */}
         <div className="shrink-0 px-6 py-4 border-t border-stone-100">
-          <button onClick={onClose} className="w-full py-3 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">
-            Close
-          </button>
+          <button onClick={onClose} className="w-full py-3 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">Close</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── Step: detail ────────────────────────────────────────────────────────────
+  if (step === 'detail' && selected) {
+    const img = MODULE_IMAGES[selected.id];
+    const features = [
+      `Video tutorials for all ${selected.topics} topics`,
+      'Lecture notes (view-only PDF)',
+      'AI-guided Q&A coach per topic',
+      'MCQ + essay assessments',
+      'Certificate progress credit',
+    ];
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+          <ModalHeader label={LABEL} title={selected.title} onClose={onClose} />
+          <div className="flex-1 overflow-y-auto">
+            {/* Photo */}
+            <div className="h-44 bg-stone-200 overflow-hidden">
+              {img && <img src={img} alt={selected.title} className="w-full h-full object-cover" />}
+            </div>
+            <div className="px-6 py-5 space-y-5">
+              {/* Module summary */}
+              <div className="bg-stone-50 rounded-xl p-4 space-y-2">
+                <p className="text-xs font-bold text-muted-foreground">{selected.code}</p>
+                <p className="text-sm text-foreground leading-relaxed">{CARRYOVER_DESC[selected.id] || ''}</p>
+                <div className="flex items-center gap-2 pt-1">
+                  <div className="h-7 w-7 rounded-full bg-stone-300 overflow-hidden shrink-0">
+                    {img && <img src={img} alt="" className="w-full h-full object-cover" />}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">{selected.tutor}</p>
+                    <p className="text-[10px] text-muted-foreground">{selected.topics} topics · Fully unlocked after payment</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature list */}
+              <div className="space-y-2.5">
+                {features.map(f => (
+                  <div key={f} className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded-full border-2 border-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="h-3 w-3 text-primary" />
+                    </div>
+                    <span className="text-sm text-foreground">{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Price box */}
+              <div className="flex items-start justify-between border border-accent/40 bg-amber-50/60 rounded-xl px-5 py-4">
+                <div>
+                  <p className="text-2xl font-bold text-foreground">₦7,500</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 font-mono leading-relaxed">One-time · this module only · separate<br/>from subscription</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-green-600">Instant<br/>access</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">No approval<br/>needed</p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button onClick={handleProceed} className="flex-1 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">Proceed to Payment</button>
+                <button onClick={() => setStep('list')} className="px-6 py-3.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">Back</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Step: payment ───────────────────────────────────────────────────────────
+  if (step === 'payment' && selected) {
+    const img = MODULE_IMAGES[selected.id];
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+          <ModalHeader label={LABEL} title="Complete Payment" onClose={onClose} />
+          <div className="px-6 py-5 space-y-5">
+            {/* Module summary row */}
+            <div className="flex items-center gap-3 bg-stone-50 border border-stone-200 rounded-xl p-3">
+              <div className="h-12 w-12 rounded-xl overflow-hidden shrink-0 bg-stone-200">
+                {img && <img src={img} alt={selected.title} className="w-full h-full object-cover" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-foreground text-sm">{selected.title}</p>
+                <p className="text-xs text-muted-foreground">{selected.code} · Year {selected.year}</p>
+              </div>
+              <span className="text-base font-bold text-primary shrink-0">₦7,500</span>
+            </div>
+
+            {/* Card details */}
+            <div className="space-y-3">
+              <p className="font-semibold text-foreground text-sm">Card Details</p>
+              <div className="border border-stone-200 rounded-xl px-4 py-3 bg-stone-50 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+                <input
+                  value={cardNum}
+                  onChange={e => setCardNum(e.target.value)}
+                  placeholder="5399 ···· ···· 4242"
+                  className="w-full bg-transparent text-sm outline-none text-foreground placeholder:text-stone-400"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="border border-stone-200 rounded-xl px-4 py-3 bg-stone-50 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+                  <input value={expiry} onChange={e => setExpiry(e.target.value)} placeholder="09 / 28" className="w-full bg-transparent text-sm outline-none text-foreground placeholder:text-stone-400" />
+                </div>
+                <div className="border border-stone-200 rounded-xl px-4 py-3 bg-stone-50 focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+                  <input value={cvv} onChange={e => setCvv(e.target.value)} placeholder="···" className="w-full bg-transparent text-sm outline-none text-foreground placeholder:text-stone-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button onClick={handlePay} className="flex-1 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">Pay ₦7,500</button>
+              <button onClick={() => setStep('detail')} className="px-6 py-3.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Step: success ───────────────────────────────────────────────────────────
+  const mod = lastAdded || selected;
+  const successFeatures = [
+    `All ${mod?.topics} video topics unlocked`,
+    'Lecture notes accessible',
+    'AI Q&A coach enabled',
+    'Topic Quizzes and assessments active',
+  ];
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <ModalHeader label={LABEL} title="Module Added!" onClose={onClose} />
+        <div className="px-6 py-8 space-y-5">
+          {/* Check circle */}
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="h-20 w-20 rounded-full bg-stone-100 flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-primary" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-xl font-serif font-bold text-foreground">Module Unlocked!</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+              <strong className="text-foreground">{mod?.title}</strong> has been added to your dashboard. You have full access to all {mod?.topics} topics right now.
+            </p>
+          </div>
+
+          {/* Feature checklist */}
+          <div className="bg-stone-50 rounded-xl px-5 py-4 space-y-3">
+            {successFeatures.map(f => (
+              <div key={f} className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                <span className="text-sm text-foreground">{f}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button onClick={onClose} className="flex-1 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">Start Learning</button>
+            <button onClick={handleAddAnother} className="flex-1 py-3.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">Add Another</button>
+          </div>
         </div>
       </div>
     </div>
