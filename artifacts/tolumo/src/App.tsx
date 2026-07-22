@@ -71,28 +71,27 @@ const clerkAppearance = {
     cardBox: "w-full shadow-none border-0",
     card: "!shadow-none !border-0 !bg-transparent !rounded-none p-0",
     footer: "!shadow-none !border-0 !bg-transparent !rounded-none",
-    headerTitle: "font-serif text-2xl font-bold text-foreground",
-    headerSubtitle: "text-muted-foreground text-sm",
-    socialButtonsBlockButtonText: "font-medium text-foreground",
-    formFieldLabel: "text-xs font-semibold uppercase tracking-wider text-foreground",
+    headerTitle: "hidden",
+    headerSubtitle: "hidden",
+    header: "hidden",
+    logoBox: "hidden",
+    logoImage: "hidden",
+    socialButtons: "hidden",
+    dividerRow: "hidden",
+    formFieldLabel: "text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1",
     footerActionLink: "text-primary font-semibold hover:text-primary/80",
-    footerActionText: "text-muted-foreground",
-    dividerText: "text-muted-foreground bg-[#F5F2EB] px-2",
+    footerActionText: "text-muted-foreground text-sm",
     identityPreviewEditButton: "text-primary hover:text-primary/80",
     formFieldSuccessText: "text-primary",
     alertText: "text-sm",
-    logoBox: "hidden",
-    logoImage: "hidden",
-    socialButtonsBlockButton: "border-border hover:bg-white/80",
-    formButtonPrimary: "bg-primary hover:bg-primary/90 text-white shadow-sm border border-transparent font-semibold",
-    formFieldInput: "bg-white border-border text-foreground focus:ring-primary",
-    footerAction: "flex items-center justify-center gap-1",
+    formButtonPrimary: "bg-primary hover:bg-primary/90 text-white shadow-sm border border-transparent font-semibold tracking-wide",
+    formFieldInput: "bg-white border-border text-foreground focus:ring-primary rounded-lg",
+    footerAction: "flex items-center justify-center gap-1 pt-2",
     dividerLine: "bg-border",
     alert: "bg-destructive/10 border-destructive/20 text-destructive",
     otpCodeFieldInput: "border-border focus:ring-primary",
-    formFieldRow: "mb-4",
+    formFieldRow: "mb-5",
     main: "p-0",
-    header: "pb-4",
   },
 };
 
@@ -151,6 +150,16 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
             >
               Sign In
             </a>
+          </div>
+
+          {/* Custom heading */}
+          <div className="mb-6">
+            <h1 className="font-serif text-2xl font-bold text-primary mb-1">
+              {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {mode === 'sign-in' ? 'Sign in to continue your learning journey.' : 'Start your LL.B journey with Tolumo.'}
+            </p>
           </div>
 
           {/* Clerk component */}
