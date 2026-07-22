@@ -1,120 +1,331 @@
 import React, { useState } from 'react';
-import { Route, Switch, useLocation } from 'wouter';
-import { PortalLayout } from '@/components/portal-layout';
-import { LayoutDashboard, BookOpen, Calendar, Users, Edit, Trash2, Plus, Clock } from 'lucide-react';
-import { 
-  useGetTutorSummary, 
-  useListModules, 
+import { Route, Switch, useLocation, Link } from 'wouter';
+import { useClerk, useUser } from '@clerk/react';
+import {
+  LayoutDashboard, BookOpen, Calendar, BarChart2,
+  HelpCircle, Settings, LogOut, Bell, Search,
+  ChevronLeft, ChevronRight, Menu, X,
+  Edit, Trash2, Plus, Clock, Users, TrendingUp,
+  CheckCircle2
+} from 'lucide-react';
+import {
+  useGetTutorSummary,
+  useListModules,
   useListBookings,
   useUpdateBooking,
   useCreateModule,
-  useUpdateModule,
   useDeleteModule,
   useCreateLesson,
-  useUpdateLesson,
   useDeleteLesson,
   useGetModule,
   useGetMe,
   getListBookingsQueryKey,
   getGetTutorSummaryQueryKey,
   getListModulesQueryKey,
-  getGetModuleQueryKey
+  getGetModuleQueryKey,
 } from '@workspace/api-client-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 
-// Dashboard
-function TutorDashboard() {
-  const { data: summary, isLoading } = useGetTutorSummary();
-  const { data: bookings } = useListBookings();
-  const updateBooking = useUpdateBooking();
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-  const handleBookingAction = (id: number, status: 'confirmed' | 'cancelled' | 'completed') => {
-    updateBooking.mutate({ id, data: { status } }, {
-      onSuccess: () => {
-        toast({ title: `Session ${status}` });
-        queryClient.invalidateQueries({ queryKey: getListBookingsQueryKey() });
-        queryClient.invalidateQueries({ queryKey: getGetTutorSummaryQueryKey() });
-      }
-    });
-  };
+// ── Sidebar nav config ────────────────────────────────────────────────────────
+const NAV = [
+  { href: '/tutor', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/tutor/content', label: 'My Content', icon: BookOpen },
+  { href: '/tutor/schedule', label: 'Tutorial Schedule', icon: Calendar },
+  { href: '/tutor/analytics', label: 'Student Analytics', icon: BarChart2 },
+];
 
-  if (isLoading) return <div className="p-8 animate-pulse">Loading dashboard...</div>;
+const NAV_BOTTOM = [
+  { href: '/tutor/help', label: 'Help & Support', icon: HelpCircle },
+  { href: '/tutor/settings', label: 'Settings', icon: Settings },
+];
 
-  const pendingBookings = bookings?.filter(b => b.status === 'pending') || [];
+// ── Shared Portal Shell ───────────────────────────────────────────────────────
+function TutorShell({ children }: { children: React.ReactNode }) {
+  const { user } = useUser();
+  const { signOut } = useClerk();
+  const [location] = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const initials = [user?.firstName, user?.lastName]
+    .filter(Boolean)
+    .map(s => s![0])
+    .join('')
+    .toUpperCase() || 'T';
+
+  const displayName = user?.fullName ||
+    (user?.unsafeMetadata as any)?.firstName ||
+    'Prof. Adeyemi';
+
+  const isActive = (href: string) =>
+    href === '/tutor' ? location === '/tutor' : location.startsWith(href);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-serif font-bold text-primary mb-2">Faculty Dashboard</h1>
-        <p className="text-muted-foreground">Manage your modules and student sessions.</p>
-      </div>
+    <div className="min-h-[100dvh] flex bg-[#F5F2EB]">
+      {/* ── Sidebar ── */}
+      <aside className={`
+        ${mobileOpen ? 'flex' : 'hidden'} md:flex flex-col
+        w-64 bg-primary text-white shrink-0
+        fixed md:sticky top-0 h-[100dvh] z-20
+      `}>
+        {/* Logo */}
+        <div className="px-6 pt-6 pb-4 flex items-center gap-3">
+          <img src={`${basePath}/logo.svg`} alt="" className="h-8 w-8 brightness-0 invert" />
+          <span className="font-serif font-bold text-xl text-white tracking-tight">Tolumo</span>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: "My Modules", value: summary?.moduleCount || 0, icon: BookOpen },
-          { label: "Total Lessons", value: summary?.lessonCount || 0, icon: Edit },
-          { label: "Pending Requests", value: summary?.pendingBookings || 0, icon: Clock },
-          { label: "Total Students", value: summary?.totalStudents || 0, icon: Users },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white border border-border rounded-xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div className="h-10 w-10 bg-accent/10 text-accent rounded-full flex items-center justify-center">
-                <stat.icon className="h-5 w-5" />
+        <div className="px-6 pb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
+            Tutor Portal
+          </p>
+        </div>
+
+        {/* Main nav */}
+        <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
+          {NAV.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive(href)
+                  ? 'bg-white/15 text-white'
+                  : 'text-white/65 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Icon className="h-[18px] w-[18px] shrink-0" />
+              {label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Bottom nav */}
+        <div className="px-3 pb-6 space-y-0.5 border-t border-white/10 pt-4">
+          {NAV_BOTTOM.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <Icon className="h-[18px] w-[18px] shrink-0" />
+              {label}
+            </Link>
+          ))}
+          <button
+            onClick={() => signOut({ redirectUrl: basePath || '/' })}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <LogOut className="h-[18px] w-[18px] shrink-0" />
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main ── */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top bar */}
+        <header className="h-16 flex items-center gap-4 px-6 bg-white border-b border-stone-200 sticky top-0 z-10">
+          {/* Mobile menu toggle */}
+          <button className="md:hidden" onClick={() => setMobileOpen(v => !v)}>
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+
+          {/* Back / Forward */}
+          <div className="hidden md:flex items-center gap-1">
+            <button onClick={() => history.back()} className="h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-stone-100 transition-colors">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button onClick={() => history.forward()} className="h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-stone-100 transition-colors">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Search */}
+          <div className="flex-1 max-w-sm hidden md:flex items-center gap-2 bg-stone-100 rounded-full px-4 py-2">
+            <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+            <input
+              className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground"
+              placeholder="Search courses, topics…"
+            />
+          </div>
+
+          <div className="ml-auto flex items-center gap-3">
+            {/* Notification bell */}
+            <button className="relative h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:bg-stone-100 transition-colors">
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">3</span>
+            </button>
+
+            {/* Avatar */}
+            <div className="flex items-center gap-2">
+              <div className="h-9 w-9 rounded-full bg-accent text-white flex items-center justify-center text-sm font-bold">
+                {initials}
+              </div>
+              <div className="hidden md:block leading-none">
+                <p className="text-sm font-semibold text-foreground">{displayName}</p>
+                <p className="text-xs text-muted-foreground">Tutor</p>
               </div>
             </div>
-            <div className="text-3xl font-bold font-serif text-primary mb-1">{stat.value}</div>
-            <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 overflow-auto p-6 md:p-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+const TOPICS = [
+  { label: 'Topic 1: Origins of Nigerian Federalism', pct: 95 },
+  { label: 'Topic 2: Supremacy of the Constitution', pct: 88 },
+  { label: 'Topic 3: Federalism & Devolution of Powers', pct: 71 },
+  { label: 'Topic 4: Separation of Powers', pct: 54 },
+  { label: 'Topic 5: Fundamental Rights', pct: 38 },
+];
+
+const STRUGGLES = [
+  { topic: 'Concurrent List conflict resolution (s. 4(5))', asks: 284 },
+  { topic: 'Residual powers vs. Exclusive List distinction', asks: 211 },
+  { topic: 'Federal supremacy doctrine', asks: 178 },
+  { topic: "Interpretation of 'covering the held'", asks: 134 },
+  { topic: 's. 4(4) limitation on state legislatures', asks: 99 },
+];
+
+const SESSIONS = [
+  { name: 'Chisom Nwosu', topic: 'Federalism & Devolution', date: 'Mon 14 Jul · 10:00am', status: 'confirmed', initials: 'CN' },
+  { name: 'Babatunde Okafor', topic: 'Constitutional Law Revision', date: 'Tue 15 Jul · 2:00pm', status: 'pending', initials: 'BO' },
+  { name: 'Amina Ibrahim', topic: 'Human Rights Law', date: 'Wed 16 Jul · 11:00am', status: 'confirmed', initials: 'AI' },
+];
+
+function barColor(pct: number) {
+  if (pct >= 80) return 'bg-primary';
+  if (pct >= 55) return 'bg-accent';
+  return 'bg-red-400';
+}
+
+function TutorDashboard() {
+  const { user } = useUser();
+  const displayName = user?.fullName || 'Prof. Adeyemi';
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Greeting */}
+      <div>
+        <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground">
+          Welcome, {displayName}
+        </h1>
+        <p className="text-muted-foreground mt-1">Here's how your modules are performing this month.</p>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Active Students', value: '3,840', delta: '+12% this month', icon: Users, iconBg: 'bg-blue-50', iconColor: 'text-blue-500' },
+          { label: 'Avg. Quiz Score', value: '74.2%', delta: '+3.1% this month', icon: TrendingUp, iconBg: 'bg-amber-50', iconColor: 'text-amber-500' },
+          { label: 'Completion Rate', value: '61%', delta: '+5% this month', icon: CheckCircle2, iconBg: 'bg-green-50', iconColor: 'text-green-600' },
+          { label: 'Bookings This Month', value: '38', delta: '+8 this month', icon: Calendar, iconBg: 'bg-purple-50', iconColor: 'text-purple-500' },
+        ].map(({ label, value, delta, icon: Icon, iconBg, iconColor }) => (
+          <div key={label} className="bg-white rounded-xl border border-stone-200 p-5 shadow-sm">
+            <div className="flex items-start justify-between mb-3">
+              <p className="text-xs text-muted-foreground font-medium leading-tight">{label}</p>
+              <div className={`h-8 w-8 rounded-full ${iconBg} flex items-center justify-center shrink-0`}>
+                <Icon className={`h-4 w-4 ${iconColor}`} />
+              </div>
+            </div>
+            <p className="text-2xl font-bold font-serif text-foreground">{value}</p>
+            <p className="text-xs text-green-600 font-medium mt-1">{delta}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white border border-border rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-border bg-secondary/20">
-          <h2 className="text-xl font-serif font-bold text-primary">Pending Session Requests</h2>
-        </div>
-        <div className="divide-y divide-border">
-          {!pendingBookings.length ? (
-            <div className="p-8 text-center text-muted-foreground">No pending requests.</div>
-          ) : (
-            pendingBookings.map(b => (
-              <div key={b.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-semibold text-foreground text-lg">{b.studentName}</h3>
-                  <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                    <Calendar className="h-4 w-4" />
-                    {new Date(b.scheduledAt).toLocaleString()}
-                  </div>
-                  {b.notes && <p className="text-sm mt-2 text-muted-foreground italic">"{b.notes}"</p>}
+      {/* Charts row */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Topics by Completion */}
+        <div className="bg-white rounded-xl border border-stone-200 p-6 shadow-sm">
+          <h2 className="font-serif font-bold text-lg text-foreground mb-5">Topics by Student Completion</h2>
+          <div className="space-y-4">
+            {TOPICS.map(({ label, pct }) => (
+              <div key={label}>
+                <div className="flex justify-between text-sm mb-1.5">
+                  <span className="text-muted-foreground text-xs">{label}</span>
+                  <span className="font-semibold text-foreground text-xs">{pct}%</span>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive/10" onClick={() => handleBookingAction(b.id, 'cancelled')}>Decline</Button>
-                  <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleBookingAction(b.id, 'confirmed')}>Accept</Button>
+                <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${barColor(pct)}`} style={{ width: `${pct}%` }} />
                 </div>
               </div>
-            ))
-          )}
+            ))}
+          </div>
+        </div>
+
+        {/* AI Struggle Points */}
+        <div className="bg-white rounded-xl border border-stone-200 p-6 shadow-sm">
+          <h2 className="font-serif font-bold text-lg text-foreground mb-1">Student Struggle Points</h2>
+          <p className="text-xs text-muted-foreground mb-5">Concepts students most frequently asked about in AI Q&A sessions this week:</p>
+          <div className="space-y-3">
+            {STRUGGLES.map(({ topic, asks }) => (
+              <div key={topic} className="flex items-center justify-between gap-4">
+                <p className="text-sm text-foreground leading-snug">{topic}</p>
+                <span className="text-xs font-semibold text-primary shrink-0">{asks} asks</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Upcoming Sessions */}
+      <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+          <h2 className="font-serif font-bold text-lg text-foreground">Upcoming Tutorial Sessions</h2>
+          <button className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
+            View all <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="divide-y divide-stone-100">
+          {SESSIONS.map(({ name, topic, date, status, initials }) => (
+            <div key={name} className="flex items-center gap-4 px-6 py-4">
+              <div className="h-10 w-10 rounded-full bg-stone-200 flex items-center justify-center text-sm font-bold text-foreground shrink-0">
+                {initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm text-foreground">{name}</p>
+                <p className="text-xs text-muted-foreground">{topic}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-xs text-muted-foreground">{date}</p>
+                <span className={`text-xs font-semibold mt-0.5 inline-block ${
+                  status === 'confirmed' ? 'text-green-600' : 'text-amber-600'
+                }`}>
+                  {status}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-function ModulesManager() {
+// ── My Content (Modules) ──────────────────────────────────────────────────────
+function MyContent() {
   const { data: user } = useGetMe();
-  // Pass an empty object to match the expected signature, or omit if optional
-  const { data: allModules, isLoading } = useListModules({}); 
+  const { data: allModules, isLoading } = useListModules({});
   const createModule = useCreateModule();
   const deleteModule = useDeleteModule();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  // Filter modules for this tutor
-  const modules = allModules?.filter(m => m.tutorId === user?.id) || [];
+  const modules = allModules?.filter((m: any) => m.tutorId === user?.id) || [];
 
   const handleCreate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -130,7 +341,7 @@ function ModulesManager() {
       }
     }, {
       onSuccess: () => {
-        toast({ title: "Module Created" });
+        toast({ title: 'Module Created' });
         queryClient.invalidateQueries({ queryKey: getListModulesQueryKey() });
         (e.target as HTMLFormElement).reset();
       }
@@ -139,93 +350,79 @@ function ModulesManager() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-serif font-bold text-primary mb-2">Manage Modules</h1>
-          <p className="text-muted-foreground">Create courses and add lessons.</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-serif font-bold text-foreground">My Content</h1>
+        <p className="text-muted-foreground mt-1">Create and manage your course modules.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1">
-          <div className="bg-white p-6 rounded-xl border border-border shadow-sm sticky top-24">
-            <h2 className="text-xl font-serif font-bold text-primary mb-6">New Module</h2>
+          <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm sticky top-24">
+            <h2 className="text-xl font-serif font-bold text-foreground mb-6">New Module</h2>
             <form onSubmit={handleCreate} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Code (e.g. LAW101)</label>
-                <input name="code" required className="w-full h-10 px-3 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
-                <input name="title" required className="w-full h-10 px-3 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">LL.B Year (1-5)</label>
-                <input type="number" min="1" max="5" name="year" required className="w-full h-10 px-3 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <textarea name="description" rows={3} required className="w-full px-3 py-2 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent"></textarea>
-              </div>
+              {[
+                { name: 'code', label: 'Code (e.g. LAW101)', type: 'text' },
+                { name: 'title', label: 'Title', type: 'text' },
+                { name: 'year', label: 'LL.B Year (1-5)', type: 'number' },
+                { name: 'description', label: 'Description', type: 'textarea' },
+              ].map(f => (
+                <div key={f.name}>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">{f.label}</label>
+                  {f.type === 'textarea' ? (
+                    <textarea name={f.name} rows={3} required className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                  ) : (
+                    <input type={f.type} name={f.name} required min={f.name === 'year' ? 1 : undefined} max={f.name === 'year' ? 5 : undefined}
+                      className="w-full h-10 px-3 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                  )}
+                </div>
+              ))}
               <div className="flex items-center gap-2">
-                <input type="checkbox" name="nucApproved" id="nuc" defaultChecked className="rounded border-input text-accent focus:ring-accent" />
+                <input type="checkbox" name="nucApproved" id="nuc" defaultChecked className="rounded border-stone-300" />
                 <label htmlFor="nuc" className="text-sm font-medium">NUC Approved</label>
               </div>
-              <Button type="submit" className="w-full" disabled={createModule.isPending}>
-                Create Module
-              </Button>
+              <Button type="submit" className="w-full" disabled={createModule.isPending}>Create Module</Button>
             </form>
           </div>
         </div>
 
         <div className="lg:col-span-2 space-y-4">
           {isLoading ? (
-            <div className="animate-pulse">Loading modules...</div>
+            <div className="animate-pulse text-muted-foreground p-8">Loading modules…</div>
           ) : !modules.length ? (
-            <div className="bg-white p-12 text-center rounded-xl border border-border shadow-sm text-muted-foreground">
+            <div className="bg-white p-12 text-center rounded-xl border border-stone-200 text-muted-foreground">
               You haven't created any modules yet.
             </div>
-          ) : (
-            modules.map(m => (
-              <div key={m.id} className="bg-white p-6 rounded-xl border border-border shadow-sm flex flex-col sm:flex-row justify-between gap-4 group">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold">{m.code}</span>
-                    <span className="text-sm text-muted-foreground font-medium">Year {m.year}</span>
-                  </div>
-                  <h3 className="font-serif font-bold text-xl text-foreground mb-2">{m.title}</h3>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> {m.lessonCount} Lessons</span>
-                    <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {m.enrolledCount} Enrolled</span>
-                  </div>
+          ) : modules.map((m: any) => (
+            <div key={m.id} className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold">{m.code}</span>
+                  <span className="text-sm text-muted-foreground">Year {m.year}</span>
                 </div>
-                <div className="flex flex-row sm:flex-col justify-end gap-2 shrink-0">
-                  <Button variant="outline" onClick={() => setLocation(`/tutor/modules/${m.id}`)}>
-                    Manage Content
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => {
-                      if(confirm('Delete module?')) {
-                        deleteModule.mutate({ id: m.id }, {
-                          onSuccess: () => queryClient.invalidateQueries({ queryKey: getListModulesQueryKey() })
-                        });
-                      }
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" /> Delete
-                  </Button>
+                <h3 className="font-serif font-bold text-lg text-foreground mb-2">{m.title}</h3>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> {m.lessonCount} Lessons</span>
+                  <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {m.enrolledCount} Enrolled</span>
                 </div>
               </div>
-            ))
-          )}
+              <div className="flex flex-row sm:flex-col justify-end gap-2 shrink-0">
+                <Button variant="outline" onClick={() => setLocation(`/tutor/content/${m.id}`)}>Manage</Button>
+                <Button variant="ghost" className="text-destructive hover:bg-destructive/10"
+                  onClick={() => confirm('Delete module?') && deleteModule.mutate({ id: m.id }, {
+                    onSuccess: () => queryClient.invalidateQueries({ queryKey: getListModulesQueryKey() })
+                  })}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
+// ── Lesson manager ────────────────────────────────────────────────────────────
 function LessonManager({ params }: { params: { id: string } }) {
   const id = parseInt(params.id);
   const { data: module, isLoading } = useGetModule(id, { query: { enabled: !!id, queryKey: getGetModuleQueryKey(id) } });
@@ -235,7 +432,7 @@ function LessonManager({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  if (isLoading || !module) return <div className="p-8">Loading...</div>;
+  if (isLoading || !module) return <div className="p-8 text-muted-foreground">Loading…</div>;
 
   const handleAddLesson = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -247,11 +444,11 @@ function LessonManager({ params }: { params: { id: string } }) {
         description: fd.get('description') as string,
         durationMinutes: parseInt(fd.get('durationMinutes') as string),
         videoUrl: fd.get('videoUrl') as string,
-        position: (module.lessons?.length || 0) + 1
+        position: ((module as any).lessons?.length || 0) + 1,
       }
     }, {
       onSuccess: () => {
-        toast({ title: "Lesson added" });
+        toast({ title: 'Lesson added' });
         queryClient.invalidateQueries({ queryKey: getGetModuleQueryKey(id) });
         (e.target as HTMLFormElement).reset();
       }
@@ -261,69 +458,53 @@ function LessonManager({ params }: { params: { id: string } }) {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => setLocation('/tutor/modules')}>← Back</Button>
+        <Button variant="outline" onClick={() => setLocation('/tutor/content')}>← Back</Button>
         <div>
-          <h1 className="text-2xl font-serif font-bold text-primary">{module.code}: {module.title}</h1>
-          <p className="text-muted-foreground">Manage lessons and content</p>
+          <h1 className="text-2xl font-serif font-bold text-foreground">{(module as any).code}: {(module as any).title}</h1>
+          <p className="text-muted-foreground text-sm">Manage lessons and content</p>
         </div>
       </div>
-
-      <div className="bg-white p-6 rounded-xl border border-border shadow-sm">
-        <h2 className="text-lg font-serif font-bold mb-4 flex items-center gap-2"><Plus className="h-5 w-5 text-accent"/> Add New Lesson</h2>
+      <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+        <h2 className="text-lg font-serif font-bold mb-4 flex items-center gap-2"><Plus className="h-5 w-5 text-accent" /> Add Lesson</h2>
         <form onSubmit={handleAddLesson} className="grid sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium mb-1">Lesson Title</label>
-            <input name="title" required className="w-full h-10 px-3 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent" />
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Title</label>
+            <input name="title" required className="w-full h-10 px-3 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Duration (minutes)</label>
-            <input type="number" name="durationMinutes" required className="w-full h-10 px-3 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent" />
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Duration (minutes)</label>
+            <input type="number" name="durationMinutes" required className="w-full h-10 px-3 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Video URL (optional)</label>
-            <input name="videoUrl" type="url" className="w-full h-10 px-3 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent" />
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Video URL (optional)</label>
+            <input name="videoUrl" type="url" className="w-full h-10 px-3 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium mb-1">Description / Notes</label>
-            <textarea name="description" rows={2} className="w-full px-3 py-2 rounded-md border border-input outline-none focus:ring-2 focus:ring-accent"></textarea>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Notes</label>
+            <textarea name="description" rows={2} className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm outline-none focus:ring-2 focus:ring-primary" />
           </div>
-          <div className="sm:col-span-2">
-            <Button type="submit" disabled={createLesson.isPending}>Add Lesson</Button>
-          </div>
+          <div className="sm:col-span-2"><Button type="submit" disabled={createLesson.isPending}>Add Lesson</Button></div>
         </form>
       </div>
-
-      <div className="space-y-4">
-        <h2 className="text-xl font-serif font-bold text-primary">Existing Lessons</h2>
-        {!module.lessons?.length ? (
-          <div className="text-center p-8 text-muted-foreground bg-white border border-border rounded-xl">No lessons yet.</div>
+      <div className="space-y-3">
+        <h2 className="text-xl font-serif font-bold text-foreground">Lessons</h2>
+        {!(module as any).lessons?.length ? (
+          <div className="text-center p-8 text-muted-foreground bg-white border border-stone-200 rounded-xl">No lessons yet.</div>
         ) : (
-          <div className="bg-white border border-border rounded-xl shadow-sm divide-y divide-border">
-            {module.lessons.sort((a,b)=>a.position - b.position).map((lesson, i) => (
+          <div className="bg-white border border-stone-200 rounded-xl shadow-sm divide-y divide-stone-100">
+            {(module as any).lessons.sort((a: any, b: any) => a.position - b.position).map((lesson: any, i: number) => (
               <div key={lesson.id} className="p-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-8 w-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-sm">
-                    {i + 1}
-                  </div>
+                  <div className="h-8 w-8 rounded-full bg-stone-100 text-muted-foreground flex items-center justify-center font-bold text-sm">{i + 1}</div>
                   <div>
-                    <h4 className="font-semibold">{lesson.title}</h4>
-                    <div className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Clock className="h-3 w-3" /> {lesson.durationMinutes} min
-                    </div>
+                    <p className="font-semibold text-sm">{lesson.title}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" /> {lesson.durationMinutes} min</p>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="text-destructive hover:bg-destructive/10"
-                  onClick={() => {
-                    if(confirm('Delete lesson?')) {
-                      deleteLesson.mutate({ id: lesson.id }, {
-                        onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetModuleQueryKey(id) })
-                      });
-                    }
-                  }}
-                >
+                <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10"
+                  onClick={() => confirm('Delete lesson?') && deleteLesson.mutate({ id: lesson.id }, {
+                    onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetModuleQueryKey(id) })
+                  })}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -335,19 +516,27 @@ function LessonManager({ params }: { params: { id: string } }) {
   );
 }
 
-export default function TutorPortal() {
-  const links = [
-    { href: '/tutor', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/tutor/modules', label: 'My Modules', icon: BookOpen },
-  ];
+// ── Placeholder pages ─────────────────────────────────────────────────────────
+const Placeholder = ({ title }: { title: string }) => (
+  <div className="max-w-6xl mx-auto">
+    <h1 className="text-3xl font-serif font-bold text-foreground mb-2">{title}</h1>
+    <p className="text-muted-foreground">This section is coming soon.</p>
+  </div>
+);
 
+// ── Root export ───────────────────────────────────────────────────────────────
+export default function TutorPortal() {
   return (
-    <PortalLayout role="Faculty" links={links}>
+    <TutorShell>
       <Switch>
         <Route path="/tutor" component={TutorDashboard} />
-        <Route path="/tutor/modules" component={ModulesManager} />
-        <Route path="/tutor/modules/:id" component={LessonManager} />
+        <Route path="/tutor/content" component={MyContent} />
+        <Route path="/tutor/content/:id" component={LessonManager} />
+        <Route path="/tutor/schedule">{() => <Placeholder title="Tutorial Schedule" />}</Route>
+        <Route path="/tutor/analytics">{() => <Placeholder title="Student Analytics" />}</Route>
+        <Route path="/tutor/help">{() => <Placeholder title="Help & Support" />}</Route>
+        <Route path="/tutor/settings">{() => <Placeholder title="Settings" />}</Route>
       </Switch>
-    </PortalLayout>
+    </TutorShell>
   );
 }
