@@ -152,15 +152,13 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
             </a>
           </div>
 
-          {/* Custom heading */}
-          <div className="mb-6">
-            <h1 className="font-serif text-2xl font-bold text-primary mb-1">
-              {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {mode === 'sign-in' ? 'Sign in to continue your learning journey.' : 'Start your LL.B journey with Tolumo.'}
-            </p>
-          </div>
+          {/* Custom heading — sign-in only; sign-up form owns its own heading */}
+          {mode === 'sign-in' && (
+            <div className="mb-6">
+              <h1 className="font-serif text-2xl font-bold text-primary mb-1">Welcome back</h1>
+              <p className="text-sm text-muted-foreground">Sign in to continue your learning journey.</p>
+            </div>
+          )}
 
           {/* Clerk component */}
           <div className="rounded-xl bg-primary px-6 py-6">
