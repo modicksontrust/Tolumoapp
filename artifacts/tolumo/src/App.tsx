@@ -163,7 +163,9 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
           </div>
 
           {/* Clerk component */}
-          {children}
+          <div className="rounded-xl border border-border bg-white px-6 py-6">
+            {children}
+          </div>
 
           {/* Demo buttons */}
           <div className="mt-6 space-y-3">
