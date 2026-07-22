@@ -211,6 +211,11 @@ html {
   background: transparent !important;
 }
 
+/* Remove gap between form fields */
+.cl-form {
+  gap: 0 !important;
+}
+
 /* Force Continue/Sign In button to gold on dark green card */
 .cl-formButtonPrimary {
   background-color: hsl(43, 74%, 49%) !important;
