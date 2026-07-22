@@ -392,63 +392,81 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 md:py-32 bg-white scroll-mt-16">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Simple, Transparent Pricing</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Invest in your legal career with plans built for every stage of your LL.B journey.
+        <section id="pricing" className="py-20 md:py-28 bg-primary scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            {/* Header */}
+            <div className="text-center mb-14">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-3">Transparent Pricing</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">Straightforward. No Hidden Fees.</h2>
+              <p className="text-white/60 max-w-md mx-auto text-sm leading-relaxed">
+                One subscription unlocks every module for your selected academic year. Save more with our annual plan or top up with individual carryover modules as needed.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
-              <div className="rounded-2xl border border-border bg-background p-8 flex flex-col">
-                <h3 className="font-serif text-2xl font-bold text-primary mb-2">Per Module</h3>
-                <p className="text-sm text-muted-foreground mb-6">Perfect for retakes or focused study.</p>
-                <div className="mb-6">
-                  <span className="font-serif text-4xl font-bold text-primary">₦25,000</span>
-                  <span className="text-muted-foreground text-sm"> / module</span>
+            {/* Cards */}
+            <div className="grid md:grid-cols-3 gap-5 items-stretch mb-5">
+              {/* Monthly — Most Popular */}
+              <div className="relative rounded-2xl border-2 border-accent bg-white/5 p-8 flex flex-col">
+                <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider mb-5">Most Popular</span>
+                <h3 className="font-serif text-2xl font-bold text-white mb-1">Monthly</h3>
+                <p className="text-sm text-white/50 mb-6">Full year access, billed monthly</p>
+                <div className="mb-8">
+                  <span className="font-serif text-4xl font-bold text-white">₦3,500</span>
+                  <span className="text-white/50 text-sm"> / month</span>
                 </div>
-                <ul className="space-y-3 text-sm text-muted-foreground mb-8 flex-1">
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Full video lecture library for one module</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> AI-guided revision & past questions</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Progress tracking</li>
+                <ul className="space-y-3 text-sm text-white/70 mb-8 flex-1">
+                  {['All module videos for your year', 'Downloadable lecture notes & slides', 'AI Revision Coach (5 Q&As per topic)', 'MCQ + practical essay quizzes', 'Tutorial session marketplace access', 'Certificate of completion', 'Cancel any time'].map(f => (
+                    <li key={f} className="flex gap-2 items-start"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />{f}</li>
+                  ))}
                 </ul>
-                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-md border border-primary/20 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white">Get Started</Link>
+                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-primary text-sm font-bold text-white transition-colors hover:bg-primary/80">
+                  Start Monthly Plan
+                </Link>
               </div>
 
-              <div className="relative rounded-2xl border-2 border-accent bg-primary p-8 flex flex-col shadow-xl shadow-primary/20">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">Most Popular</div>
-                <h3 className="font-serif text-2xl font-bold text-white mb-2">Full Year</h3>
-                <p className="text-sm text-white/70 mb-6">Everything you need to pass the year.</p>
-                <div className="mb-6">
-                  <span className="font-serif text-4xl font-bold text-white">₦180,000</span>
-                  <span className="text-white/70 text-sm"> / year</span>
+              {/* Annual */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 flex flex-col">
+                <span className="inline-flex w-fit items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold text-white/80 uppercase tracking-wider mb-5">Save ₦7,000/year</span>
+                <h3 className="font-serif text-2xl font-bold text-white mb-1">Annual</h3>
+                <p className="text-sm text-white/50 mb-6">Full year access, paid upfront</p>
+                <div className="mb-8">
+                  <span className="font-serif text-4xl font-bold text-white">₦35,000</span>
+                  <span className="text-white/50 text-sm"> / year</span>
+                  <p className="text-sm text-white/30 line-through mt-1">₦42,000 if billed monthly</p>
                 </div>
-                <ul className="space-y-3 text-sm text-white/80 mb-8 flex-1">
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> All modules for your academic year</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Monthly 1-on-1 tutor sessions</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> AI Revision Coach with instant feedback</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Priority support</li>
+                <ul className="space-y-3 text-sm text-white/70 mb-8 flex-1">
+                  {['Everything in Monthly', '2 months free vs monthly plan', 'Priority support', 'Early access to new modules', 'Annual recap progress report'].map(f => (
+                    <li key={f} className="flex gap-2 items-start"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />{f}</li>
+                  ))}
                 </ul>
-                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accent text-sm font-semibold text-white shadow transition-colors hover:bg-accent/90">Enroll Now</Link>
+                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-accent text-sm font-bold text-white transition-colors hover:bg-accent/90">
+                  Start Annual Plan
+                </Link>
               </div>
 
-              <div className="rounded-2xl border border-border bg-background p-8 flex flex-col">
-                <h3 className="font-serif text-2xl font-bold text-primary mb-2">Full Degree</h3>
-                <p className="text-sm text-muted-foreground mb-6">The complete 5-year LL.B pathway.</p>
-                <div className="mb-6">
-                  <span className="font-serif text-4xl font-bold text-primary">₦750,000</span>
-                  <span className="text-muted-foreground text-sm"> one-time</span>
+              {/* Carryover */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 flex flex-col">
+                <span className="inline-flex w-fit items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold text-white/80 uppercase tracking-wider mb-5">Add-On</span>
+                <h3 className="font-serif text-2xl font-bold text-white mb-1">Carryover Module</h3>
+                <p className="text-sm text-white/50 mb-6">Purchase individual failed modules</p>
+                <div className="mb-8">
+                  <span className="font-serif text-4xl font-bold text-white">₦7,500</span>
+                  <span className="text-white/50 text-sm"> / module</span>
                 </div>
-                <ul className="space-y-3 text-sm text-muted-foreground mb-8 flex-1">
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> All 5 years of the LL.B curriculum</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Unlimited tutor sessions</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Bar exam preparation resources</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" /> Dedicated academic advisor</li>
+                <ul className="space-y-3 text-sm text-white/70 mb-8 flex-1">
+                  {['Any single NUC-approved module', 'Instant access after payment', 'Full video, notes & quizzes', 'No subscription required', 'Combines with any active plan'].map(f => (
+                    <li key={f} className="flex gap-2 items-start"><CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />{f}</li>
+                  ))}
                 </ul>
-                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-md border border-primary/20 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white">Get Started</Link>
+                <Link href="/sign-up" className="inline-flex h-11 w-full items-center justify-center rounded-xl border border-white/20 text-sm font-bold text-white transition-colors hover:bg-white/10">
+                  Browse Carryover Modules
+                </Link>
               </div>
+            </div>
+
+            {/* Footer note */}
+            <div className="rounded-xl border border-white/10 bg-white/5 px-6 py-4 text-center text-sm text-white/50">
+              <span className="font-semibold text-white/80">Tutorial sessions are priced separately</span> — set by each lecturer (typically ₦1,500–₦3,500 per session) and booked directly through the marketplace. Platform fee of 15% applies per booking.
             </div>
           </div>
         </section>
