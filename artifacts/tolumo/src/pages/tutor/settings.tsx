@@ -136,6 +136,8 @@ function ProfileSection() {
   );
   const [title, setTitle] = useState('Professor of Constitutional Law');
   const [saved, setSaved] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const email = user?.primaryEmailAddress?.emailAddress || 'o.adeyemi@tolumo.com';
   const initials = name.split(' ').map(s => s[0]).join('').toUpperCase().slice(0, 2);
@@ -145,6 +147,13 @@ function ProfileSection() {
     setTimeout(() => setSaved(false), 2500);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPhotoUrl(url);
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -152,12 +161,29 @@ function ProfileSection() {
         <p className="text-sm text-muted-foreground mt-0.5">Manage your account identity and personal details.</p>
       </div>
 
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
       {/* Avatar card */}
       <div className="flex items-center gap-4 p-5 bg-stone-50 border border-stone-200 rounded-xl">
         <div className="relative">
-          <div className="h-16 w-16 rounded-full bg-[#1a4d35] text-white flex items-center justify-center text-xl font-bold">
-            {initials}
-          </div>
+          {photoUrl ? (
+            <img
+              src={photoUrl}
+              alt="Profile"
+              className="h-16 w-16 rounded-full object-cover"
+            />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-[#1a4d35] text-white flex items-center justify-center text-xl font-bold">
+              {initials}
+            </div>
+          )}
           <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-green-500 border-2 border-white flex items-center justify-center">
             <CheckCircle className="h-2.5 w-2.5 text-white" />
           </div>
@@ -169,9 +195,20 @@ function ProfileSection() {
             <span className="flex items-center gap-1 text-xs font-semibold text-green-600">
               <CheckCircle className="h-3.5 w-3.5" /> Verified
             </span>
-            <button className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline">
-              <Camera className="h-3.5 w-3.5" /> Upload photo
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+            >
+              <Camera className="h-3.5 w-3.5" /> {photoUrl ? 'Change photo' : 'Upload photo'}
             </button>
+            {photoUrl && (
+              <button
+                onClick={() => { setPhotoUrl(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+                className="text-xs text-red-500 font-medium hover:underline"
+              >
+                Remove
+              </button>
+            )}
           </div>
         </div>
       </div>
