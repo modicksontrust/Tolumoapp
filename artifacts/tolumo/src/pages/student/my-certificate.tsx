@@ -1,118 +1,86 @@
 import React from 'react';
-import { useUser } from '@clerk/react';
-import { Award, CheckCircle2, Lock, Download, Share2, BookOpen } from 'lucide-react';
+import { Target } from 'lucide-react';
 
 const MODULES = [
-  { code: 'LAW 201', title: 'Constitutional Law', done: 8, total: 12, pct: 67 },
-  { code: 'LAW 202', title: 'Law of Contract', done: 4, total: 10, pct: 40 },
-  { code: 'LAW 203', title: 'Criminal Law I', done: 6, total: 11, pct: 55 },
-  { code: 'LAW 204', title: 'Law of Torts', done: 2, total: 9, pct: 22 },
-  { code: 'LAW 205', title: 'Jurisprudence', done: 1, total: 8, pct: 13 },
-  { code: 'LAW 206', title: 'Land Law I', done: 0, total: 10, pct: 0 },
+  { code: 'LAW 201', title: 'Constitutional Law',  done: 3,  total: 12 },
+  { code: 'LAW 202', title: 'Law of Contract',     done: 0,  total: 10 },
+  { code: 'LAW 203', title: 'Criminal Law I',      done: 0,  total: 11 },
+  { code: 'LAW 204', title: 'Law of Torts',        done: 0,  total: 9  },
+  { code: 'LAW 205', title: 'Jurisprudence',       done: 0,  total: 8  },
+  { code: 'LAW 206', title: 'Land Law I',          done: 0,  total: 10 },
 ];
 
 export default function MyCertificate() {
-  const { user } = useUser();
-  const displayName = user?.fullName || 'Chisom Nwosu';
-
-  const totalTopics = MODULES.reduce((s, m) => s + m.total, 0);
-  const doneTopics = MODULES.reduce((s, m) => s + m.done, 0);
-  const overallPct = Math.round((doneTopics / totalTopics) * 100);
-  const allComplete = overallPct === 100;
-
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-serif font-bold text-foreground">My Certificate</h1>
-        <p className="text-muted-foreground mt-0.5">Complete all Year 2 topics to earn your Tolumo LL.B Certificate of Completion.</p>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          Awarded upon completing all NUC-approved modules in your selected academic year
+        </p>
       </div>
 
-      {/* Certificate preview */}
-      <div className={`relative rounded-2xl overflow-hidden border-2 ${allComplete ? 'border-accent shadow-lg shadow-accent/20' : 'border-stone-200'}`}>
-        <div className="bg-gradient-to-br from-[#1a4d35] to-[#0f2e20] px-10 py-10 text-white text-center relative">
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_50%_50%,white_1px,transparent_1px)] bg-[length:24px_24px]" />
-          <div className="relative">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-px flex-1 bg-white/20" />
-              <div className="h-14 w-14 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                <Award className="h-8 w-8 text-accent" />
-              </div>
-              <div className="h-px flex-1 bg-white/20" />
-            </div>
-            <p className="text-xs font-bold text-white/50 uppercase tracking-[0.3em] mb-2">Certificate of Completion</p>
-            <h2 className="text-2xl font-serif font-bold text-white mb-1">Tolumo LL.B Learning Platform</h2>
-            <p className="text-sm text-white/60 mb-8">Year 2 (200 Level) — Nigerian Law Programme</p>
-            {allComplete ? (
-              <>
-                <p className="text-sm text-white/60 mb-2">This certifies that</p>
-                <p className="text-3xl font-serif font-bold text-accent mb-2">{displayName}</p>
-                <p className="text-sm text-white/60 mb-6">has successfully completed all 60 topics across 6 Year 2 LL.B modules with a passing grade.</p>
-                <div className="flex items-center justify-center gap-3">
-                  <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors">
-                    <Download className="h-4 w-4" /> Download PDF
-                  </button>
-                  <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/30 text-white font-semibold text-sm hover:bg-white/10 transition-colors">
-                    <Share2 className="h-4 w-4" /> Share
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="space-y-3">
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden w-64 mx-auto">
-                  <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${overallPct}%` }} />
-                </div>
-                <p className="text-sm text-white/70">{overallPct}% complete — {doneTopics}/{totalTopics} topics done</p>
-                <div className="flex items-center justify-center gap-2 text-sm text-white/40">
-                  <Lock className="h-4 w-4" /> Complete all topics to unlock your certificate
-                </div>
-              </div>
-            )}
+      {/* Requirements card */}
+      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+        {/* Card header */}
+        <div className="flex items-start gap-4 px-6 py-5 border-b border-stone-100">
+          <div className="h-9 w-9 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+            <Target className="h-4.5 w-4.5 text-amber-600" style={{ height: '1.125rem', width: '1.125rem' }} />
+          </div>
+          <div>
+            <p className="font-bold text-foreground">Certificate Requirements — Year 2</p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Complete ALL topics in ALL modules below to unlock your certificate
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Module progress */}
-      <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-stone-100">
-          <h2 className="font-serif font-bold text-foreground">Module Completion</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">Complete every topic in every module to earn your certificate.</p>
-        </div>
+        {/* Module rows */}
         <div className="divide-y divide-stone-100">
-          {MODULES.map(m => (
-            <div key={m.code} className="px-6 py-4 flex items-center gap-4">
-              <div className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${m.pct === 100 ? 'bg-green-100' : 'bg-stone-100'}`}>
-                {m.pct === 100 ? (
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                ) : (
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1.5">
-                  <div>
-                    <span className="text-[10px] font-bold text-muted-foreground">{m.code}</span>
-                    <p className="font-medium text-sm text-foreground">{m.title}</p>
+          {MODULES.map(m => {
+            const pct = m.total > 0 ? Math.round((m.done / m.total) * 100) : 0;
+            const complete = pct === 100;
+            return (
+              <div key={m.code} className="px-6 py-4 flex items-start gap-4">
+                {/* Radio circle */}
+                <div className={`mt-0.5 h-5 w-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors
+                  ${complete ? 'border-[#1a4d35] bg-[#1a4d35]' : 'border-stone-300 bg-white'}`}>
+                  {complete && <div className="h-2 w-2 rounded-full bg-white" />}
+                </div>
+
+                {/* Text + bar */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-3 mb-1.5">
+                    <div>
+                      <p className="font-semibold text-sm text-foreground leading-tight">{m.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{m.code} · {m.done}/{m.total} topics completed</p>
+                    </div>
+                    <span className={`text-sm font-bold shrink-0 ${complete ? 'text-[#1a4d35]' : pct > 0 ? 'text-[#1a4d35]' : 'text-muted-foreground'}`}>
+                      {pct}%
+                    </span>
                   </div>
-                  <span className={`text-sm font-bold ${m.pct === 100 ? 'text-green-600' : 'text-primary'}`}>{m.pct}%</span>
+                  <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#1a4d35] rounded-full transition-all"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full transition-all ${m.pct === 100 ? 'bg-green-500' : 'bg-primary'}`} style={{ width: `${m.pct}%` }} />
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-1">{m.done}/{m.total} topics completed</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* Amber callout */}
+        <div className="mx-6 mb-6 mt-2 rounded-xl bg-amber-50 border border-amber-100 px-5 py-4 flex items-start gap-3">
+          <span className="text-amber-500 shrink-0 mt-0.5 text-base">ⓘ</span>
+          <p className="text-sm text-foreground leading-relaxed">
+            <span className="font-semibold">Remember:</span> For each module, you must complete every topic by watching videos,
+            reviewing notes, completing the AI Q&amp;A, and passing all tests before moving to the next topic.
+          </p>
         </div>
       </div>
-
-      {!allComplete && (
-        <div className="bg-primary/5 border border-primary/15 rounded-xl p-5 text-center">
-          <p className="text-sm text-foreground font-medium mb-1">
-            You need <strong>{totalTopics - doneTopics} more topics</strong> to unlock your certificate.
-          </p>
-          <p className="text-xs text-muted-foreground">At your current pace, you're on track to complete Year 2 within the semester.</p>
-        </div>
-      )}
     </div>
   );
 }
