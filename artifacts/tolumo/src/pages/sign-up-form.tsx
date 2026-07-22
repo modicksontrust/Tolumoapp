@@ -83,7 +83,7 @@ export default function CustomSignUpForm() {
     setError('');
     setLoading(true);
     try {
-      await signUp.create({
+      const result = await signUp.create({
         firstName: form.firstName,
         lastName: form.lastName,
         emailAddress: form.email,
@@ -97,8 +97,13 @@ export default function CustomSignUpForm() {
           gender: form.gender,
         },
       });
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-      setStep('verify');
+      if (result.status === 'complete') {
+        window.location.href = '/';
+      } else {
+        // Email verification required — show OTP step
+        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+        setStep('verify');
+      }
     } catch (err: any) {
       setError(err?.errors?.[0]?.longMessage ?? err?.message ?? 'Something went wrong.');
     } finally {
