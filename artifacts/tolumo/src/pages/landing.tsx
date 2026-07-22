@@ -43,7 +43,7 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-primary via-primary to-[#2d5a3d]/90" />
 
           <div className="container relative mx-auto px-4 md:px-6 max-w-6xl">
-            <div className="grid md:grid-cols-2 gap-12 items-center min-h-[92vh] py-24 md:py-32">
+            <div className="grid md:grid-cols-2 gap-12 items-center py-20 md:py-24">
 
               {/* Left: copy */}
               <div>
@@ -186,12 +186,12 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {(modules ?? []).slice(0, 6).map((mod, i) => {
                 const images = [
-                  "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=800&auto=format&fit=crop",
-                  "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&auto=format&fit=crop",
-                  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?q=80&w=800&auto=format&fit=crop",
-                  "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=800&auto=format&fit=crop",
-                  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800&auto=format&fit=crop",
-                  "https://images.unsplash.com/photo-1554224154-26032ffc0d07?q=80&w=800&auto=format&fit=crop",
+                  "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=800&auto=format&fit=crop", // grand law library
+                  "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&auto=format&fit=crop", // signing contract
+                  "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop", // gavel on desk
+                  "https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=800&auto=format&fit=crop", // law books shelf
+                  "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?q=80&w=800&auto=format&fit=crop", // scales of justice
+                  "https://images.unsplash.com/photo-1554224154-26032ffc0d07?q=80&w=800&auto=format&fit=crop", // person writing
                 ];
                 const ratings = [4.9, 4.8, 4.9, 4.7, 4.8, 4.6];
                 const reviews = [3840, 2910, 2140, 1980, 1650, 1430];
