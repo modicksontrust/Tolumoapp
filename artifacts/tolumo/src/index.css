@@ -226,3 +226,41 @@ html {
 .cl-formButtonPrimary:hover {
   background-color: hsl(43, 74%, 42%) !important;
 }
+
+/* White text for Clerk screens rendered inside the dark green card */
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-identityPreviewText,
+.cl-identityPreviewEditButton,
+.cl-formResendCodeLink,
+.cl-footerActionText,
+.cl-formFieldLabel,
+.cl-formFieldHintText,
+.cl-otpCodeFieldInput,
+.cl-alternativeMethodsBlockButton,
+.cl-alternativeMethodsBlockButtonText {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.cl-headerSubtitle,
+.cl-footerActionText,
+.cl-formFieldHintText {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* OTP input boxes on dark card */
+.cl-otpCodeFieldInput {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+/* Resend / alternative action links */
+.cl-formResendCodeLink,
+.cl-footerActionLink {
+  color: hsl(43, 74%, 65%) !important;
+}
+.cl-formResendCodeLink:hover,
+.cl-footerActionLink:hover {
+  color: hsl(43, 74%, 75%) !important;
+}
