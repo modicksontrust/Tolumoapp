@@ -1,103 +1,169 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import {
-  CheckCircle2, Lock, ChevronLeft, ChevronRight, Send,
-  Play, SkipBack, SkipForward, Volume2, BookOpen,
-  MessageCircle, FileText, Search, ClipboardList, AlertCircle,
+  CheckCircle2, Lock, ChevronLeft, ChevronRight, ChevronDown,
+  Play, Pause, SkipBack, SkipForward, Volume2,
+  MessageCircle, Search, ClipboardList, AlertCircle,
+  Headphones, BookOpen, Scale, FileText, Gavel, Newspaper,
+  Clock, Plus,
 } from 'lucide-react';
 
 // ── Module & topics ────────────────────────────────────────────────────────────
 const MODULE = { code: 'LAW 201', name: 'Constitutional Law 201', tutor: 'Prof. Oluwaseun Adeyemi' };
 
 const TOPICS = [
-  { id: 1, title: 'Introduction to Nigerian Legal System',    status: 'current'   as const, duration: '47:23' },
-  { id: 2, title: 'Separation of Powers',                     status: 'done'      as const, duration: '38:55' },
-  { id: 3, title: 'Federalism & Devolution of Powers',        status: 'locked'    as const, duration: '52:10' },
-  { id: 4, title: 'Fundamental Rights under Chapter IV',      status: 'locked'    as const, duration: '41:30' },
+  { id: 1, title: 'Introduction to Nigerian Legal System',  status: 'current' as const, duration: '47:23' },
+  { id: 2, title: 'Separation of Powers',                   status: 'done'    as const, duration: '38:55' },
+  { id: 3, title: 'Federalism & Devolution of Powers',      status: 'locked'  as const, duration: '52:10' },
+  { id: 4, title: 'Fundamental Rights under Chapter IV',    status: 'locked'  as const, duration: '41:30' },
 ];
 
 const TUTOR = {
   initials: 'OA',
   name: 'Prof. Oluwaseun Adeyemi',
   creds: 'LL.B (Hons), LL.M, PhD · Founding Lecturer',
-  bio: 'In this lecture, we explore the constitutional foundations of Nigerian federalism — examining Sections 2–4 of the CFRN 1999 and the distribution of legislative powers through the Second Schedule\'s Exclusive and Concurrent Lists.',
+  bio: "In this lecture, we explore the constitutional foundations of Nigerian federalism — examining Sections 2–4 of the CFRN 1999 and the distribution of legislative powers through the Second Schedule's Exclusive and Concurrent Lists.",
 };
 
-// ── Step content ───────────────────────────────────────────────────────────────
-const NOTES_CONTENT = `## Federalism & Devolution of Powers
-
-### 1. The Structure of Nigerian Federalism
-
-Nigeria operates a federal system under the 1999 Constitution (as amended). Legislative powers are divided between the National Assembly (Federal) and the 36 State Houses of Assembly.
-
-### 2. The Second Schedule
-
-**Part I — Exclusive Legislative List**
-Only the National Assembly may legislate on the 68 listed items (defence, currency, customs, immigration, petroleum). States have no competence here.
-
-**Part II — Concurrent Legislative List**
-Both Federal and State legislatures may legislate on 30 matters (education, electricity, health, road traffic). Federal law prevails on conflict (s.4(5)).
-
-**Residual Powers**
-Matters not listed in either schedule vest exclusively in States.
-
-### 3. Section 4(5) — The Inconsistency Clause
-
-*"If any Law enacted by the House of Assembly of a State is inconsistent with any law validly made by the National Assembly, the law made by the National Assembly shall prevail, and that other Law shall to the extent of its inconsistency be void."*
-
-**Test of Inconsistency:** Impossibility of compliance or occupied-field doctrine.
-
-### 4. Key Cases
-
-**A-G (Ogun State) v. A-G (Federation) [1982]** — Federal supremacy upheld on concurrent matters.
-
-**Bronik Motors Ltd v. Wema Bank Ltd [1983]** — State banking law void; banking is an exclusive federal matter.
-
-**Lakanmi v. A-G (Western State) [1971]** — Constitution supreme over military decrees.`;
-
-const SUMMARY_POINTS = [
-  "Nigeria's federal system divides legislative powers between the National Assembly and State Houses of Assembly under the 1999 Constitution.",
-  "The Second Schedule Part I (Exclusive List, 68 items) grants sole competence to the National Assembly — states cannot legislate here.",
-  "The Concurrent List (Part II, 30 items) allows both tiers to legislate, but s.4(5) ensures Federal law prevails on any inconsistency.",
-  "Residual powers vest in States for matters not appearing in either Schedule.",
-  "The two inconsistency tests: (1) impossibility of simultaneous compliance; (2) occupied field doctrine.",
-  "Leading cases: A-G Ogun v. Federation [1982], Bronik Motors [1983], Lakanmi [1971].",
+// ── Read / Listen ──────────────────────────────────────────────────────────────
+const NOTES_SECTIONS = [
+  {
+    heading: '1. Nature of the Nigerian Federal State',
+    paragraphs: [
+      'Nigeria operates a federal system of government as expressly stated in Section 2(2) of the Constitution of the Federal Republic of Nigeria 1999 (as amended): "Nigeria shall be a Federation consisting of States and a Federal Capital Territory."',
+      'The distinguishing feature of federalism is the constitutional distribution of powers between the central (federal) government and the component units (states), with each deriving its authority independently from the Constitution itself — not from the other tier.',
+    ],
+  },
+  {
+    heading: '2. Legislative Powers Under Section 4',
+    paragraphs: [
+      'Section 4 of the CFRN is the cornerstone provision for legislative competence. It vests legislative powers in the National Assembly (s. 4(1)) and State Houses of Assembly (s. 4(6)) respectively.',
+    ],
+    keyProvision: '"The National Assembly shall have power to make laws for the peace, order and good government of the Federation with respect to any matter included in the Exclusive Legislative List set out in Part I of the Second Schedule…" — Section 4(2), CFRN 1999',
+  },
+  {
+    heading: '3. The Legislative Lists',
+    paragraphs: [
+      'The Second Schedule contains two lists that distribute legislative competence between the federal and state tiers.',
+      'Part I — Exclusive Legislative List: 68 items on which only the National Assembly may legislate (defence, currency, customs, aviation, petroleum). States have no competence here.',
+      'Part II — Concurrent Legislative List: 30 items where both tiers may legislate (education, electricity, health, road traffic). Federal law prevails on any conflict (s. 4(5)).',
+      'Residual Powers: Matters not listed in either schedule vest exclusively in State Houses of Assembly.',
+    ],
+  },
+  {
+    heading: '4. The Inconsistency Clause — Section 4(5)',
+    paragraphs: [
+      '"If any Law enacted by the House of Assembly of a State is inconsistent with any law validly made by the National Assembly, the law made by the National Assembly shall prevail, and that other Law shall to the extent of its inconsistency be void."',
+      'Two inconsistency tests apply: (1) Impossibility — is simultaneous compliance with both laws impossible? (2) Covering the Field — has Federal Parliament legislated so comprehensively as to impliedly exclude State legislation on the same matter?',
+    ],
+  },
 ];
 
-const RESEARCH = [
-  { type: 'Statute', ref: 'Constitution of the Federal Republic of Nigeria, 1999 (as amended) — ss.4, Second Schedule' },
-  { type: 'Case', ref: 'A-G (Ogun State) v. A-G (Federation) [1982] 3 NCLR 583' },
-  { type: 'Case', ref: 'Bronik Motors Ltd v. Wema Bank Ltd [1983] 1 SCNLR 296' },
-  { type: 'Case', ref: 'Lakanmi v. A-G (Western State) [1971] 1 UILR 201' },
-  { type: 'Article', ref: 'Nwabueze, B.O., "Nigerian Federal Finance" (1983) Nwamife Publishers' },
-  { type: 'Article', ref: 'Ojo, J.D., "The Devolution of Powers in Nigeria" (2005) 19 African Journal of International Law 122' },
+// ── Summary ────────────────────────────────────────────────────────────────────
+const LEARNING_OUTCOMES = [
+  'Define federalism and explain its distinguishing features from unitary systems',
+  "Describe the constitutional basis of Nigeria's federal structure under Section 2(2) CFRN 1999",
+  'Distinguish between the Exclusive List, Concurrent List, and Residual Powers under Section 4',
+  "Apply the 'covering the field' doctrine to resolve conflicts between federal and state legislation",
+  "Analyse the significance of A.-G. Ogun State v A.-G. Federation (1982) to Nigerian federalism",
 ];
 
+const KEY_CONCEPTS = [
+  { term: 'Federalism', def: 'Constitutional distribution of powers between a central government and component units, each deriving authority directly from the Constitution.' },
+  { term: 'Exclusive Legislative List', def: 'Part I, Second Schedule, CFRN — 68 items on which only the National Assembly may legislate (e.g. defence, aviation, currency).' },
+  { term: 'Concurrent List', def: 'Part II, Second Schedule — 30 items on which both federal and state legislatures may legislate; federal law prevails on conflict (s. 4(5)).' },
+  { term: 'Residual Powers', def: 'Any matter not on either list falls to State Houses of Assembly — a core feature of Nigerian federalism.' },
+  { term: 'Covering the Field', def: "Where federal legislation comprehensively regulates a concurrent-list matter, it 'covers the field' and renders inconsistent state legislation inoperative." },
+  { term: 'Section 4(5) CFRN', def: '"If any law enacted by the House of Assembly of a State is inconsistent with any law validly made by the National Assembly, the law made by the National Assembly shall prevail..."' },
+];
+
+const SELF_CHECK = [
+  'Can you name the three lists and give two examples from each?',
+  'What happens when federal and state laws conflict on the Concurrent List?',
+  'Why is A.-G. Ogun State v A.-G. Federation significant?',
+  'What does Section 2(2) CFRN establish?',
+];
+
+// ── Research ───────────────────────────────────────────────────────────────────
+const TRIAX_LIBRARY = {
+  cases: [
+    { name: 'A.-G. Ogun State v A.-G. Federation', citation: '(1982) 3 NCLR 166' },
+    { name: 'Tukur v Government of Gongola State', citation: '(1989) 4 NWLR (Pt 117) 517' },
+    { name: 'General Sani Abacha v Gani Fawehinmi', citation: '(2000) 6 NWLR (Pt 660) 228' },
+  ],
+  laws: [
+    { name: 'CFRN 1999', desc: 'Constitution of the Federal Republic of Nigeria 1999' },
+    { name: 'LUA 1978', desc: 'Land Use Act 1978' },
+  ],
+  court: [{ name: 'Supreme Court Rules 2014' }],
+  judgements: [{ name: 'Okeke v Federal Republic of Nigeria — Digital Evidence Admissibility', court: 'Supreme Court of Nigeria · 11 April 2023' }],
+  journals: [
+    { name: 'The Doctrine of Covering the Field in Nigerian Federalism', by: 'Prof. T.O. Elias · Nigerian Law Journal' },
+    { name: 'Domestication of International Human Rights Treaties in Nigeria', by: 'Prof. B.O. Nwabueze · University of Lagos Law Review' },
+  ],
+  textbooks: [{ name: 'Nigerian Constitutional Law', by: 'Prof. B.O. Nwabueze' }],
+};
+
+const RESEARCH_QUESTIONS = [
+  "How has the Supreme Court applied 'covering the field' after 1982?",
+  'What items are on the Exclusive List relevant to technology and communications?',
+  'How do other federal constitutions handle concurrent-list conflicts?',
+  'What is the effect of Section 315 CFRN on existing laws?',
+];
+
+// ── Q&A ────────────────────────────────────────────────────────────────────────
 const AI_QA = [
   { q: 'What is the effect of s.4(5) of the 1999 Constitution?', a: 'Section 4(5) provides that where a State law is inconsistent with a valid Act of the National Assembly, the Federal law prevails and the State law is void to the extent of the inconsistency — the Federal Supremacy Clause.' },
   { q: 'Name the two parts of the Second Schedule.', a: 'Part I: Exclusive Legislative List (68 items — Federal only). Part II: Concurrent Legislative List (30 items — both Federal and State, Federal prevails on conflict).' },
   { q: 'What are residual powers?', a: 'Legislative matters not listed in either Schedule. They vest exclusively in States by exclusion from the Federal lists — States may legislate freely on these matters.' },
-  { q: 'Apply Bronik Motors to a scenario where a State enacts a banking regulation.', a: 'Banking is an Exclusive List item. Applying Bronik Motors, any State banking law would be void under s.4(5) — the National Assembly has exclusive competence and has occupied the field via BOFIA.' },
+  { q: "Apply the 'covering the field' doctrine to a State education regulation.", a: "Education is on the Concurrent List. If the National Assembly has enacted a comprehensive education statute occupying the field, a conflicting State education law is void under s.4(5) — the Federal law is deemed to have 'covered the field'." },
   { q: 'What test is used to determine inconsistency under s.4(5)?', a: 'Two tests: (1) Impossibility — is it impossible to obey both laws simultaneously? (2) Occupied field — has Federal Parliament legislated so comprehensively as to impliedly exclude State legislation?' },
 ];
 
+// ── Quiz ───────────────────────────────────────────────────────────────────────
 const MCQ = [
-  { q: 'Under the 1999 Constitution, which Schedule contains the Exclusive Legislative List?', opts: ['First Schedule — Part I', 'Second Schedule — Part I', 'Second Schedule — Part II', 'Third Schedule'], ans: 1 },
-  { q: 'What does s.4(5) of the 1999 Constitution provide?', opts: ['State law always prevails over Federal law', 'Federal law prevails over inconsistent State law', 'Both have equal validity', 'Emergency powers override all legislation'], ans: 1 },
-  { q: 'In Bronik Motors v. Wema Bank [1983], the Supreme Court held a State banking law was:', opts: ['Valid and enforceable', 'Void for inconsistency with Federal law', 'Applicable only in that State', 'Subject to Presidential assent'], ans: 1 },
-  { q: 'Residual legislative powers under the 1999 Constitution vest in:', opts: ['The National Assembly exclusively', 'The President', 'State Houses of Assembly exclusively', 'Both tiers jointly'], ans: 2 },
-  { q: 'The "occupied field" doctrine in Nigerian federalism means:', opts: ['Emergency powers restrict State action', 'Federal Parliament has legislated so comprehensively as to exclude State legislation', 'Land use regulated by States', 'Military administration of states'], ans: 1 },
+  {
+    q: 'In a federal state, legislative powers are typically:',
+    opts: ['Concentrated in the central government', 'Distributed between central and component units', 'Held exclusively by state governments', 'Determined by the judiciary'],
+    ans: 1,
+  },
+  {
+    q: 'Which Chapter of the 1999 CFRN deals with Fundamental Rights?',
+    opts: ['Chapter I', 'Chapter II', 'Chapter III', 'Chapter IV'],
+    ans: 3,
+  },
+  {
+    q: 'The Exclusive Legislative List in Nigeria is contained in:',
+    opts: ['Section 4 and Part I of the Second Schedule', 'Section 5 and Part II of the First Schedule', 'Section 6 and Part III', 'Section 7 and Part IV'],
+    ans: 0,
+  },
+  {
+    q: 'Which provision grants the National Assembly power to legislate on the Exclusive List?',
+    opts: ['Section 3', 'Section 4(2)', 'Section 5(1)', 'Section 6(4)'],
+    ans: 1,
+  },
+  {
+    q: 'Residual legislative powers in Nigeria are exercised by:',
+    opts: ['The National Assembly', 'The President', 'The Judiciary', 'State Houses of Assembly'],
+    ans: 3,
+  },
 ];
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function fmt(s: number) {
+  const m = Math.floor(s / 60), ss = s % 60;
+  return `${m}:${ss.toString().padStart(2, '0')}`;
+}
 
 // ── Step config ────────────────────────────────────────────────────────────────
 type StepId = 'watch' | 'read' | 'summary' | 'research' | 'qa' | 'quiz';
-const STEPS: { id: StepId; label: string; short: string }[] = [
-  { id: 'watch',    label: 'Watch',         short: 'Watch' },
-  { id: 'read',     label: 'Read / Listen', short: 'Read / Listen' },
-  { id: 'summary',  label: 'Summary',       short: 'Summary' },
-  { id: 'research', label: 'Research',      short: 'Research' },
-  { id: 'qa',       label: 'Q&A',           short: 'Q&A' },
-  { id: 'quiz',     label: 'Quiz',          short: 'Quiz' },
+const STEPS: { id: StepId; label: string }[] = [
+  { id: 'watch',    label: 'Watch' },
+  { id: 'read',     label: 'Read / Listen' },
+  { id: 'summary',  label: 'Summary' },
+  { id: 'research', label: 'Research' },
+  { id: 'qa',       label: 'Q&A' },
+  { id: 'quiz',     label: 'Quiz' },
 ];
 
 // ── Main component ─────────────────────────────────────────────────────────────
@@ -106,17 +172,33 @@ export default function CurrentTopic() {
   const [currentTopicId, setCurrentTopicId] = useState(1);
   const [step, setStep] = useState<StepId>('watch');
   const [completedSteps, setCompletedSteps] = useState<Set<StepId>>(new Set());
+
+  // Watch
+  const [playing, setPlaying] = useState(false);
+
+  // Read
   const [notesRead, setNotesRead] = useState(false);
 
-  // Q&A state
+  // Research
+  const [expandedQ, setExpandedQ] = useState<number | null>(null);
+
+  // Q&A
   const [qaIndex, setQaIndex] = useState(0);
   const [showAns, setShowAns] = useState(false);
   const [completedQA, setCompletedQA] = useState<Set<number>>(new Set());
 
-  // Quiz state
+  // Quiz
   const [selected, setSelected] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
+  const [quizSecs, setQuizSecs] = useState(590); // 9:50
+
+  useEffect(() => {
+    if (step !== 'quiz' || submitted) return;
+    if (quizSecs <= 0) return;
+    const t = setInterval(() => setQuizSecs(s => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [step, submitted, quizSecs]);
 
   const markDone = (s: StepId) => setCompletedSteps(prev => new Set([...prev, s]));
 
@@ -133,21 +215,20 @@ export default function CurrentTopic() {
     if (i < stepOrder.length - 1) setStep(stepOrder[i + 1]);
   };
 
-  // Quiz submit
   const submitQuiz = () => {
     const correct = MCQ.filter((q, i) => selected[i] === q.ans).length;
     setSubmitted(true);
     if (correct >= 3) { setQuizPassed(true); markDone('quiz'); }
   };
+
   const resetAll = () => {
     setSelected({}); setSubmitted(false); setQuizPassed(false);
     setCompletedSteps(new Set()); setStep('watch');
-    setQaIndex(0); setShowAns(false); setCompletedQA(new Set()); setNotesRead(false);
+    setQaIndex(0); setShowAns(false); setCompletedQA(new Set());
+    setNotesRead(false); setPlaying(false); setQuizSecs(590);
   };
 
-  // Current topic & step
   const topic = TOPICS.find(t => t.id === currentTopicId) || TOPICS[0];
-  const stepIdx = stepOrder.indexOf(step);
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
@@ -168,7 +249,7 @@ export default function CurrentTopic() {
       </div>
 
       {/* Topic navigator */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {TOPICS.map(t => {
           const active = t.id === currentTopicId;
           return (
@@ -192,7 +273,7 @@ export default function CurrentTopic() {
       </div>
 
       {/* Step tab bar */}
-      <div className="flex items-center gap-0 bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="flex items-center bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
         {STEPS.map((s, i) => {
           const done = completedSteps.has(s.id);
           const active = step === s.id;
@@ -208,57 +289,57 @@ export default function CurrentTopic() {
                   accessible ? 'text-muted-foreground bg-white hover:bg-stone-50 hover:text-foreground' :
                   'text-stone-300 bg-stone-50 cursor-not-allowed'}`}
             >
-              {done && !active ? (
-                <CheckCircle2 className="h-3 w-3 shrink-0" />
-              ) : !accessible ? (
-                <span className="h-4 w-4 rounded-full border border-stone-300 flex items-center justify-center text-[9px] font-bold text-stone-400">{i + 1}</span>
-              ) : active && !done ? (
-                <span className="h-4 w-4 rounded-full border border-current flex items-center justify-center text-[9px] font-bold">{i + 1}</span>
-              ) : null}
-              <span className="hidden sm:inline">{s.short}</span>
+              {done && !active
+                ? <CheckCircle2 className="h-3 w-3 shrink-0" />
+                : <span className={`h-4 w-4 rounded-full border flex items-center justify-center text-[9px] font-bold
+                    ${active ? 'border-white text-white' : accessible ? 'border-stone-400 text-stone-500' : 'border-stone-300 text-stone-300'}`}>{i + 1}</span>
+              }
+              <span className="hidden sm:inline">{s.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* ── WATCH ── */}
+      {/* ══ WATCH ══ */}
       {step === 'watch' && (
         <div className="space-y-4">
-          {/* Video player */}
           <div className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-lg" style={{ aspectRatio: '16/9' }}>
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=675&fit=crop"
               alt="Lecture"
               className="w-full h-full object-cover opacity-80"
             />
-            {/* Play overlay */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <button className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors border border-white/30">
-                <Play className="h-8 w-8 text-white fill-white ml-1" />
+              <button
+                onClick={() => setPlaying(p => !p)}
+                className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors border border-white/30"
+              >
+                {playing
+                  ? <Pause className="h-7 w-7 text-white fill-white" />
+                  : <Play  className="h-7 w-7 text-white fill-white ml-1" />}
               </button>
             </div>
-            {/* Controls bar */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-4 py-3">
-              {/* Progress bar */}
-              <div className="h-1 bg-white/30 rounded-full mb-3 cursor-pointer">
+              <div className="h-1 bg-white/30 rounded-full mb-3">
                 <div className="h-full w-0 bg-white rounded-full" />
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <button className="text-white/80 hover:text-white transition-colors"><SkipBack className="h-4 w-4" /></button>
-                  <button className="text-white hover:text-white/80 transition-colors"><Play className="h-5 w-5 fill-white" /></button>
-                  <button className="text-white/80 hover:text-white transition-colors"><SkipForward className="h-4 w-4" /></button>
+                  <button className="text-white/80 hover:text-white"><SkipBack className="h-4 w-4" /></button>
+                  <button onClick={() => setPlaying(p => !p)} className="text-white hover:text-white/80">
+                    {playing ? <Pause className="h-5 w-5 fill-white" /> : <Play className="h-5 w-5 fill-white" />}
+                  </button>
+                  <button className="text-white/80 hover:text-white"><SkipForward className="h-4 w-4" /></button>
                   <span className="text-white text-xs font-mono">0:00 / {topic.duration}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button className="text-white/80 hover:text-white transition-colors"><Volume2 className="h-4 w-4" /></button>
+                  <button className="text-white/80 hover:text-white"><Volume2 className="h-4 w-4" /></button>
                   <span className="text-white/80 text-xs font-semibold">1.0x</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Tutor card */}
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 flex items-start gap-4">
             <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center shrink-0">
               <span className="text-white text-xs font-bold">{TUTOR.initials}</span>
@@ -270,127 +351,326 @@ export default function CurrentTopic() {
             </div>
           </div>
 
-          {/* CTA */}
-          <button
-            onClick={() => goNext('watch')}
-            className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2"
-          >
+          <button onClick={() => goNext('watch')}
+            className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
             I've watched the video — Continue to Notes <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      {/* ── READ / LISTEN ── */}
+      {/* ══ READ / LISTEN ══ */}
       {step === 'read' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-stone-100">
-              <BookOpen className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-foreground">Lecture Notes</span>
-              <span className="ml-auto text-xs text-muted-foreground">Read before the AI Q&A</span>
+            {/* Auto-read bar */}
+            <div className="flex items-center gap-3 px-5 py-3 border-b border-stone-100 bg-stone-50">
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Headphones className="h-4 w-4 text-primary" />
+              </div>
+              <span className="font-semibold text-foreground text-sm">Auto Read — Lecture Notes</span>
+              <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="font-mono font-semibold text-foreground">18:40</span>
+                <span>1×</span>
+                <Volume2 className="h-4 w-4" />
+              </div>
             </div>
-            <div className="px-6 py-5 space-y-3 overflow-y-auto" style={{ maxHeight: 440 }}>
-              {NOTES_CONTENT.split('\n').map((line, i) => {
-                if (line.startsWith('## ')) return <h2 key={i} className="text-lg font-bold font-serif text-foreground mt-3 mb-1">{line.replace('## ', '')}</h2>;
-                if (line.startsWith('### ')) return <h3 key={i} className="text-sm font-bold text-foreground mt-3 mb-1">{line.replace('### ', '')}</h3>;
-                if (line.startsWith('**') && line.endsWith('**')) return <p key={i} className="font-bold text-foreground">{line.replace(/\*\*/g, '')}</p>;
-                if (line.startsWith('*') && line.endsWith('*')) return <p key={i} className="italic text-muted-foreground border-l-4 border-primary/30 pl-4 my-2">{line.replace(/\*/g, '')}</p>;
-                if (line === '') return <div key={i} className="h-2" />;
-                return <p key={i} className="text-sm text-foreground leading-relaxed">{line}</p>;
-              })}
-            </div>
-            <div className="px-6 py-4 border-t border-stone-100 flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={notesRead} onChange={e => setNotesRead(e.target.checked)} className="h-4 w-4 accent-primary" />
-                <span className="text-sm font-medium text-foreground">I've read and understood these notes</span>
-              </label>
+
+            {/* Notes content */}
+            <div className="px-6 py-5 overflow-y-auto space-y-6" style={{ maxHeight: 480 }}>
+              {NOTES_SECTIONS.map((sec, si) => (
+                <div key={si} className="space-y-3">
+                  <h3 className="font-bold text-[#1a4d35] text-base">{sec.heading}</h3>
+                  {sec.paragraphs.map((p, pi) => (
+                    <p key={pi} className="text-sm text-foreground leading-relaxed">{p}</p>
+                  ))}
+                  {sec.keyProvision && (
+                    <div className="rounded-xl bg-amber-50 border border-amber-100 px-5 py-4 mt-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-2">Key Provision</p>
+                      <p className="text-sm text-foreground leading-relaxed italic">{sec.keyProvision}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-          <button onClick={() => { if (notesRead) goNext('read'); }} disabled={!notesRead}
-            className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-            Continue to Summary <ChevronRight className="h-4 w-4" />
+
+          <button onClick={() => { setNotesRead(true); goNext('read'); }}
+            className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
+            Notes read — See Topic Summary <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      {/* ── SUMMARY ── */}
+      {/* ══ SUMMARY ══ */}
       {step === 'summary' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-stone-100">
-              <FileText className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-foreground">Topic Summary</span>
-            </div>
-            <div className="px-6 py-5 space-y-3">
-              <p className="text-sm text-muted-foreground mb-4">Key takeaways from this topic — use these as your revision anchor points.</p>
-              {SUMMARY_POINTS.map((point, i) => (
-                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-stone-50 border border-stone-100">
-                  <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">{i + 1}</div>
-                  <p className="text-sm text-foreground leading-relaxed">{point}</p>
+          {/* Dark-green header card */}
+          <div className="rounded-2xl bg-[#1a4d35] px-7 py-6 text-white">
+            <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">Topic {topic.id}</p>
+            <h2 className="text-xl font-serif font-bold mb-1">{topic.title}</h2>
+            <p className="text-sm opacity-70">{MODULE.name} · {MODULE.tutor.replace('Prof. ', 'Prof. ')}</p>
+          </div>
+
+          {/* Learning outcomes */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Learning Outcomes — You Should Now Be Able To</p>
+            {LEARNING_OUTCOMES.map((o, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <p className="text-sm text-foreground leading-relaxed">{o}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Key Concepts 2-col grid */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Key Concepts</p>
+            <div className="grid grid-cols-2 gap-3">
+              {KEY_CONCEPTS.map((c, i) => (
+                <div key={i} className="rounded-xl border border-stone-200 p-4 space-y-1">
+                  <p className="font-semibold text-foreground text-sm">{c.term}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{c.def}</p>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Landmark Case */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 border-l-4 border-l-amber-400">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-2">Landmark Case</p>
+            <p className="font-semibold text-foreground mb-2">A.-G. Ogun State v A.-G. Federation (1982) 3 NCLR 166</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Established the 'covering the field' doctrine in Nigeria. Held that where federal legislation comprehensively covers a concurrent-list matter, state legislation on that same matter is inoperative to the extent of any inconsistency — even if the state law predates the federal.
+            </p>
+          </div>
+
+          {/* Key Provision to Memorise */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Key Provision to Memorise</p>
+            <p className="text-sm text-foreground leading-relaxed">
+              "The National Assembly shall have power to make laws for the peace, order and good government of the Federation with respect to any matter included in the Exclusive Legislative List..." — <strong>Section 4(2), CFRN 1999</strong>
+            </p>
+          </div>
+
+          {/* Self-check */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Before You Research — Quick Self-Check</p>
+            <div className="space-y-2">
+              {SELF_CHECK.map((q, i) => (
+                <p key={i} className="text-sm text-foreground"><span className="font-bold">Q{i + 1}.</span> {q}</p>
+              ))}
+            </div>
+          </div>
+
           <button onClick={() => goNext('summary')}
             className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
-            Continue to Research <ChevronRight className="h-4 w-4" />
+            Summary reviewed — Start Research <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      {/* ── RESEARCH ── */}
+      {/* ══ RESEARCH ══ */}
       {step === 'research' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-stone-100">
-              <Search className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-foreground">Further Research</span>
-              <span className="ml-auto text-xs text-muted-foreground">Primary & secondary sources</span>
+          {/* Intro card */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 flex items-start gap-4">
+            <div className="h-9 w-9 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
+              <Search className="h-4 w-4 text-muted-foreground" />
             </div>
-            <div className="px-6 py-5 space-y-3">
-              <p className="text-sm text-muted-foreground mb-2">Review these sources to deepen your understanding before the Q&A.</p>
-              {RESEARCH.map((r, i) => (
-                <div key={i} className="flex items-start gap-3 p-4 rounded-xl border border-stone-200 hover:border-primary/30 transition-colors">
-                  <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${r.type === 'Case' ? 'bg-amber-100 text-amber-800' : r.type === 'Statute' ? 'bg-blue-100 text-blue-800' : 'bg-stone-100 text-stone-600'}`}>{r.type}</span>
-                  <p className="text-sm text-foreground leading-relaxed">{r.ref}</p>
+            <div>
+              <p className="font-semibold text-foreground mb-1">Research Step</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Before moving to Q&A, explore the cases, laws, and materials referenced in this topic. Use the Triax Law Library below to read case holdings, study key legislation, and review recommended judgements. Deep research now makes your Q&A session far more effective.
+              </p>
+            </div>
+          </div>
+
+          {/* Triax Law Library */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-stone-100 flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
                 </div>
+                <div>
+                  <p className="font-bold text-foreground text-sm">TRIAX LAW LIBRARY</p>
+                  <p className="text-xs text-muted-foreground">Cases, laws &amp; resources referenced in this topic</p>
+                </div>
+              </div>
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            </div>
+
+            <div className="px-5 py-4 space-y-5">
+              {/* Cases */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Cases Referenced</p>
+                <div className="space-y-1">
+                  {TRIAX_LIBRARY.cases.map((c, i) => (
+                    <div key={i} className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-b-0">
+                      <div className="h-7 w-7 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+                        <Scale className="h-3.5 w-3.5 text-amber-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground leading-tight">{c.name}</p>
+                        <p className="text-xs text-muted-foreground">{c.citation}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Relevant Laws */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Relevant Laws</p>
+                <div className="space-y-1">
+                  {TRIAX_LIBRARY.laws.map((l, i) => (
+                    <div key={i} className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-b-0">
+                      <div className="h-7 w-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                        <FileText className="h-3.5 w-3.5 text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground">{l.name}</p>
+                        <p className="text-xs text-muted-foreground">{l.desc}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rules of Court */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Rules of Court</p>
+                {TRIAX_LIBRARY.court.map((r, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2.5">
+                    <div className="h-7 w-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
+                      <Gavel className="h-3.5 w-3.5 text-stone-500" />
+                    </div>
+                    <p className="flex-1 text-sm font-medium text-foreground">{r.name}</p>
+                    <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Recommended Judgements */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Recommended Judgements</p>
+                {TRIAX_LIBRARY.judgements.map((j, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2.5">
+                    <div className="h-7 w-7 rounded-full bg-green-50 flex items-center justify-center shrink-0">
+                      <Scale className="h-3.5 w-3.5 text-green-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground leading-tight">{j.name}</p>
+                      <p className="text-xs text-muted-foreground">{j.court}</p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Related Journals */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Related Journals</p>
+                <div className="space-y-1">
+                  {TRIAX_LIBRARY.journals.map((j, i) => (
+                    <div key={i} className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-b-0">
+                      <div className="h-7 w-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
+                        <Newspaper className="h-3.5 w-3.5 text-stone-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground leading-tight">{j.name}</p>
+                        <p className="text-xs text-muted-foreground">{j.by}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Textbooks */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Textbooks</p>
+                {TRIAX_LIBRARY.textbooks.map((b, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2.5">
+                    <div className="h-7 w-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
+                      <BookOpen className="h-3.5 w-3.5 text-stone-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">{b.name}</p>
+                      <p className="text-xs text-muted-foreground">{b.by}</p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Open Library link */}
+              <button className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+                <Plus className="h-3.5 w-3.5" /> Open Full Library
+              </button>
+            </div>
+          </div>
+
+          {/* Suggested Research Questions */}
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-stone-100">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Suggested Research Questions</p>
+            </div>
+            <div className="divide-y divide-stone-100">
+              {RESEARCH_QUESTIONS.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => setExpandedQ(expandedQ === i ? null : i)}
+                  className="w-full flex items-center gap-3 px-5 py-3.5 text-left hover:bg-stone-50 transition-colors"
+                >
+                  <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <p className="flex-1 text-sm text-foreground leading-relaxed">{q}</p>
+                  <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
+                </button>
               ))}
             </div>
           </div>
-          <button onClick={() => goNext('research')}
-            className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
-            Continue to Q&A <ChevronRight className="h-4 w-4" />
+
+          {/* CTAs */}
+          <div className="flex gap-3">
+            <button onClick={() => goNext('research')}
+              className="flex-1 py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
+              Research done — Start Q&A <ChevronRight className="h-4 w-4" />
+            </button>
+            <button onClick={() => { markDone('research'); markDone('qa'); setStep('quiz'); }}
+              className="px-5 py-4 rounded-2xl border border-stone-300 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors whitespace-nowrap">
+              Skip to Quiz →
+            </button>
+          </div>
+          <button className="w-full flex items-center justify-center gap-2 py-3 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+            <Plus className="h-3.5 w-3.5" /> Open Full Library
           </button>
         </div>
       )}
 
-      {/* ── Q&A ── */}
+      {/* ══ Q&A ══ */}
       {step === 'qa' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 bg-primary">
+            <div className="flex items-center justify-between px-6 py-4 bg-primary">
               <div className="flex items-center gap-2 text-white">
                 <MessageCircle className="h-5 w-5" />
                 <span className="font-semibold">AI Q&A Coach — {completedQA.size}/{AI_QA.length} questions</span>
               </div>
               <span className="text-xs text-white/60">Answer all to unlock the quiz</span>
             </div>
-
             <div className="p-6 space-y-5">
-              {/* Progress dots */}
               <div className="flex items-center gap-2">
                 {AI_QA.map((_, i) => (
                   <div key={i} className={`h-2 flex-1 rounded-full transition-colors ${completedQA.has(i) ? 'bg-green-500' : i === qaIndex ? 'bg-primary' : 'bg-stone-200'}`} />
                 ))}
               </div>
-
-              {/* Question */}
               <div className="bg-stone-50 rounded-xl p-5 border border-stone-200">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Question {qaIndex + 1} of {AI_QA.length}</p>
                 <p className="font-semibold text-foreground leading-relaxed">{AI_QA[qaIndex].q}</p>
               </div>
-
-              {/* Answer */}
               {showAns ? (
                 <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 space-y-4">
                   <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Model Answer</p>
@@ -402,8 +682,7 @@ export default function CurrentTopic() {
                       if (qaIndex < AI_QA.length - 1) { setQaIndex(q => q + 1); setShowAns(false); }
                       else { markDone('qa'); setStep('quiz'); }
                     }}
-                    className="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors"
-                  >
+                    className="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">
                     {qaIndex < AI_QA.length - 1 ? 'Next Question →' : 'Proceed to Quiz →'}
                   </button>
                 </div>
@@ -418,16 +697,22 @@ export default function CurrentTopic() {
         </div>
       )}
 
-      {/* ── QUIZ ── */}
+      {/* ══ QUIZ ══ */}
       {step === 'quiz' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+            {/* Quiz header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
-              <div className="flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">Topic Quiz</span>
+              <div>
+                <p className="font-semibold text-foreground">Topic Quiz — Part I: Multiple Choice</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Select the best answer for each question. Once you pass, you can rewatch this topic's video freely.</p>
               </div>
-              <span className="text-xs text-muted-foreground">Pass mark: 3/5 correct</span>
+              {!submitted && (
+                <div className="flex items-center gap-1.5 text-sm font-mono font-bold text-foreground shrink-0 ml-4">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  {fmt(quizSecs)}
+                </div>
+              )}
             </div>
 
             {/* Passed */}
@@ -437,7 +722,7 @@ export default function CurrentTopic() {
                   <CheckCircle2 className="h-8 w-8 text-green-600" />
                 </div>
                 <h3 className="text-xl font-serif font-bold text-foreground">Topic Complete! 🎉</h3>
-                <p className="text-sm text-muted-foreground">You've passed the quiz. Topic {topic.id} is now fully unlocked and credited to your certificate progress.</p>
+                <p className="text-sm text-muted-foreground">You've passed the quiz. Topic {topic.id} is now fully credited to your certificate progress.</p>
                 <div className="flex gap-3 justify-center pt-2">
                   <button onClick={() => setLocation('/student/modules')} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Back to Module Library</button>
                   <button onClick={resetAll} className="px-6 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">Revisit Topic</button>
@@ -445,44 +730,56 @@ export default function CurrentTopic() {
               </div>
             )}
 
-            {/* Quiz failed */}
+            {/* Failed */}
             {submitted && !quizPassed && (
               <div className="p-10 text-center space-y-4">
                 <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
                   <AlertCircle className="h-8 w-8 text-red-500" />
                 </div>
                 <h3 className="text-xl font-serif font-bold text-foreground">Not quite — try again</h3>
-                <p className="text-sm text-muted-foreground">You scored {MCQ.filter((q, i) => selected[i] === q.ans).length}/5. The topic will reset so you can re-watch and re-read before retrying.</p>
+                <p className="text-sm text-muted-foreground">You scored {MCQ.filter((q, i) => selected[i] === q.ans).length}/5. Re-read the notes and retry.</p>
                 <button onClick={resetAll} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Start Topic Again</button>
               </div>
             )}
 
             {/* Quiz form */}
             {!submitted && (
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-7">
                 {MCQ.map((q, qi) => (
                   <div key={qi} className="space-y-3">
                     <p className="font-semibold text-foreground text-sm">{qi + 1}. {q.q}</p>
                     <div className="space-y-2">
                       {q.opts.map((opt, oi) => (
-                        <button key={oi} onClick={() => setSelected(prev => ({ ...prev, [qi]: oi }))}
-                          className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-colors ${selected[qi] === oi ? 'border-primary bg-primary/5 text-primary font-medium' : 'border-stone-200 text-foreground hover:border-stone-300 hover:bg-stone-50'}`}>
-                          <span className="mr-2 font-bold">{['A', 'B', 'C', 'D'][oi]}.</span>{opt}
+                        <button
+                          key={oi}
+                          onClick={() => setSelected(prev => ({ ...prev, [qi]: oi }))}
+                          className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-colors flex items-center gap-3
+                            ${selected[qi] === oi ? 'border-primary bg-primary/5 text-primary font-medium' : 'border-stone-200 text-foreground hover:border-stone-300 hover:bg-stone-50'}`}
+                        >
+                          <span className={`h-4 w-4 rounded-full border-2 shrink-0 flex items-center justify-center
+                            ${selected[qi] === oi ? 'border-primary' : 'border-stone-300'}`}>
+                            {selected[qi] === oi && <span className="h-2 w-2 rounded-full bg-primary block" />}
+                          </span>
+                          {opt}
                         </button>
                       ))}
                     </div>
                   </div>
                 ))}
-                <button
-                  onClick={submitQuiz}
-                  disabled={Object.keys(selected).length < MCQ.length}
-                  className="w-full py-3.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Submit Quiz
-                </button>
               </div>
             )}
           </div>
+
+          {!submitted && (
+            <button
+              onClick={submitQuiz}
+              className="w-full py-4 rounded-2xl bg-stone-200 text-stone-500 font-bold text-sm transition-colors disabled:cursor-not-allowed
+                enabled:bg-[#1a4d35] enabled:text-white enabled:hover:bg-[#1a4d35]/90"
+              disabled={false}
+            >
+              Submit Answers ({Object.keys(selected).length}/5 answered)
+            </button>
+          )}
         </div>
       )}
     </div>
