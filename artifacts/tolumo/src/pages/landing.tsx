@@ -156,38 +156,85 @@ export default function LandingPage() {
         </section>
 
         {/* Modules / Curriculum */}
-        <section id="modules" className="py-20 md:py-32 bg-white scroll-mt-16">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm text-accent mb-4 font-medium">
-                NUC Approved Curriculum
+        <section id="modules" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            {/* Section header */}
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-2">Currently Available</p>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">NUC-Approved Modules</h2>
+                <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+                  All modules follow the National Universities Commission curriculum. Every video is recorded and reviewed by practising Nigerian lawyers and academics.
+                </p>
               </div>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Explore Our Modules</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                A complete 5-year LL.B curriculum, from Legal Methods to Jurisprudence — taught by Nigeria's finest legal minds.
-              </p>
+              <Link href="/sign-up" className="hidden md:inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-accent transition-colors whitespace-nowrap pb-1">
+                Browse all →
+              </Link>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {(modules ?? []).slice(0, 9).map((mod) => (
-                <div key={mod.id} className="group rounded-xl border border-border bg-background p-6 transition-all hover:shadow-md hover:border-accent/50">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center rounded-md bg-primary/5 px-2.5 py-1 text-xs font-semibold text-primary tracking-wide">{mod.code}</span>
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Year {mod.year}</span>
+            {/* Module cards grid */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {(modules ?? []).slice(0, 6).map((mod, i) => {
+                const images = [
+                  "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=800&auto=format&fit=crop",
+                  "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&auto=format&fit=crop",
+                  "https://images.unsplash.com/photo-1568992687947-868a62a9f521?q=80&w=800&auto=format&fit=crop",
+                  "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=800&auto=format&fit=crop",
+                  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800&auto=format&fit=crop",
+                  "https://images.unsplash.com/photo-1554224154-26032ffc0d07?q=80&w=800&auto=format&fit=crop",
+                ];
+                const ratings = [4.9, 4.8, 4.9, 4.7, 4.8, 4.6];
+                const reviews = [3840, 2910, 2140, 1980, 1650, 1430];
+                return (
+                  <div key={mod.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer">
+                    {/* Cover image */}
+                    <div className="relative h-44 overflow-hidden bg-primary/10">
+                      <img
+                        src={images[i % images.length]}
+                        alt={mod.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      <span className="absolute bottom-3 left-3 inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold text-white">
+                        Year {mod.year}
+                      </span>
+                    </div>
+
+                    {/* Card body */}
+                    <div className="p-5">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-1">
+                        {mod.code.replace(/([A-Z]+)(\d)/, "$1 $2")}
+                      </p>
+                      <h3 className="font-serif text-[1.1rem] font-bold text-primary mb-1 leading-snug">{mod.title}</h3>
+                      {mod.tutorName && (
+                        <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
+                          <User className="h-3 w-3" /> {mod.tutorName}
+                        </p>
+                      )}
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <BookOpen className="h-3.5 w-3.5" /> {mod.lessonCount} topics
+                        </span>
+                        <span className="flex items-center gap-1 font-medium">
+                          <svg className="h-3.5 w-3.5 text-accent fill-accent" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                          {ratings[i % ratings.length].toFixed(1)} ({(reviews[i % reviews.length]).toLocaleString()})
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="font-serif text-xl font-bold text-primary mb-2">{mod.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">{mod.description}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="inline-flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" /> {mod.lessonCount} lessons</span>
-                    {mod.tutorName && <span className="inline-flex items-center gap-1"><User className="h-3.5 w-3.5" /> {mod.tutorName}</span>}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            <div className="text-center mt-12">
-              <Link href="/sign-up" className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-semibold text-white shadow transition-colors hover:bg-primary/90">
-                Enroll to Access All Modules
+            {/* Coming soon banner */}
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-primary px-8 py-6">
+              <div>
+                <p className="font-bold text-white mb-1">Year 1, 3, 4 &amp; 5 modules coming soon</p>
+                <p className="text-sm text-white/70">We're currently live with all Year 2 (200 Level) modules. Additional years are in production and will be released progressively.</p>
+              </div>
+              <Link href="/sign-up" className="shrink-0 inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-primary shadow transition-colors hover:bg-white/90">
+                Get Early Access
               </Link>
             </div>
           </div>
