@@ -494,36 +494,68 @@ function RecordingsTab({ sessions: _sessions }: { sessions: Session[] }) {
               </button>
             </div>
 
-            {/* Expanded attendance */}
+            {/* Expanded attendance table */}
             {expanded === ps.id && (
-              <div className="border-t border-stone-100 pt-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Student Attendance</p>
-                <div className="space-y-2">
-                  {[
-                    { name: 'Chisom Nwosu',     status: 'on-time', stayed: true  },
-                    { name: 'Babatunde Okafor', status: 'early',   stayed: true  },
-                    { name: 'Amina Ibrahim',    status: 'late',    stayed: true  },
-                    { name: 'Emeka Okafor',     status: 'on-time', stayed: false },
-                    { name: 'Tunde Adeleke',    status: 'early',   stayed: true  },
-                    { name: 'Funke Bello',      status: 'late',    stayed: true  },
-                  ].slice(0, ps.studentsAttended).map(s => (
-                    <div key={s.name} className="flex items-center justify-between text-sm">
-                      <span className="text-foreground font-medium">{s.name}</span>
-                      <div className="flex items-center gap-3">
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                          s.status === 'late'
-                            ? 'bg-red-100 text-red-600'
-                            : 'bg-green-100 text-green-700'
-                        }`}>
-                          {s.status}
-                        </span>
-                        <span className={`text-xs ${s.stayed ? 'text-green-600' : 'text-muted-foreground'}`}>
-                          {s.stayed ? 'Stayed full' : 'Left early'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="border-t border-stone-100 pt-4 -mx-6 px-6 overflow-x-auto">
+                <table className="w-full text-sm min-w-[560px]">
+                  <thead>
+                    <tr className="border-b border-stone-100">
+                      {['Student', 'Institution', 'Joined At', 'Punctuality', 'Stayed Full Session'].map(h => (
+                        <th key={h} className="text-left pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground pr-4 last:pr-0">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-50">
+                    {[
+                      { name: 'Chisom Nwosu',     initials: 'CN', institution: 'UNILAG',   joinedAt: '5:57 PM', status: 'Early',   stayed: true  },
+                      { name: 'Emeka Okafor',     initials: 'EO', institution: 'UniPort',   joinedAt: '6:01 PM', status: 'Late',    stayed: true  },
+                      { name: 'Amara Diallo',     initials: 'AD', institution: 'UNN',       joinedAt: '6:00 PM', status: 'On Time', stayed: true  },
+                      { name: 'Ngozi Eze',        initials: 'NE', institution: 'OAU',       joinedAt: '5:58 PM', status: 'Early',   stayed: true  },
+                      { name: 'Babatunde Okafor', initials: 'BO', institution: 'ABU',       joinedAt: '6:03 PM', status: 'Late',    stayed: false },
+                      { name: 'Tunde Adeleke',    initials: 'TA', institution: 'LASU',      joinedAt: '5:59 PM', status: 'Early',   stayed: true  },
+                    ].slice(0, ps.studentsAttended).map(s => (
+                      <tr key={s.name} className="hover:bg-stone-50/60 transition-colors">
+                        {/* Student */}
+                        <td className="py-3 pr-4">
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                              <span className="text-[10px] font-bold text-primary">{s.initials}</span>
+                            </div>
+                            <span className="font-medium text-foreground">{s.name}</span>
+                          </div>
+                        </td>
+                        {/* Institution */}
+                        <td className="py-3 pr-4 text-muted-foreground text-xs">{s.institution}</td>
+                        {/* Joined at */}
+                        <td className="py-3 pr-4 font-semibold text-foreground">{s.joinedAt}</td>
+                        {/* Punctuality */}
+                        <td className="py-3 pr-4">
+                          <span className={`inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                            s.status === 'Late'
+                              ? 'bg-red-100 text-red-600'
+                              : s.status === 'Early'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-stone-100 text-stone-600'
+                          }`}>
+                            {s.status}
+                          </span>
+                        </td>
+                        {/* Stayed full */}
+                        <td className="py-3">
+                          {s.stayed ? (
+                            <span className="flex items-center gap-1.5 text-green-600 text-sm font-medium">
+                              <CheckCircle2 className="h-4 w-4" /> Yes
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
