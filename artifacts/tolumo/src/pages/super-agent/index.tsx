@@ -780,21 +780,23 @@ function Messaging() {
   );
 }
 
-// ── Help & Support ─────────────────────────────────────────────────────────────
+// ── Help & Support (standalone page + embedded in Settings) ───────────────────
+
+const HELP_ITEMS = [
+  { label: 'Help Centre & FAQs',    desc: 'Common questions about referrals, commission, and payouts.' },
+  { label: 'Contact Support',       desc: 'Reach our team via chat, email, or WhatsApp.'               },
+  { label: 'Report a Problem',      desc: 'Flag a bug, payment issue, or platform problem.'            },
+  { label: 'Community Guidelines',  desc: 'Our standards for honest, respectful agent conduct.'        },
+  { label: 'Terms of Service',      desc: undefined },
+  { label: 'Privacy Policy',        desc: undefined },
+];
 
 function SAHelp() {
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <p className="text-xs text-muted-foreground">Resources for Super Agents.</p>
+      <p className="text-xs text-muted-foreground">Get answers, contact support, or read platform policies.</p>
       <div className="bg-white rounded-xl border border-stone-200 shadow-sm divide-y divide-stone-100 overflow-hidden">
-        {[
-          { label: 'Help Centre & FAQs',     desc: 'Guides on managing Sub-Agents, commissions, and verifications.' },
-          { label: 'Contact Support',         desc: 'Reach our team via chat, email, or WhatsApp.'                  },
-          { label: 'Report a Problem',        desc: 'Flag a bug, incorrect commission, or platform issue.'          },
-          { label: 'Super Agent Guidelines',  desc: 'Standards and responsibilities for Super Agents.'              },
-          { label: 'Terms of Service',        desc: undefined },
-          { label: 'Privacy Policy',          desc: undefined },
-        ].map((item, i) => (
+        {HELP_ITEMS.map((item, i) => (
           <button key={i} className="w-full flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors text-left group">
             <div>
               <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</p>
@@ -810,7 +812,7 @@ function SAHelp() {
 
 // ── Settings ───────────────────────────────────────────────────────────────────
 
-type SASettingsTab = 'profile' | 'payout' | 'notifications' | 'help' | 'account';
+type SASettingsTab = 'profile' | 'payout' | 'global' | 'subagent' | 'notifications' | 'help' | 'account';
 
 function SToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
@@ -821,29 +823,57 @@ function SToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   );
 }
 
-function SRow({ label, desc, children }: { label: string; desc?: string; children: React.ReactNode }) {
+/** Two-column section: label on left, rows on right */
+function SettingsSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-6">
+      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest w-28 shrink-0 pt-4">{label}</p>
+      <div className="flex-1 divide-y divide-stone-100">{children}</div>
+    </div>
+  );
+}
+
+function ToggleRow({ label, desc, on, onToggle }: { label: string; desc?: string; on: boolean; onToggle: () => void }) {
   return (
     <div className="flex items-center justify-between py-3.5">
       <div>
         <p className="text-sm font-medium text-foreground">{label}</p>
         {desc && <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>}
       </div>
-      {children}
+      <SToggle on={on} onToggle={onToggle} />
     </div>
+  );
+}
+
+function SaveBtn() {
+  return (
+    <button className="px-5 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm mt-2">
+      Save Changes
+    </button>
   );
 }
 
 function SASettings() {
   const [tab, setTab] = useState<SASettingsTab>('profile');
+
+  // Profile
   const [displayName, setDisplayName] = useState('Olu Martins');
   const [phone, setPhone] = useState('+234 803 000 0001');
   const [bio, setBio] = useState('Super Agent overseeing the South-West network.');
 
+  // Payout
   const [bank, setBank] = useState('Zenith Bank');
   const [accountNo] = useState('••••••7890');
   const [accountName, setAccountName] = useState('Olu Martins');
   const [showAcct, setShowAcct] = useState(false);
 
+  // Sub-Agent Management
+  const [autoApprove, setAutoApprove]       = useState(false);
+  const [notifyNewApp, setNotifyNewApp]     = useState(true);
+  const [alertLapsed, setAlertLapsed]       = useState(true);
+  const [weeklyDigest, setWeeklyDigest]     = useState(true);
+
+  // Notifications
   const [emailNotif, setEmailNotif] = useState(true);
   const [pushNotif, setPushNotif]   = useState(true);
   const [commUpd, setCommUpd]       = useState(true);
@@ -852,51 +882,53 @@ function SASettings() {
   const [sysAnn, setSysAnn]         = useState(true);
   const [mktg, setMktg]             = useState(false);
 
-  function SaveBtn() {
-    return (
-      <button className="px-5 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm mt-4">
-        Save Changes
-      </button>
-    );
-  }
-
-  const NAV_ITEMS: { key: SASettingsTab; label: string; icon: React.ElementType }[] = [
-    { key: 'profile',       label: 'Profile',       icon: BarChart2      },
-    { key: 'payout',        label: 'Payout Details', icon: DollarSign    },
-    { key: 'notifications', label: 'Notifications', icon: Bell           },
-    { key: 'help',          label: 'Help & Support', icon: HelpCircle    },
-    { key: 'account',       label: 'Account',        icon: LogOut        },
+  const NAV: { key: SASettingsTab; label: string; icon: React.ElementType }[] = [
+    { key: 'profile',       label: 'Profile',              icon: Users       },
+    { key: 'payout',        label: 'Payout Details',       icon: DollarSign  },
+    { key: 'global',        label: 'Global Settings',      icon: Home        },
+    { key: 'subagent',      label: 'Sub-Agent Management', icon: Users       },
+    { key: 'notifications', label: 'Notifications',        icon: Bell        },
+    { key: 'help',          label: 'Help & Support',       icon: HelpCircle  },
+    { key: 'account',       label: 'Account',              icon: LogOut      },
   ];
 
   return (
-    <div className="flex gap-4 max-w-3xl mx-auto">
-      <div className="w-44 shrink-0 bg-white rounded-xl border border-stone-200 shadow-sm py-2 h-fit">
-        {NAV_ITEMS.map(item => (
+    <div className="flex gap-4 max-w-4xl mx-auto">
+      {/* Left nav */}
+      <div className="w-48 shrink-0 bg-white rounded-xl border border-stone-200 shadow-sm py-2 h-fit">
+        {NAV.map(item => (
           <button key={item.key} onClick={() => setTab(item.key)}
             className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-colors text-left ${tab === item.key ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
             <item.icon className="h-4 w-4 shrink-0" />
-            {item.label}
-            {tab === item.key && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#1a4d35]" />}
+            <span className="flex-1 text-left">{item.label}</span>
+            {tab === item.key && <span className="h-1.5 w-1.5 rounded-full bg-[#1a4d35] shrink-0" />}
           </button>
         ))}
       </div>
 
-      <div className="flex-1 bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+      {/* Right panel */}
+      <div className="flex-1 bg-white rounded-xl border border-stone-200 shadow-sm p-6 min-w-0">
+
+        {/* ── Profile ── */}
         {tab === 'profile' && (
           <div className="space-y-5">
             <h2 className="font-serif font-bold text-lg">Profile</h2>
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-[#1a4d35] text-white font-bold text-lg flex items-center justify-center">OM</div>
+              <div className="h-14 w-14 rounded-xl bg-[#1a4d35] text-white font-bold text-lg flex items-center justify-center shrink-0">OM</div>
               <div>
                 <p className="text-sm font-semibold">Upload photo</p>
                 <p className="text-xs text-muted-foreground">JPG, PNG or WebP · max 5 MB</p>
               </div>
             </div>
-            <div>
-              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Display Name</label>
-              <input value={displayName} onChange={e => setDisplayName(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
-            </div>
+            {[
+              { label: 'Display Name', value: displayName, onChange: setDisplayName, readOnly: false },
+            ].map(f => (
+              <div key={f.label}>
+                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">{f.label}</label>
+                <input value={f.value} onChange={e => f.onChange(e.target.value)}
+                  className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+              </div>
+            ))}
             <div>
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Email</label>
               <input value="olu.m@tolumo.ng" readOnly
@@ -917,6 +949,7 @@ function SASettings() {
           </div>
         )}
 
+        {/* ── Payout Details ── */}
         {tab === 'payout' && (
           <div className="space-y-5">
             <h2 className="font-serif font-bold text-lg">Payout Details</h2>
@@ -934,8 +967,8 @@ function SASettings() {
             <div>
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Account Number</label>
               <div className="relative">
-                <input value={showAcct ? '0123457890' : accountNo}
-                  className="w-full h-10 px-3 pr-10 rounded-xl border border-stone-200 text-sm outline-none font-mono" readOnly />
+                <input value={showAcct ? '0123457890' : accountNo} readOnly
+                  className="w-full h-10 px-3 pr-10 rounded-xl border border-stone-200 text-sm outline-none font-mono" />
                 <button onClick={() => setShowAcct(v => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   <Eye className="h-4 w-4" />
@@ -952,59 +985,115 @@ function SASettings() {
           </div>
         )}
 
-        {tab === 'notifications' && (
+        {/* ── Global Settings ── */}
+        {tab === 'global' && (
           <div className="space-y-5">
-            <h2 className="font-serif font-bold text-lg">Notifications</h2>
-            <div>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Channels</p>
-              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
-                <SRow label="Email notifications" desc="Receive notifications to your registered email"><SToggle on={emailNotif} onToggle={() => setEmailNotif(v => !v)} /></SRow>
-                <SRow label="Push notifications" desc="In-app and browser push alerts"><SToggle on={pushNotif} onToggle={() => setPushNotif(v => !v)} /></SRow>
-              </div>
+            <h2 className="font-serif font-bold text-lg">Global Settings</h2>
+            <div className="flex items-start gap-2 p-3.5 bg-stone-50 border-l-4 border-[#1a4d35] rounded-r-xl text-xs text-muted-foreground">
+              These values are set by Tolumo Admin and are read-only. Contact Admin via Help &amp; Support to request changes.
             </div>
-            <div>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Activity</p>
-              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
-                <SRow label="Commission updates" desc="When commission is credited or adjusted"><SToggle on={commUpd} onToggle={() => setCommUpd(v => !v)} /></SRow>
-                <SRow label="New Sub-Agent application" desc="When someone applies to join your network"><SToggle on={newAgent} onToggle={() => setNewAgent(v => !v)} /></SRow>
-                <SRow label="Payout processed" desc="Confirmation when your monthly payout is sent"><SToggle on={payoutP} onToggle={() => setPayoutP(v => !v)} /></SRow>
+            {[
+              { label: 'Commission Rate',  sublabel: 'Your share of each Sub-Agent\'s student revenue.', value: '5% of Sub-Agent commission (net)' },
+              { label: 'Payout Schedule',  sublabel: undefined,                                          value: 'Last business day of each month'  },
+              { label: 'Territory',        sublabel: undefined,                                          value: 'South-West Nigeria'               },
+              { label: 'Max Sub-Agents',   sublabel: undefined,                                          value: '50 active Sub-Agents'            },
+            ].map(f => (
+              <div key={f.label}>
+                <div className="flex gap-4 items-start">
+                  <div className="w-40 shrink-0 pt-2.5">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{f.label}</p>
+                    {f.sublabel && <p className="text-[10px] text-muted-foreground mt-0.5">{f.sublabel}</p>}
+                  </div>
+                  <input value={f.value} readOnly
+                    className="flex-1 h-10 px-3 rounded-xl border border-stone-200 text-sm text-foreground bg-white outline-none" />
+                </div>
               </div>
-            </div>
-            <div>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Platform</p>
-              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
-                <SRow label="System announcements" desc="Platform updates, downtime notices, policy changes"><SToggle on={sysAnn} onToggle={() => setSysAnn(v => !v)} /></SRow>
-                <SRow label="Marketing & promotions" desc="Campaign tips, performance challenges, offers"><SToggle on={mktg} onToggle={() => setMktg(v => !v)} /></SRow>
-              </div>
-            </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Sub-Agent Management ── */}
+        {tab === 'subagent' && (
+          <div className="space-y-6">
+            <h2 className="font-serif font-bold text-lg">Sub-Agent Management</h2>
+            <SettingsSection label="Applications">
+              <ToggleRow label="Auto-approve new Sub-Agents" desc="Approved applications skip manual review (not recommended)" on={autoApprove} onToggle={() => setAutoApprove(v => !v)} />
+              <ToggleRow label="Notify me on new application" desc="Push + email when a new Sub-Agent applies under you" on={notifyNewApp} onToggle={() => setNotifyNewApp(v => !v)} />
+            </SettingsSection>
+            <SettingsSection label="Activity">
+              <ToggleRow label="Alert on lapsed Sub-Agent" desc="Notify when a Sub-Agent falls below minimum activity" on={alertLapsed} onToggle={() => setAlertLapsed(v => !v)} />
+              <ToggleRow label="Weekly activity digest" desc="Summary of Sub-Agent performance every Monday" on={weeklyDigest} onToggle={() => setWeeklyDigest(v => !v)} />
+            </SettingsSection>
             <SaveBtn />
           </div>
         )}
 
-        {tab === 'help' && <SAHelp />}
+        {/* ── Notifications ── */}
+        {tab === 'notifications' && (
+          <div className="space-y-6">
+            <h2 className="font-serif font-bold text-lg">Notifications</h2>
+            <SettingsSection label="Channels">
+              <ToggleRow label="Email notifications" desc="Receive notifications to your registered email" on={emailNotif} onToggle={() => setEmailNotif(v => !v)} />
+              <ToggleRow label="Push notifications"  desc="In-app and browser push alerts"                on={pushNotif}  onToggle={() => setPushNotif(v => !v)}  />
+            </SettingsSection>
+            <SettingsSection label="Activity">
+              <ToggleRow label="Commission updates"       desc="When commission is credited or adjusted"          on={commUpd}  onToggle={() => setCommUpd(v => !v)}  />
+              <ToggleRow label="New Sub-Agent application" desc="When someone applies to join under you"          on={newAgent} onToggle={() => setNewAgent(v => !v)} />
+              <ToggleRow label="Payout processed"         desc="Confirmation when your monthly payout is sent"   on={payoutP}  onToggle={() => setPayoutP(v => !v)}  />
+            </SettingsSection>
+            <SettingsSection label="Platform">
+              <ToggleRow label="System announcements"   desc="Platform updates, downtime notices, policy changes" on={sysAnn} onToggle={() => setSysAnn(v => !v)} />
+              <ToggleRow label="Marketing & promotions" desc="Campaign tips, performance challenges, offers"       on={mktg}   onToggle={() => setMktg(v => !v)}   />
+            </SettingsSection>
+            <SaveBtn />
+          </div>
+        )}
 
+        {/* ── Help & Support ── */}
+        {tab === 'help' && (
+          <div className="space-y-4">
+            <h2 className="font-serif font-bold text-lg">Help &amp; Support</h2>
+            <p className="text-xs text-muted-foreground">Get answers, contact support, or read platform policies.</p>
+            <div className="divide-y divide-stone-100 rounded-xl border border-stone-200 overflow-hidden">
+              {HELP_ITEMS.map((item, i) => (
+                <button key={i} className="w-full flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors text-left group">
+                  <div>
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</p>
+                    {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
+                  </div>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Account ── */}
         {tab === 'account' && (
           <div className="space-y-4">
             <h2 className="font-serif font-bold text-lg">Account</h2>
             <div className="rounded-xl border border-stone-200 p-5 space-y-3">
-              <p className="font-semibold">Sign out</p>
+              <p className="font-semibold text-foreground">Sign out</p>
               <p className="text-sm text-muted-foreground">You will be signed out of your Super Agent dashboard on this device.</p>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-stone-200 text-sm font-semibold hover:bg-stone-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-stone-200 text-sm font-semibold text-foreground hover:bg-stone-50 transition-colors">
                 <LogOut className="h-3.5 w-3.5" /> Sign out
               </button>
             </div>
-            <div className="rounded-xl border border-red-200 p-5 space-y-3 bg-red-50/50">
+            <div className="rounded-xl border border-red-200 p-5 space-y-3 bg-red-50/40">
               <div className="flex items-center gap-2">
                 <Flag className="h-4 w-4 text-red-500 shrink-0" />
                 <p className="font-semibold text-red-600">Delete account</p>
               </div>
-              <p className="text-sm text-muted-foreground">This permanently removes your Super Agent account and all associated data. This cannot be undone.</p>
+              <p className="text-sm text-muted-foreground">
+                This permanently deletes your agent account, referral history, and commission records. Outstanding payouts will still be processed before deletion completes. This cannot be undone.
+              </p>
               <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-300 text-sm font-semibold text-red-600 hover:bg-red-100 transition-colors">
                 <Flag className="h-3.5 w-3.5" /> Request account deletion
               </button>
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
