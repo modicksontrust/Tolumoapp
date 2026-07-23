@@ -193,7 +193,7 @@ function AdminDashboard() {
 
 // ── Users ─────────────────────────────────────────────────────────────────────
 
-const MOCK_USERS = [
+const INITIAL_USERS = [
   { id: 1, name: 'Chisom Nwosu',    email: 'c.nwosu@unilag.edu.ng',    role: 'Student', university: 'UNILAG',    plan: 'Monthly',   joined: 'Mar 2025', status: 'active'    },
   { id: 2, name: 'Emeka Okafor',    email: 'e.okefor@uniport.edu.ng',  role: 'Student', university: 'UniPort',   plan: 'Monthly',   joined: 'Jan 2025', status: 'active'    },
   { id: 3, name: 'Prof. Adeyemi',   email: 'o.adeyemi@tolumo.com',     role: 'Tutor',   university: '—',         plan: '—',         joined: 'Jan 2025', status: 'active'    },
@@ -201,23 +201,119 @@ const MOCK_USERS = [
   { id: 5, name: 'Amara Diallo',    email: 'a.diallo@unn.edu.ng',      role: 'Student', university: 'UNN',       plan: 'Monthly',   joined: 'May 2025', status: 'suspended' },
 ];
 
+const BLANK_USER = { name: '', email: '', role: 'Student', university: '', plan: 'Monthly', status: 'active' };
+
+function AddUserModal({ onClose, onAdd }: {
+  onClose: () => void;
+  onAdd: (u: typeof BLANK_USER) => void;
+}) {
+  const [form, setForm] = useState(BLANK_USER);
+  const set = (k: keyof typeof BLANK_USER) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setForm(f => ({ ...f, [k]: e.target.value }));
+
+  const valid = form.name.trim() && form.email.trim();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!valid) return;
+    onAdd(form);
+    onClose();
+  }
+
+  return (
+    <div className="fixed inset-0 z-[300] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <h2 className="font-serif font-bold text-lg text-foreground">Add New User</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-stone-100 text-muted-foreground">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Full Name *</label>
+            <input value={form.name} onChange={set('name')} placeholder="e.g. Chisom Nwosu"
+              className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Email Address *</label>
+            <input value={form.email} onChange={set('email')} type="email" placeholder="e.g. chisom@unilag.edu.ng"
+              className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Role</label>
+              <select value={form.role} onChange={set('role')}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none bg-white appearance-none">
+                {['Student', 'Tutor', 'Admin'].map(r => <option key={r}>{r}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Plan</label>
+              <select value={form.plan} onChange={set('plan')}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none bg-white appearance-none">
+                {['Monthly', 'Semester', 'Annual', '—'].map(p => <option key={p}>{p}</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">University</label>
+            <input value={form.university} onChange={set('university')} placeholder="e.g. UNILAG"
+              className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Status</label>
+            <select value={form.status} onChange={set('status')}
+              className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none bg-white appearance-none">
+              {['active', 'suspended'].map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose}
+              className="flex-1 h-10 rounded-xl border border-stone-200 text-sm font-semibold text-muted-foreground hover:bg-stone-50 transition-colors">
+              Cancel
+            </button>
+            <button type="submit" disabled={!valid}
+              className="flex-1 h-10 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
+              Add User
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function UsersPage() {
+  const [users, setUsers] = useState(INITIAL_USERS);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All Roles');
   const [instFilter, setInstFilter] = useState('All Institutions');
+  const [showAdd, setShowAdd] = useState(false);
 
-  const filtered = MOCK_USERS.filter(u => {
+  const filtered = users.filter(u => {
     const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
     const matchRole = roleFilter === 'All Roles' || u.role === roleFilter;
     const matchInst = instFilter === 'All Institutions' || u.university === instFilter;
     return matchSearch && matchRole && matchInst;
   });
 
+  function handleAdd(form: typeof BLANK_USER) {
+    const now = new Date();
+    const joined = now.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+    setUsers(prev => [...prev, { ...form, id: prev.length + 1, joined }]);
+  }
+
   return (
+    <>
+    {showAdd && <AddUserModal onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-serif font-bold text-foreground">User Management</h1>
-        <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm">
+        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm">
           <Plus className="h-4 w-4" /> Add User
         </button>
       </div>
@@ -272,6 +368,7 @@ function UsersPage() {
         </table>
       </div>
     </div>
+    </>
   );
 }
 
