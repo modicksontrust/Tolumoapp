@@ -1600,6 +1600,37 @@ function AdminSettings() {
   );
 }
 
+// ── Admin Help Page ───────────────────────────────────────────────────────────
+
+function AdminHelpPage() {
+  return (
+    <div className="max-w-2xl mx-auto space-y-5">
+      <div>
+        <h1 className="text-2xl font-serif font-bold text-foreground">Help &amp; Support</h1>
+        <p className="text-sm text-muted-foreground mt-1">Admin resources and support channels.</p>
+      </div>
+      <div className="bg-white rounded-xl border border-stone-200 shadow-sm divide-y divide-stone-100 overflow-hidden">
+        {[
+          { label: 'Help Centre & FAQs',    desc: 'Answers to common questions about courses, payments, and tutors.' },
+          { label: 'Contact Support',        desc: 'Reach our team via chat, email, or WhatsApp.' },
+          { label: 'Report a Problem',       desc: 'Flag a bug, incorrect content, or platform issue.' },
+          { label: 'Community Guidelines',   desc: 'Our standards for respectful academic interaction.' },
+          { label: 'Terms of Service',       desc: undefined },
+          { label: 'Privacy Policy',         desc: undefined },
+        ].map((item, i) => (
+          <button key={i} className="w-full flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors text-left group">
+            <div>
+              <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</p>
+              {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Router ────────────────────────────────────────────────────────────────────
 
 export default function AdminPortal() {
@@ -1614,7 +1645,7 @@ export default function AdminPortal() {
         <Route path="/admin/announcements" component={AnnouncementsPage}    />
         <Route path="/admin/scholarships"  component={ScholarshipsAdminPage}/>
         <Route path="/admin/settings"  component={AdminSettings} />
-        <Route path="/admin/help">    {() => <AdminSettings />}</Route>
+        <Route path="/admin/help"      component={AdminHelpPage} />
         <Route component={AdminDashboard} />
       </Switch>
     </AdminShell>
