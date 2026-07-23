@@ -701,6 +701,37 @@ function Inbox() {
   );
 }
 
+// ── Help ──────────────────────────────────────────────────────────────────────
+
+function AgentHelp() {
+  return (
+    <div className="max-w-2xl mx-auto space-y-5">
+      <div>
+        <h1 className="text-xl font-serif font-bold text-foreground">Help &amp; Support</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Resources for Sub-Agents.</p>
+      </div>
+      <div className="bg-white rounded-xl border border-stone-200 shadow-sm divide-y divide-stone-100 overflow-hidden">
+        {[
+          { label: 'Help Centre & FAQs',   desc: 'Guides on referrals, commissions, and verification.'  },
+          { label: 'Contact Support',       desc: 'Reach our team via chat, email, or WhatsApp.'         },
+          { label: 'Report a Problem',      desc: 'Flag a bug, incorrect commission, or platform issue.' },
+          { label: 'Community Guidelines',  desc: 'Standards for our Sub-Agent network.'                 },
+          { label: 'Terms of Service',      desc: undefined },
+          { label: 'Privacy Policy',        desc: undefined },
+        ].map((item, i) => (
+          <button key={i} className="w-full flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors text-left group">
+            <div>
+              <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</p>
+              {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Settings ──────────────────────────────────────────────────────────────────
 
 type SettingsTab = 'profile' | 'institution' | 'payout' | 'referral' | 'notifications' | 'help' | 'account';
@@ -1058,6 +1089,7 @@ export default function AgentPortal() {
         <Route path="/agent/verification" component={LecturerVerification}  />
         <Route path="/agent/inbox"        component={Inbox}                 />
         <Route path="/agent/settings"     component={AgentSettings}         />
+        <Route path="/agent/help"         component={AgentHelp}             />
         <Route component={AgentHome} />
       </Switch>
     </AgentShell>
