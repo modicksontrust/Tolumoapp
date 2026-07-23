@@ -623,10 +623,217 @@ function AnalyticsPage() {
         </>
       )}
 
-      {tab !== 'Finance' && (
-        <div className="bg-white rounded-xl border border-stone-200 p-12 text-center">
-          <p className="text-muted-foreground text-sm">{tab} analytics — coming soon</p>
-        </div>
+      {/* ── Students tab ── */}
+      {tab === 'Students' && (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { label: 'Total Students',       value: '12,411', color: 'text-violet-600' },
+              { label: 'Active This Month',     value: '8,743',  color: 'text-teal-600'  },
+              { label: 'Avg Topics Completed',  value: '4.2',    color: 'text-amber-600' },
+              { label: 'Quiz Pass Rate',        value: '78%',    color: 'text-violet-600' },
+              { label: 'Tutorial Attendance',   value: '91%',    color: 'text-teal-600'  },
+              { label: 'Carryover Add-ons',     value: '152',    color: 'text-amber-600' },
+            ].map((s, i) => (
+              <div key={i} className="bg-white rounded-xl border border-stone-200 p-5 shadow-sm">
+                <p className="text-xs text-muted-foreground mb-1">{s.label}</p>
+                <p className={`text-2xl font-bold font-serif ${s.color}`}>{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Quiz pass rates */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+            <h2 className="font-serif font-bold text-foreground mb-5">Quiz Pass Rates by Module</h2>
+            <div className="space-y-4">
+              {[
+                { module: 'Constitutional Law', pass: 82, fail: 18 },
+                { module: 'Law of Contract',    pass: 78, fail: 22 },
+                { module: 'Criminal Law I',     pass: 75, fail: 25 },
+                { module: 'Law of Torts',       pass: 80, fail: 20 },
+                { module: 'Jurisprudence',      pass: 70, fail: 30 },
+              ].map((m, i) => (
+                <div key={i}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-medium text-foreground">{m.module}</span>
+                    <span className="text-xs text-muted-foreground">{m.pass}% pass · {m.fail}% fail</span>
+                  </div>
+                  <div className="h-2 bg-stone-100 rounded-full overflow-hidden flex">
+                    <div className="h-full bg-[#1a4d35] rounded-l-full" style={{ width: `${m.pass}%` }} />
+                    <div className="h-full bg-red-400 rounded-r-full" style={{ width: `${m.fail}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tutorial attendance punctuality */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+            <h2 className="font-serif font-bold text-foreground mb-5">Tutorial Attendance — Punctuality Breakdown</h2>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { label: 'Joined Early',   value: '34%', color: 'text-teal-600',   bg: 'bg-teal-50'   },
+                { label: 'Joined On Time', value: '57%', color: 'text-violet-600', bg: 'bg-violet-50' },
+                { label: 'Joined Late',    value: '9%',  color: 'text-red-500',    bg: 'bg-red-50'    },
+              ].map((c, i) => (
+                <div key={i} className={`${c.bg} rounded-xl p-5 text-center`}>
+                  <p className={`text-2xl font-bold font-serif ${c.color}`}>{c.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{c.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Tutors tab ── */}
+      {tab === 'Tutors' && (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { label: 'Active Tutors',           value: '48',    color: 'text-violet-600' },
+              { label: 'Modules Submitted',        value: '61',    color: 'text-teal-600'  },
+              { label: 'Avg Module Rating',        value: '4.6★',  color: 'text-amber-600' },
+              { label: 'Tutorial Sessions (Jul)',  value: '1,204', color: 'text-teal-600'  },
+              { label: 'Pending Approvals',        value: '3',     color: 'text-red-500'   },
+              { label: 'Add-on Earnings',          value: '₦1.14M',color: 'text-emerald-600'},
+            ].map((s, i) => (
+              <div key={i} className="bg-white rounded-xl border border-stone-200 p-5 shadow-sm">
+                <p className="text-xs text-muted-foreground mb-1">{s.label}</p>
+                <p className={`text-2xl font-bold font-serif ${s.color}`}>{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-stone-100">
+              <h2 className="font-serif font-bold text-foreground">Tutor Performance</h2>
+            </div>
+            <table className="w-full text-sm">
+              <thead className="bg-stone-50 border-b border-stone-100">
+                <tr>
+                  {['Tutor', 'Modules', 'Students', 'Avg Rating', 'Sessions', 'Status'].map(h => (
+                    <th key={h} className="px-5 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100">
+                {[
+                  { name: 'Prof. Adeyemi',       modules: 3, students: '4,820', rating: '4.8★', sessions: 312, status: 'active'   },
+                  { name: 'Barrister Okonkwo',   modules: 2, students: '3,210', rating: '4.5★', sessions: 248, status: 'active'   },
+                  { name: 'Dr. Ngozi Eze',        modules: 2, students: '2,140', rating: '4.7★', sessions: 194, status: 'active'   },
+                  { name: 'Adeyemi Oluwaseun',    modules: 1, students: '810',   rating: '4.3★', sessions: 88,  status: 'pending'  },
+                  { name: 'Chioma Obi',           modules: 1, students: '620',   rating: '4.6★', sessions: 72,  status: 'active'   },
+                ].map((t, i) => (
+                  <tr key={i} className="hover:bg-stone-50">
+                    <td className="px-5 py-3.5 font-medium text-foreground">{t.name}</td>
+                    <td className="px-5 py-3.5 text-muted-foreground">{t.modules}</td>
+                    <td className="px-5 py-3.5 text-muted-foreground">{t.students}</td>
+                    <td className="px-5 py-3.5 text-amber-600 font-semibold">{t.rating}</td>
+                    <td className="px-5 py-3.5 text-muted-foreground">{t.sessions}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`text-xs font-semibold ${t.status === 'active' ? 'text-emerald-600' : 'text-amber-600'}`}>{t.status}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {/* ── Platform tab ── */}
+      {tab === 'Platform' && (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { label: 'Total Platform Users',  value: '12,459', color: 'text-teal-600'  },
+              { label: 'Universities Covered',  value: '7',      color: 'text-amber-600' },
+              { label: 'Modules Live',          value: '23',     color: 'text-amber-600' },
+              { label: 'Active Tutors',         value: '48',     color: 'text-violet-600'},
+              { label: 'Avg Session Duration',  value: '34 mins',color: 'text-teal-600'  },
+              { label: 'Mobile Users',          value: '81%',    color: 'text-amber-600' },
+            ].map((s, i) => (
+              <div key={i} className="bg-white rounded-xl border border-stone-200 p-5 shadow-sm">
+                <p className="text-xs text-muted-foreground mb-1">{s.label}</p>
+                <p className={`text-2xl font-bold font-serif ${s.color}`}>{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* University coverage */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+            <h2 className="font-serif font-bold text-foreground mb-5">University Coverage</h2>
+            <div className="space-y-3">
+              {[
+                { name: 'University of Lagos (UNILAG)',           students: '3,841', pct: 31 },
+                { name: 'Obafemi Awolowo University (OAU)',       students: '2,210', pct: 18 },
+                { name: 'University of Nigeria, Nsukka (UNN)',    students: '1,892', pct: 15 },
+                { name: 'Ahmadu Bello University (ABU)',          students: '1,540', pct: 12 },
+                { name: 'Nnamdi Azikiwe University (NAU)',        students: '1,102', pct: 9  },
+                { name: 'University of Benin (UNIBEN)',           students: '980',   pct: 8  },
+                { name: 'Other universities',                     students: '846',   pct: 7  },
+              ].map((u, i) => (
+                <div key={i}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-foreground">{u.name}</span>
+                    <span className="text-xs text-muted-foreground shrink-0 ml-4">{u.students} students · {u.pct}%</span>
+                  </div>
+                  <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#1a4d35] rounded-full" style={{ width: `${u.pct * 3}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Access device + Monthly growth side by side */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Access device */}
+            <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+              <h2 className="font-serif font-bold text-foreground mb-5">Access Device</h2>
+              <div className="space-y-4">
+                {[
+                  { label: 'Mobile (Android/iOS)', pct: 81, color: 'bg-[#1a4d35]' },
+                  { label: 'Desktop / Laptop',     pct: 14, color: 'bg-amber-400'  },
+                  { label: 'Tablet',               pct: 5,  color: 'bg-violet-500' },
+                ].map((d, i) => (
+                  <div key={i}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-foreground">{d.label}</span>
+                      <span className="text-sm font-semibold text-foreground">{d.pct}%</span>
+                    </div>
+                    <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                      <div className={`h-full ${d.color} rounded-full`} style={{ width: `${d.pct}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Monthly subscriber growth */}
+            <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+              <h2 className="font-serif font-bold text-foreground mb-5">Monthly Subscriber Growth</h2>
+              <div className="space-y-3">
+                {[
+                  { month: 'Mar 2025', count: 1840, max: 3723 },
+                  { month: 'Apr 2025', count: 2210, max: 3723 },
+                  { month: 'May 2025', count: 2780, max: 3723 },
+                  { month: 'Jun 2025', count: 3260, max: 3723 },
+                  { month: 'Jul 2025', count: 3723, max: 3723 },
+                ].map((m, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground w-16 shrink-0">{m.month}</span>
+                    <div className="flex-1 h-6 bg-stone-100 rounded overflow-hidden relative">
+                      <div className="h-full bg-[#1a4d35] rounded" style={{ width: `${(m.count / m.max) * 100}%` }} />
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-foreground">{m.count.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
