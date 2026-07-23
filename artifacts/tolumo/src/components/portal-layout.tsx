@@ -34,7 +34,7 @@ export function PortalLayout({ children, role, links }: { children: React.ReactN
       {/* Sidebar */}
       <aside className={`
         ${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex
-        flex-col w-full md:w-64 bg-primary text-white border-r border-primary-border
+        flex-col w-full md:w-64 bg-primary text-white border-r border-white/10
         fixed md:sticky top-[61px] md:top-0 h-[calc(100vh-61px)] md:h-[100dvh] z-10
       `}>
         <div className="p-6 hidden md:flex items-center gap-3">
