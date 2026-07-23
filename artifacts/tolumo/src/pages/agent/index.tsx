@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Route, Switch, useLocation, Link } from 'wouter';
+import { useClerk } from '@clerk/react';
 import {
   Home, Users, Share2, DollarSign, CheckCircle2,
   MessageSquare, HelpCircle, Settings, LogOut,
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
 
 function AgentShell({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
+  const { signOut } = useClerk();
   const isActive = (href: string) =>
     href === '/agent' ? location === '/agent' : location.startsWith(href);
 
@@ -76,7 +78,8 @@ function AgentShell({ children }: { children: React.ReactNode }) {
               {item.label}
             </Link>
           ))}
-          <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[11px] font-medium text-white/65 hover:bg-white/10 hover:text-white transition-colors">
+          <button onClick={() => signOut({ redirectUrl: '/' })}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[11px] font-medium text-white/65 hover:bg-white/10 hover:text-white transition-colors">
             <LogOut className="h-3.5 w-3.5 shrink-0" />
             Sign out
           </button>
