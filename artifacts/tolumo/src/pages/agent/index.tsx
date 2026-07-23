@@ -4,7 +4,7 @@ import {
   Home, Users, Share2, DollarSign, CheckCircle2,
   MessageSquare, HelpCircle, Settings, LogOut,
   Bell, ChevronLeft, ChevronRight, Copy, Send,
-  Download, Phone, Mail, ShieldCheck, Flag, Eye,
+  Download, Phone, Mail, ShieldCheck, Flag, Eye, ExternalLink,
 } from 'lucide-react';
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
@@ -23,7 +23,10 @@ function AgentShell({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) =>
     href === '/agent' ? location === '/agent' : location.startsWith(href);
 
-  const pageTitle = NAV_ITEMS.find(n => isActive(n.href))?.label ?? 'Home';
+  const bottomTitle =
+    location.startsWith('/agent/settings') ? 'Settings' :
+    location.startsWith('/agent/help')     ? 'Help & Support' : null;
+  const pageTitle = bottomTitle ?? NAV_ITEMS.find(n => isActive(n.href))?.label ?? 'Home';
 
   return (
     <div className="flex h-screen bg-[#F5F2EB] overflow-hidden">
@@ -698,6 +701,350 @@ function Inbox() {
   );
 }
 
+// ── Settings ──────────────────────────────────────────────────────────────────
+
+type SettingsTab = 'profile' | 'institution' | 'payout' | 'referral' | 'notifications' | 'help' | 'account';
+
+const SETTINGS_NAV: { key: SettingsTab; label: string; icon: React.ElementType }[] = [
+  { key: 'profile',       label: 'Profile',              icon: Users         },
+  { key: 'institution',   label: 'Institution',          icon: Home          },
+  { key: 'payout',        label: 'Payout Details',       icon: DollarSign    },
+  { key: 'referral',      label: 'Referral Preferences', icon: Share2        },
+  { key: 'notifications', label: 'Notifications',        icon: Bell          },
+  { key: 'help',          label: 'Help & Support',       icon: HelpCircle    },
+  { key: 'account',       label: 'Account',              icon: LogOut        },
+];
+
+function SToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button onClick={onToggle}
+      className={`relative shrink-0 inline-flex h-6 w-11 rounded-full transition-colors ${on ? 'bg-[#1a4d35]' : 'bg-stone-200'}`}>
+      <span className={`absolute top-0.5 h-5 w-5 bg-white rounded-full shadow transition-transform ${on ? 'translate-x-5' : 'translate-x-0.5'}`} />
+    </button>
+  );
+}
+
+function SRow({ label, desc, children }: { label: string; desc?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between py-3.5">
+      <div>
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        {desc && <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AgentSettings() {
+  const [tab, setTab] = useState<SettingsTab>('profile');
+
+  // Profile
+  const [displayName, setDisplayName] = useState('Chiamaka Adeyemi');
+  const [phone, setPhone] = useState('+234 812 345 6789');
+  const [bio, setBio] = useState('Sub-Agent at the University of Lagos, Faculty of Law.');
+
+  // Institution
+  const [institution, setInstitution] = useState('University of Lagos');
+  const [dept, setDept] = useState('Faculty of Law');
+  const [staffId, setStaffId] = useState('LAW/2021/0342');
+  const [affiliation, setAffiliation] = useState('Student');
+
+  // Payout
+  const [bank, setBank] = useState('Guaranty Trust Bank (GTB)');
+  const [accountNo, setAccountNo] = useState('••••••5432');
+  const [accountName, setAccountName] = useState('Chiamaka Adeyemi');
+  const [showAcct, setShowAcct] = useState(false);
+
+  // Referral Preferences
+  const [notifyNewSignup, setNotifyNewSignup] = useState(true);
+  const [weeklyDigest, setWeeklyDigest] = useState(true);
+  const [refCopied, setRefCopied] = useState(false);
+
+  // Notifications
+  const [emailNotif, setEmailNotif]     = useState(true);
+  const [pushNotif, setPushNotif]       = useState(true);
+  const [commUpdates, setCommUpdates]   = useState(true);
+  const [newReferral, setNewReferral]   = useState(true);
+  const [payoutProc, setPayoutProc]     = useState(true);
+  const [sysAnn, setSysAnn]             = useState(true);
+  const [marketing, setMarketing]       = useState(false);
+
+  function SaveBtn() {
+    return (
+      <button className="px-5 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm mt-4">
+        Save Changes
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex gap-4 max-w-4xl mx-auto">
+      {/* Left nav */}
+      <div className="w-44 shrink-0 bg-white rounded-xl border border-stone-200 shadow-sm py-2 h-fit">
+        {SETTINGS_NAV.map(item => (
+          <button key={item.key} onClick={() => setTab(item.key)}
+            className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-colors text-left relative ${
+              tab === item.key ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+            }`}>
+            <item.icon className="h-4 w-4 shrink-0" />
+            {item.label}
+            {tab === item.key && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#1a4d35]" />}
+          </button>
+        ))}
+      </div>
+
+      {/* Right panel */}
+      <div className="flex-1 bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+
+        {/* ── Profile ── */}
+        {tab === 'profile' && (
+          <div className="space-y-5">
+            <h2 className="font-serif font-bold text-lg text-foreground">Profile</h2>
+
+            {/* Photo */}
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Photo</p>
+              <div className="flex items-center gap-4">
+                <div className="relative h-14 w-14 rounded-xl bg-[#1a4d35] text-white font-bold text-lg flex items-center justify-center shrink-0">
+                  CA
+                  <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-[8px] text-white font-bold">✎</span>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Upload photo</p>
+                  <p className="text-xs text-muted-foreground">JPG, PNG or WebP · max 5 MB</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Display Name</label>
+              <input value={displayName} onChange={e => setDisplayName(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Email</label>
+              <input value="chiamaka.a@tolumo.ng" readOnly
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm text-muted-foreground bg-stone-50 outline-none" />
+              <p className="text-[10px] text-muted-foreground mt-1">Managed by Tolumo — contact Admin to change.</p>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Phone</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Bio</label>
+              <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
+                className="w-full px-3 py-2.5 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none" />
+            </div>
+            <SaveBtn />
+          </div>
+        )}
+
+        {/* ── Institution ── */}
+        {tab === 'institution' && (
+          <div className="space-y-5">
+            <h2 className="font-serif font-bold text-lg text-foreground">Institution</h2>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Institution</label>
+              <input value={institution} onChange={e => setInstitution(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Department / Faculty</label>
+              <input value={dept} onChange={e => setDept(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Student / Staff ID</label>
+              <input value={staffId} onChange={e => setStaffId(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+              <p className="text-[10px] text-muted-foreground mt-1">Used to verify your affiliation.</p>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Affiliation Type</label>
+              <select value={affiliation} onChange={e => setAffiliation(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none bg-white appearance-none">
+                {['Student', 'Staff', 'Alumni'].map(o => <option key={o}>{o}</option>)}
+              </select>
+            </div>
+            <SaveBtn />
+          </div>
+        )}
+
+        {/* ── Payout Details ── */}
+        {tab === 'payout' && (
+          <div className="space-y-5">
+            <h2 className="font-serif font-bold text-lg text-foreground">Payout Details</h2>
+            <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+              <span className="shrink-0 mt-0.5">⚠</span>
+              <span>Payout details are used to process your monthly commission. Changes take effect from the next payout cycle. Ensure the account name matches your bank records exactly.</span>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Bank</label>
+              <select value={bank} onChange={e => setBank(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none bg-white appearance-none">
+                {['Guaranty Trust Bank (GTB)', 'First Bank of Nigeria', 'Zenith Bank', 'Access Bank', 'UBA'].map(b => <option key={b}>{b}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Account Number</label>
+              <div className="relative">
+                <input value={showAcct ? '0123455432' : accountNo} onChange={e => setAccountNo(e.target.value)}
+                  className="w-full h-10 px-3 pr-10 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20 font-mono" />
+                <button onClick={() => setShowAcct(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <Eye className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Account Name</label>
+              <input value={accountName} onChange={e => setAccountName(e.target.value)}
+                className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+              <p className="text-[10px] text-muted-foreground mt-1">Must match exactly as it appears in your bank records.</p>
+            </div>
+            <SaveBtn />
+          </div>
+        )}
+
+        {/* ── Referral Preferences ── */}
+        {tab === 'referral' && (
+          <div className="space-y-5">
+            <h2 className="font-serif font-bold text-lg text-foreground">Referral Preferences</h2>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Referral Link</p>
+              <p className="text-xs text-muted-foreground mb-2">Share this link to earn commission.</p>
+              <div className="flex gap-2">
+                <input value="https://tolumo.ng/r/CA-2024-0342" readOnly
+                  className="flex-1 h-10 px-3 rounded-xl border border-stone-200 text-sm text-muted-foreground bg-stone-50 outline-none font-mono" />
+                <button onClick={() => { navigator.clipboard.writeText('https://tolumo.ng/r/CA-2024-0342').catch(() => {}); setRefCopied(true); setTimeout(() => setRefCopied(false), 1500); }}
+                  className="px-4 h-10 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shrink-0">
+                  {refCopied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Alerts</p>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                <SRow label="Notify me on each new signup" desc="Instant notification when a student uses your link">
+                  <SToggle on={notifyNewSignup} onToggle={() => setNotifyNewSignup(v => !v)} />
+                </SRow>
+                <SRow label="Weekly referral digest" desc="Summary email every Monday at 8 AM">
+                  <SToggle on={weeklyDigest} onToggle={() => setWeeklyDigest(v => !v)} />
+                </SRow>
+              </div>
+            </div>
+            <SaveBtn />
+          </div>
+        )}
+
+        {/* ── Notifications ── */}
+        {tab === 'notifications' && (
+          <div className="space-y-5">
+            <h2 className="font-serif font-bold text-lg text-foreground">Notifications</h2>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Channels</p>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                <SRow label="Email notifications" desc="Receive notifications to your registered email">
+                  <SToggle on={emailNotif} onToggle={() => setEmailNotif(v => !v)} />
+                </SRow>
+                <SRow label="Push notifications" desc="In-app and browser push alerts">
+                  <SToggle on={pushNotif} onToggle={() => setPushNotif(v => !v)} />
+                </SRow>
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Activity</p>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                <SRow label="Commission updates" desc="When commission is credited or adjusted">
+                  <SToggle on={commUpdates} onToggle={() => setCommUpdates(v => !v)} />
+                </SRow>
+                <SRow label="New student referral" desc="When a student signs up via your link">
+                  <SToggle on={newReferral} onToggle={() => setNewReferral(v => !v)} />
+                </SRow>
+                <SRow label="Payout processed" desc="Confirmation when your monthly payout is sent">
+                  <SToggle on={payoutProc} onToggle={() => setPayoutProc(v => !v)} />
+                </SRow>
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Platform</p>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                <SRow label="System announcements" desc="Platform updates, downtime notices, policy changes">
+                  <SToggle on={sysAnn} onToggle={() => setSysAnn(v => !v)} />
+                </SRow>
+                <SRow label="Marketing & promotions" desc="Campaign tips, performance challenges, offers">
+                  <SToggle on={marketing} onToggle={() => setMarketing(v => !v)} />
+                </SRow>
+              </div>
+            </div>
+            <SaveBtn />
+          </div>
+        )}
+
+        {/* ── Help & Support ── */}
+        {tab === 'help' && (
+          <div className="space-y-4">
+            <h2 className="font-serif font-bold text-lg text-foreground">Help &amp; Support</h2>
+            <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+              {[
+                { label: 'Help Centre & FAQs',   desc: 'Guides on referrals, commissions, and verification.'  },
+                { label: 'Contact Support',       desc: 'Reach our team via chat, email, or WhatsApp.'         },
+                { label: 'Report a Problem',      desc: 'Flag a bug, incorrect commission, or platform issue.' },
+                { label: 'Community Guidelines',  desc: 'Standards for our Sub-Agent network.'                 },
+                { label: 'Terms of Service',      desc: undefined },
+                { label: 'Privacy Policy',        desc: undefined },
+              ].map((item, i) => (
+                <button key={i} className="w-full flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors text-left group">
+                  <div>
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</p>
+                    {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
+                  </div>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Account ── */}
+        {tab === 'account' && (
+          <div className="space-y-4">
+            <h2 className="font-serif font-bold text-lg text-foreground">Account</h2>
+
+            {/* Sign out card */}
+            <div className="rounded-xl border border-stone-200 p-5 space-y-3">
+              <p className="font-semibold text-foreground">Sign out</p>
+              <p className="text-sm text-muted-foreground">You will be signed out of your Sub-Agent dashboard on this device.</p>
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-stone-200 text-sm font-semibold text-foreground hover:bg-stone-50 transition-colors">
+                <LogOut className="h-3.5 w-3.5" /> Sign out
+              </button>
+            </div>
+
+            {/* Delete account card */}
+            <div className="rounded-xl border border-red-200 p-5 space-y-3 bg-red-50/50">
+              <div className="flex items-center gap-2">
+                <Flag className="h-4 w-4 text-red-500 shrink-0" />
+                <p className="font-semibold text-red-600">Delete account</p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                This permanently deletes your agent account, referral history, and commission records.
+                Outstanding payouts will still be processed before deletion completes. This cannot be undone.
+              </p>
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-300 text-sm font-semibold text-red-600 hover:bg-red-100 transition-colors">
+                <Flag className="h-3.5 w-3.5" /> Request account deletion
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
 // ── Router ────────────────────────────────────────────────────────────────────
 
 export default function AgentPortal() {
@@ -710,6 +1057,7 @@ export default function AgentPortal() {
         <Route path="/agent/commission"   component={Commission}            />
         <Route path="/agent/verification" component={LecturerVerification}  />
         <Route path="/agent/inbox"        component={Inbox}                 />
+        <Route path="/agent/settings"     component={AgentSettings}         />
         <Route component={AgentHome} />
       </Switch>
     </AgentShell>
