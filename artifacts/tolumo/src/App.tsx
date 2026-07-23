@@ -186,6 +186,7 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
                 {[
                   { label: 'Sub-Agent', href: `${basePath}/agent` },
                   { label: 'Super Agent', href: `${basePath}/super-agent` },
+                  { label: 'CRM Portal', href: `${basePath}/crm` },
                 ].map(({ label, href }) => (
                   <a key={label} href={href} className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors border ${label === 'Demo Super Agent' ? 'bg-primary text-white border-primary hover:bg-primary/90' : 'border-border bg-white text-muted-foreground hover:border-primary hover:text-primary'}`}>
                     {label}
