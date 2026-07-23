@@ -1209,9 +1209,396 @@ function StubPage({ title, desc }: { title: string; desc: string }) {
   );
 }
 
-// ── Import helpers ─────────────────────────────────────────────────────────────
+// ── Admin Settings ────────────────────────────────────────────────────────────
 
-// (Users is already imported above via lucide)
+type SettingsTab = 'profile' | 'team' | 'platform' | 'integrations' | 'audit' | 'notifications' | 'help' | 'account';
+
+const SETTINGS_NAV: { key: SettingsTab; label: string; icon: React.ElementType; red?: boolean }[] = [
+  { key: 'profile',       label: 'Profile',               icon: Users           },
+  { key: 'team',          label: 'Team & Roles',          icon: UserCheck       },
+  { key: 'platform',      label: 'Platform Notifications',icon: Activity        },
+  { key: 'integrations',  label: 'Integrations',          icon: Zap             },
+  { key: 'audit',         label: 'Audit Log',             icon: BookMarked      },
+  { key: 'notifications', label: 'Notifications',         icon: Bell            },
+  { key: 'help',          label: 'Help & Support',        icon: HelpCircle      },
+  { key: 'account',       label: 'Account',               icon: LogOut, red: true },
+];
+
+const AUDIT_ENTRIES = [
+  { action: 'Approved tutor account',  actor: 'Sade Balogun',  detail: 'Adeyemi Oluwaseun',           date: '2025-07-14 09:12' },
+  { action: 'Subscription renewed',    actor: 'System',        detail: 'Chisom Okafor',                date: '2025-07-14 08:45' },
+  { action: 'Published course content',actor: 'Emeka Nwosu',  detail: 'Criminal Law — Topic 3',       date: '2025-07-13 17:30' },
+  { action: 'Resolved support ticket #841', actor: 'Fatima Yusuf', detail: 'Ticket #841',             date: '2025-07-13 14:11' },
+  { action: 'Suspended user account',  actor: 'Sade Balogun',  detail: 'Tobenna Eze',                 date: '2025-07-12 11:55' },
+];
+
+const TEAM_MEMBERS = [
+  { name: 'Sade Balogun',  email: 'sade@tolumo.ng',   initials: 'SB', role: 'Full Admin',      roleBg: 'bg-violet-100 text-violet-700' },
+  { name: 'Emeka Nwosu',   email: 'emeka@tolumo.ng',  initials: 'EN', role: 'Content Curator', roleBg: 'bg-teal-100 text-teal-700'    },
+  { name: 'Fatima Yusuf',  email: 'fatima@tolumo.ng', initials: 'FY', role: 'Support Staff',   roleBg: 'bg-stone-100 text-stone-600'  },
+];
+
+function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button onClick={onToggle}
+      className={`relative shrink-0 inline-flex h-6 w-10 rounded-full transition-colors ${on ? 'bg-[#1a4d35]' : 'bg-stone-200'}`}>
+      <span className={`absolute top-0.5 h-5 w-5 bg-white rounded-full shadow transition-transform ${on ? 'translate-x-4' : 'translate-x-0.5'}`} />
+    </button>
+  );
+}
+
+function SettingsRow({ label, desc, children }: { label: string; desc?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between py-3.5 border-b border-stone-100 last:border-b-0">
+      <div>
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        {desc && <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AdminSettings() {
+  const [tab, setTab] = useState<SettingsTab>('profile');
+
+  // Profile state
+  const [fullName, setFullName] = useState('Admin User');
+  const [phone, setPhone] = useState('+234 800 000 0000');
+  const [gender, setGender] = useState('Female');
+
+  // Notifications
+  const [push, setPush]               = useState(true);
+  const [email, setEmail]             = useState(true);
+  const [whatsapp, setWhatsapp]       = useState(false);
+  const [newSignups, setNewSignups]   = useState(true);
+  const [churnRisk, setChurnRisk]     = useState(true);
+  const [sysAlerts, setSysAlerts]     = useState(true);
+  const [platAnn, setPlatAnn]         = useState(true);
+
+  // Platform notifications
+  const [moduleSubmit, setModuleSubmit]   = useState(true);
+  const [tutorApply, setTutorApply]       = useState(true);
+  const [paymentFail, setPaymentFail]     = useState(true);
+  const [securityAlert, setSecurityAlert] = useState(true);
+  const [weeklyReport, setWeeklyReport]   = useState(false);
+
+  // Audit search
+  const [auditSearch, setAuditSearch] = useState('');
+  const [revealKey, setRevealKey]     = useState(false);
+
+  const filteredAudit = AUDIT_ENTRIES.filter(e =>
+    e.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
+    e.actor.toLowerCase().includes(auditSearch.toLowerCase()) ||
+    e.detail.toLowerCase().includes(auditSearch.toLowerCase())
+  );
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-2xl font-serif font-bold text-foreground">Settings</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Admin Account</p>
+      </div>
+
+      <div className="flex gap-0 bg-transparent">
+        {/* Left nav */}
+        <div className="w-44 shrink-0 bg-white rounded-xl border border-stone-200 shadow-sm py-2 h-fit">
+          {SETTINGS_NAV.map(item => (
+            <button key={item.key} onClick={() => setTab(item.key)}
+              className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-colors text-left relative ${
+                tab === item.key ? 'text-foreground' : item.red ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-foreground'
+              }`}>
+              <item.icon className={`h-4 w-4 shrink-0 ${item.red ? 'text-red-500' : ''}`} />
+              {item.label}
+              {tab === item.key && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#1a4d35]" />}
+            </button>
+          ))}
+        </div>
+
+        {/* Right content */}
+        <div className="flex-1 min-w-0 ml-4 bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+
+          {/* ── Profile ── */}
+          {tab === 'profile' && (
+            <div className="space-y-6">
+              <h2 className="font-serif font-bold text-lg text-foreground">Profile</h2>
+
+              {/* Avatar card */}
+              <div className="flex items-center gap-4 p-4 bg-stone-50 rounded-xl border border-stone-200">
+                <div className="relative">
+                  <div className="h-14 w-14 rounded-full bg-[#1a4d35] text-white flex items-center justify-center text-lg font-bold">CO</div>
+                  <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center">
+                    <Check className="h-2.5 w-2.5 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground text-sm">Admin User</p>
+                  <p className="text-xs text-muted-foreground">admin@tolumo.com</p>
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">Full Admin</span>
+                </div>
+                <button className="ml-auto text-xs text-primary font-medium hover:underline">Upload photo</button>
+              </div>
+
+              {/* Personal Information */}
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Personal Information</p>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Full Name</label>
+                    <input value={fullName} onChange={e => setFullName(e.target.value)}
+                      className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Email Address</label>
+                    <input value="admin@tolumo.com" readOnly
+                      className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm text-muted-foreground bg-stone-50 outline-none" />
+                    <p className="text-[10px] text-muted-foreground mt-1">To change your email, contact Support.</p>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Phone Number</label>
+                    <input value={phone} onChange={e => setPhone(e.target.value)}
+                      className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+                    <p className="text-[10px] text-muted-foreground mt-1">Used for account recovery and notifications.</p>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Gender</label>
+                    <select value={gender} onChange={e => setGender(e.target.value)}
+                      className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm outline-none bg-white appearance-none">
+                      {['Female', 'Male', 'Prefer not to say'].map(o => <option key={o}>{o}</option>)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Password & Security */}
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Password &amp; Security</p>
+                <button className="text-sm font-medium text-primary hover:underline">Change password →</button>
+              </div>
+
+              <div className="flex justify-end">
+                <button className="px-5 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm">Save Changes</button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Team & Roles ── */}
+          {tab === 'team' && (
+            <div className="space-y-5">
+              <h2 className="font-serif font-bold text-lg text-foreground">Team &amp; Roles</h2>
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Team Members</p>
+                <div className="rounded-xl border border-stone-200 overflow-hidden divide-y divide-stone-100">
+                  {TEAM_MEMBERS.map((m, i) => (
+                    <div key={i} className="flex items-center gap-3 px-4 py-3.5">
+                      <div className="h-8 w-8 rounded-full bg-[#1a4d35] text-white flex items-center justify-center text-xs font-bold shrink-0">{m.initials}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground">{m.name}</p>
+                        <p className="text-xs text-muted-foreground">{m.email}</p>
+                      </div>
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${m.roleBg}`}>{m.role}</span>
+                      <button className="p-1.5 text-red-400 hover:text-red-600 transition-colors"><Trash2 className="h-3.5 w-3.5" /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#14392a] transition-colors shadow-sm">
+                <Plus className="h-4 w-4" /> Add Team Member
+              </button>
+            </div>
+          )}
+
+          {/* ── Platform Notifications ── */}
+          {tab === 'platform' && (
+            <div className="space-y-5">
+              <h2 className="font-serif font-bold text-lg text-foreground">Platform Notifications</h2>
+              <p className="text-sm text-muted-foreground">Control which platform events trigger admin alerts.</p>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                <SettingsRow label="Module submission" desc="A tutor submits a new module for review.">
+                  <Toggle on={moduleSubmit} onToggle={() => setModuleSubmit(v => !v)} />
+                </SettingsRow>
+                <SettingsRow label="Tutor application" desc="A new tutor applies to join the platform.">
+                  <Toggle on={tutorApply} onToggle={() => setTutorApply(v => !v)} />
+                </SettingsRow>
+                <SettingsRow label="Payment failure" desc="A subscription or add-on payment fails.">
+                  <Toggle on={paymentFail} onToggle={() => setPaymentFail(v => !v)} />
+                </SettingsRow>
+                <SettingsRow label="Security alert" desc="Unusual login activity or account breach attempt.">
+                  <Toggle on={securityAlert} onToggle={() => setSecurityAlert(v => !v)} />
+                </SettingsRow>
+                <SettingsRow label="Weekly digest" desc="Summary of platform activity every Monday.">
+                  <Toggle on={weeklyReport} onToggle={() => setWeeklyReport(v => !v)} />
+                </SettingsRow>
+              </div>
+            </div>
+          )}
+
+          {/* ── Integrations ── */}
+          {tab === 'integrations' && (
+            <div className="space-y-5">
+              <h2 className="font-serif font-bold text-lg text-foreground">Integrations</h2>
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Payment Gateways</p>
+                <div className="space-y-3">
+                  {/* Paystack */}
+                  <div className="rounded-xl border border-stone-200 p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <p className="font-semibold text-foreground">Paystack</p>
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">Active</span>
+                    </div>
+                    <p className="text-xs font-mono text-muted-foreground mb-2">
+                      {revealKey ? 'sk_live_test_abc123_demo4a2f' : 'sk_live_••••••••••••4a2f'}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <button onClick={() => setRevealKey(v => !v)} className="flex items-center gap-1 text-xs text-primary font-medium hover:underline">
+                        <ShieldCheck className="h-3 w-3" /> {revealKey ? 'Hide key' : 'Reveal key'}
+                      </button>
+                      <span className="text-stone-300">·</span>
+                      <button className="text-xs text-primary font-medium hover:underline">Update key</button>
+                    </div>
+                  </div>
+                  {/* Flutterwave */}
+                  <div className="rounded-xl border border-stone-200 p-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <p className="font-semibold text-foreground">Flutterwave</p>
+                      <span className="px-2.5 py-1 rounded-full bg-red-100 text-red-600 text-[10px] font-bold">Lapsed</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Not configured</p>
+                  </div>
+                  {/* Lawpavillon */}
+                  <div className="rounded-xl border border-stone-200 p-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <p className="font-semibold text-foreground">Lawpavillon API</p>
+                      <span className="text-xs text-muted-foreground font-medium">Coming soon</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Coming soon</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Audit Log ── */}
+          {tab === 'audit' && (
+            <div className="space-y-4">
+              <h2 className="font-serif font-bold text-lg text-foreground">Audit Log</h2>
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Activity Log</p>
+                <div className="relative mb-3">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+                  <input value={auditSearch} onChange={e => setAuditSearch(e.target.value)}
+                    placeholder="Search by actor or action…"
+                    className="w-full h-9 pl-9 pr-3 rounded-xl border border-stone-200 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
+                </div>
+                <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+                  {filteredAudit.length === 0 ? (
+                    <p className="px-4 py-8 text-center text-sm text-muted-foreground">No matching entries.</p>
+                  ) : filteredAudit.map((e, i) => (
+                    <div key={i} className="flex items-start justify-between px-4 py-3.5 hover:bg-stone-50">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{e.action}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{e.actor} · {e.detail}</p>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground font-mono shrink-0 ml-4">{e.date}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Notifications ── */}
+          {tab === 'notifications' && (
+            <div className="space-y-5">
+              <h2 className="font-serif font-bold text-lg text-foreground">Notifications</h2>
+
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Channels</p>
+                <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                  <SettingsRow label="Push notifications">
+                    <Toggle on={push} onToggle={() => setPush(v => !v)} />
+                  </SettingsRow>
+                  <SettingsRow label="Email notifications">
+                    <Toggle on={email} onToggle={() => setEmail(v => !v)} />
+                  </SettingsRow>
+                  <SettingsRow label="WhatsApp alerts" desc="Requires a verified WhatsApp number.">
+                    <Toggle on={whatsapp} onToggle={() => setWhatsapp(v => !v)} />
+                  </SettingsRow>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Notification Types</p>
+                <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 px-4">
+                  <SettingsRow label="New sign-ups" desc="Daily digest of new student registrations.">
+                    <Toggle on={newSignups} onToggle={() => setNewSignups(v => !v)} />
+                  </SettingsRow>
+                  <SettingsRow label="Churn risk alerts" desc="Subscribers inactive for 14+ days.">
+                    <Toggle on={churnRisk} onToggle={() => setChurnRisk(v => !v)} />
+                  </SettingsRow>
+                  <SettingsRow label="System alerts" desc="Payment gateway errors and infrastructure events.">
+                    <Toggle on={sysAlerts} onToggle={() => setSysAlerts(v => !v)} />
+                  </SettingsRow>
+                  <SettingsRow label="Platform announcements" desc="Internal team communication.">
+                    <Toggle on={platAnn} onToggle={() => setPlatAnn(v => !v)} />
+                  </SettingsRow>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Help & Support ── */}
+          {tab === 'help' && (
+            <div className="space-y-4">
+              <h2 className="font-serif font-bold text-lg text-foreground">Help &amp; Support</h2>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+                {[
+                  { label: 'Help Centre & FAQs',    desc: 'Answers to common questions about courses, payments, and tutors.' },
+                  { label: 'Contact Support',        desc: 'Reach our team via chat, email, or WhatsApp.' },
+                  { label: 'Report a Problem',       desc: 'Flag a bug, incorrect content, or platform issue.' },
+                  { label: 'Community Guidelines',   desc: 'Our standards for respectful academic interaction.' },
+                  { label: 'Terms of Service',       desc: undefined },
+                  { label: 'Privacy Policy',         desc: undefined },
+                ].map((item, i) => (
+                  <button key={i} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-stone-50 transition-colors text-left group">
+                    <div>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</p>
+                      {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
+                    </div>
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Account ── */}
+          {tab === 'account' && (
+            <div className="space-y-5">
+              <h2 className="font-serif font-bold text-lg text-foreground">Account</h2>
+              <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+                {[
+                  { label: 'Export account data',   desc: 'Download a copy of your admin account data.'  },
+                  { label: 'Transfer admin role',    desc: 'Assign your Full Admin role to another team member.' },
+                  { label: 'Deactivate account',    desc: 'Temporarily disable this admin account.', red: true },
+                ].map((item, i) => (
+                  <button key={i} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-stone-50 transition-colors text-left">
+                    <div>
+                      <p className={`text-sm font-medium ${item.red ? 'text-red-500' : 'text-foreground'}`}>{item.label}</p>
+                      {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Router ────────────────────────────────────────────────────────────────────
 
@@ -1226,8 +1613,8 @@ export default function AdminPortal() {
         <Route path="/admin/analytics"     component={AnalyticsPage}        />
         <Route path="/admin/announcements" component={AnnouncementsPage}    />
         <Route path="/admin/scholarships"  component={ScholarshipsAdminPage}/>
-        <Route path="/admin/settings">{() => <StubPage title="Settings" desc="Platform configuration and admin preferences." />}</Route>
-        <Route path="/admin/help">    {() => <StubPage title="Help & Support" desc="Admin help centre and support resources." />}    </Route>
+        <Route path="/admin/settings"  component={AdminSettings} />
+        <Route path="/admin/help">    {() => <AdminSettings />}</Route>
         <Route component={AdminDashboard} />
       </Switch>
     </AdminShell>
