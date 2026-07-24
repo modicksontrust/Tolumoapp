@@ -167,23 +167,6 @@ export default function OnboardingPage() {
 
             {isStudent ? (
               <>
-                {/* Year level */}
-                <div>
-                  <label className={labelClass}>Current Year / Level</label>
-                  <div className="relative">
-                    <select
-                      className={selectClass}
-                      value={yearLevel}
-                      onChange={e => setYearLevel(e.target.value)}
-                      required
-                    >
-                      <option value="">Select your year</option>
-                      {YEAR_LEVELS.map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
-                    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▼</span>
-                  </div>
-                </div>
-
                 {/* Area of law */}
                 <div>
                   <label className={labelClass}>Area of Law You're Most Interested In</label>
