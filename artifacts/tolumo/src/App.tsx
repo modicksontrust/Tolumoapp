@@ -130,9 +130,9 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
           <span className="text-white/60 text-xs">12,400+ students</span>
         </div>
       </div>
-      {/* Right panel — cream */}
-      <div className="flex-1 bg-[#F5F2EB] flex flex-col">
-        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 max-w-lg mx-auto w-full py-12">
+      {/* Right panel — cream, scrollable so tall forms (sign-up) are fully reachable */}
+      <div className="flex-1 bg-[#F5F2EB] overflow-y-auto flex flex-col">
+        <div className="flex flex-col px-8 md:px-16 max-w-lg mx-auto w-full py-12">
           {/* Back link */}
           <a href={basePath || '/'} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-8">
             ← Back

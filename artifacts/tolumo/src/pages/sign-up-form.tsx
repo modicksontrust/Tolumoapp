@@ -79,7 +79,7 @@ export default function CustomSignUpForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isLoaded) return;
+    if (!signUp) { setError('Still loading — please try again in a moment.'); return; }
     setError('');
     setLoading(true);
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
