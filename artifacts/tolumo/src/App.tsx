@@ -55,7 +55,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: "none" as const,
     logoLinkUrl: basePath || "/",
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: `${window.location.origin}${basePath}/logo.png`,
   },
   variables: {
     colorPrimary: "hsl(153, 54%, 15%)",
@@ -106,8 +106,8 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
 
         {/* Logo */}
         <div className="relative flex items-center gap-2">
-          <img src={`${window.location.origin}${basePath}/logo.svg`} alt="Tolumo" className="h-8 w-8" />
-          <span className="font-serif font-bold text-xl tracking-tight text-white">Tolumo</span>
+          <img src={`${window.location.origin}${basePath}/logo.png`} alt="Tolumore" className="h-8 w-8" />
+          <span className="font-serif font-bold text-xl tracking-tight text-white">Tolumore</span>
         </div>
 
         {/* Quote */}
@@ -247,7 +247,7 @@ function UserPortalRouter() {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center bg-background">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <img src={`${basePath}/logo.svg`} alt="Tolumo" className="h-12 w-12 opacity-50" />
+          <img src={`${basePath}/logo.png`} alt="Tolumore" className="h-12 w-12 opacity-50" />
           <p className="text-muted-foreground font-serif">Loading your portal...</p>
         </div>
       </div>
@@ -302,13 +302,13 @@ function ClerkProviderWithRoutes() {
       localization={{
         signIn: {
           start: {
-            title: "Welcome to Tolumo",
+            title: "Welcome to Tolumore",
             subtitle: "Sign in to your learning portal",
           },
         },
         signUp: {
           start: {
-            title: "Join Tolumo",
+            title: "Join Tolumore",
             subtitle: "Begin your LL.B journey today",
           },
         },

@@ -14,8 +14,8 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 md:px-6 max-w-6xl h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Tolumo" className="h-8 w-8" />
-            <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumo</span>
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`} alt="Tolumore" className="h-8 w-8" />
+            <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumore</span>
           </div>
           
           <div className="hidden md:flex items-center gap-8 font-medium text-sm">
@@ -171,7 +171,7 @@ export default function LandingPage() {
             {/* Header */}
             <div className="text-center mb-14">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">The Learning Journey</p>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">How Tolumo Works</h2>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">How Tolumore Works</h2>
               <p className="text-foreground max-w-lg mx-auto">
                 We've rebuilt the university law learning experience from scratch — structured, progressive, and proven to improve exam results.
               </p>
@@ -343,7 +343,7 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-3 gap-5">
               {[
                 {
-                  quote: '"I\'d failed Constitutional Law twice before Tolumo. The way Prof. Adeyemi breaks down the Second Schedule finally made it click. I passed with a B+ this time."',
+                  quote: '"I\'d failed Constitutional Law twice before Tolumore. The way Prof. Adeyemi breaks down the Second Schedule finally made it click. I passed with a B+ this time."',
                   name: 'Chisom Anieke',
                   school: 'University of Lagos',
                   initials: 'CA',
@@ -483,13 +483,13 @@ export default function LandingPage() {
                 </h2>
                 <div className="space-y-5 text-sm text-muted-foreground leading-relaxed">
                   <p>
-                    Tolumo was born from a simple observation: Nigerian law students are among the hardest-working students in the world, yet thousands fail preventable exams every year — not from lack of effort, but from lack of access to quality teaching resources.
+                    Tolumore was born from a simple observation: Nigerian law students are among the hardest-working students in the world, yet thousands fail preventable exams every year — not from lack of effort, but from lack of access to quality teaching resources.
                   </p>
                   <p>
                     In Nigerian law faculties, a single lecturer often teaches hundreds of students with limited time for individual support. Textbooks are expensive, past questions are scattered, and revision support is inconsistent across institutions.
                   </p>
                   <p>
-                    Tolumo changes that. Built by <strong className="text-primary font-semibold">Solalina</strong> in partnership with practising lawyers and academics, we've built a structured, NUC-aligned learning platform that meets students where they are — whether studying in Lagos, Zaria, Nsukka or Port Harcourt.
+                    Tolumore changes that. Built by <strong className="text-primary font-semibold">Solalina</strong> in partnership with practising lawyers and academics, we've built a structured, NUC-aligned learning platform that meets students where they are — whether studying in Lagos, Zaria, Nsukka or Port Harcourt.
                   </p>
                   <p>
                     Every feature — from the AI Study Coach to the post-quiz feedback loop — was designed with one goal: to help more Nigerian law students pass their exams, graduate on time, and enter the profession with confidence.
@@ -559,11 +559,11 @@ export default function LandingPage() {
                 <div>
                   <p className="font-bold text-primary text-sm">Dr Moses Oruaze Dickson</p>
                   <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD</p>
-                  <p className="text-xs text-muted-foreground">Founder, Tolumo.</p>
+                  <p className="text-xs text-muted-foreground">Founder, Tolumore.</p>
                 </div>
                 {/* Pull quote */}
                 <blockquote className="border-l-4 border-accent pl-4 text-sm text-muted-foreground italic leading-relaxed">
-                  "Tolumo is the classroom I wish every student could have had: a place where complex ideas become crystal clear, where fear loosens its grip, and where every learner is reminded they are not a mistake, not an afterthought, and never too late."
+                  "Tolumore is the classroom I wish every student could have had: a place where complex ideas become crystal clear, where fear loosens its grip, and where every learner is reminded they are not a mistake, not an afterthought, and never too late."
                 </blockquote>
               </div>
 
@@ -582,25 +582,25 @@ export default function LandingPage() {
                 {/* Pullquote block */}
                 <div className="rounded-xl bg-primary px-8 py-6 not-prose my-8">
                   <p className="font-serif text-lg font-bold text-white leading-snug mb-2">"And then it struck me: if one classroom could change lives, what could a classroom without walls do?"</p>
-                  <p className="text-sm text-white/60 italic">That question became Tolumo.</p>
+                  <p className="text-sm text-white/60 italic">That question became Tolumore.</p>
                 </div>
 
-                <p>In my native Ijaw language, <strong className="text-primary">Tolumo</strong> means "to teach." But to me, it is much more than a word; it is a promise. Tolumo is the classroom I wish every student could have had: a place where complex ideas become crystal clear, where fear loosens its grip, and where every learner is reminded that they are not a mistake, not an afterthought, and never "too late" or "too little." You are exactly who you need to be to begin.</p>
-                <p>Tolumo is not just a platform. It is a movement of second chances, of "try again," and of "you are closer than you think." It is built on the unwavering belief that while talent is everywhere, opportunity is not — and we are here to change that.</p>
+                <p>In my native Ijaw language, <strong className="text-primary">Tolumore</strong> means "to teach." But to me, it is much more than a word; it is a promise. Tolumore is the classroom I wish every student could have had: a place where complex ideas become crystal clear, where fear loosens its grip, and where every learner is reminded that they are not a mistake, not an afterthought, and never "too late" or "too little." You are exactly who you need to be to begin.</p>
+                <p>Tolumore is not just a platform. It is a movement of second chances, of "try again," and of "you are closer than you think." It is built on the unwavering belief that while talent is everywhere, opportunity is not — and we are here to change that.</p>
                 <p>With the support of my old classmates who survived those early hardships alongside me, fellow academics, mentors, and partners who share this dream, we are turning what once lived only in my heart into something you can hold in your hands and use to build your future.</p>
 
                 <p className="font-semibold text-primary">This is our classroom without walls.</p>
                 <p className="font-semibold text-primary">This is where we teach like every student matters, because you do.</p>
                 <p className="font-semibold text-primary">This is where we learn like the future is listening, because it is.</p>
 
-                <p><strong className="text-primary">Welcome to Tolumo!<br />I am honored to walk this road with you.</strong></p>
+                <p><strong className="text-primary">Welcome to Tolumore!<br />I am honored to walk this road with you.</strong></p>
 
                 {/* Signature */}
                 <div className="flex items-center gap-3 pt-6 border-t border-border not-prose">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white font-serif font-bold text-sm">M</div>
                   <div>
                     <p className="text-sm font-bold text-primary">Dr Moses Oruaze Dickson</p>
-                    <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD &nbsp;·&nbsp; Founder, Tolumo.</p>
+                    <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD &nbsp;·&nbsp; Founder, Tolumore.</p>
                   </div>
                 </div>
               </div>
@@ -616,8 +616,8 @@ export default function LandingPage() {
             {/* Brand */}
             <div className="max-w-xs">
               <div className="flex items-center gap-2 mb-4">
-                <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Tolumo" className="h-8 w-8" />
-                <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumo</span>
+                <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`} alt="Tolumore" className="h-8 w-8" />
+                <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumore</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 Africa's premier law tutorial platform. Real tutors. AI-guided revision, and a proven learning structure built for the Nigerian university experience.
@@ -659,7 +659,7 @@ export default function LandingPage() {
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-5">Company</p>
               <ul className="space-y-3 text-sm text-muted-foreground">
-                <li><a href="#about" className="hover:text-primary transition-colors">About Tolumo</a></li>
+                <li><a href="#about" className="hover:text-primary transition-colors">About Tolumore</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Solalina</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Triax Solicitors</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Goldcoast Foundation</a></li>
@@ -670,7 +670,7 @@ export default function LandingPage() {
 
           {/* Bottom bar */}
           <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <p>© 2025 Tolumo · Operated by Solalina. All rights reserved.</p>
+            <p>© 2025 Tolumore · Operated by Solalina. All rights reserved.</p>
             <p>Built for African students, by educators who care.</p>
           </div>
         </div>

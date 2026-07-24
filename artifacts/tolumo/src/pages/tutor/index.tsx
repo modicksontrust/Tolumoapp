@@ -242,8 +242,8 @@ function TutorShell({ children }: { children: React.ReactNode }) {
       `}>
         {/* Logo */}
         <div className="px-6 pt-6 pb-4 flex items-center gap-3">
-          <img src={`${basePath}/logo.svg`} alt="" className="h-8 w-8" />
-          <span className="font-serif font-bold text-xl text-white tracking-tight">Tolumo</span>
+          <img src={`${basePath}/logo.png`} alt="" className="h-8 w-8" />
+          <span className="font-serif font-bold text-xl text-white tracking-tight">Tolumore</span>
         </div>
 
         <div className="px-6 pb-4">
@@ -405,7 +405,7 @@ const AI_REPLIES: { text: string; chips?: string[] }[] = [
     chips: ['View all feedback', 'View analytics'],
   },
   {
-    text: 'You can reach Tolumo support via the Help & Support section in Settings, or email support@tolumo.com. Our team responds within 24 hours.',
+    text: 'You can reach Tolumore support via the Help & Support section in Settings, or email support@tolumo.com. Our team responds within 24 hours.',
     chips: ['Open Help & Support', 'Submit a ticket'],
   },
 ];
@@ -430,7 +430,7 @@ function AIChatWidget() {
   const [msgs, setMsgs] = useState<ChatMsg[]>([
     {
       role: 'ai',
-      text: "Hi Prof. Adeyemi 👋 I'm your Tolumo AI assistant. Ask me anything about your students, content, earnings, or the platform.",
+      text: "Hi Prof. Adeyemi 👋 I'm your Tolumore AI assistant. Ask me anything about your students, content, earnings, or the platform.",
       time: nowTime(),
       chips: ['View my schedule', 'Check my earnings', 'Pending content', 'Student feedback'],
       helpful: null,
@@ -468,8 +468,8 @@ function AIChatWidget() {
   };
 
   // Logo icon component (matches the reference's building mark)
-  const TolumoMark = () => (
-    <img src={`${basePath}/logo.svg`} alt="" className="h-full w-full object-contain" />
+  const TolumoreMark = () => (
+    <img src={`${basePath}/logo.png`} alt="" className="h-full w-full object-contain" />
   );
 
   return (
@@ -482,13 +482,13 @@ function AIChatWidget() {
           <div className="flex items-center gap-3 px-4 py-3 bg-primary shrink-0">
             {/* Logo mark */}
             <div className="h-9 w-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0 overflow-hidden p-1">
-              <TolumoMark />
+              <TolumoreMark />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white leading-tight">Tolumo AI</p>
+              <p className="text-sm font-bold text-white leading-tight">Tolumore AI</p>
               <p className="flex items-center gap-1.5 text-[11px] text-white/70 mt-0.5">
                 <span className="h-2 w-2 rounded-full bg-green-400 shrink-0" />
-                Online · Tolumo Assistant
+                Online · Tolumore Assistant
               </p>
             </div>
             <button
@@ -521,7 +521,7 @@ function AIChatWidget() {
                   /* AI bubble */
                   <div className="flex items-start gap-2">
                     <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden p-1 mt-0.5">
-                      <TolumoMark />
+                      <TolumoreMark />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="bg-stone-100 text-foreground text-sm px-4 py-3 rounded-2xl rounded-tl-sm leading-relaxed">
@@ -571,7 +571,7 @@ function AIChatWidget() {
                 <p className="text-[10px] text-stone-400 text-center mb-2">{nowTime()}</p>
                 <div className="flex items-start gap-2">
                   <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden p-1">
-                    <TolumoMark />
+                    <TolumoreMark />
                   </div>
                   <div className="bg-stone-100 rounded-2xl rounded-tl-sm px-4 py-3">
                     <div className="flex gap-1 items-center">
@@ -605,7 +605,7 @@ function AIChatWidget() {
               </button>
             </div>
             <p className="text-[10px] text-stone-400 text-center pb-2.5">
-              Powered by Tolumo AI · Responses may be imperfect
+              Powered by Tolumore AI · Responses may be imperfect
             </p>
           </div>
         </div>

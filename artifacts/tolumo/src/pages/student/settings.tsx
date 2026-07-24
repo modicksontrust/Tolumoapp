@@ -385,7 +385,7 @@ export default function StudentSettings() {
                   { label: 'Help Centre',             desc: 'Browse FAQs and how-to guides' },
                   { label: 'Contact Support',         desc: 'Open a ticket with our team' },
                   { label: 'Report a Bug',            desc: 'Tell us what went wrong' },
-                  { label: 'Request a Feature',       desc: 'Suggest improvements to Tolumo' },
+                  { label: 'Request a Feature',       desc: 'Suggest improvements to Tolumore' },
                   { label: 'Privacy Policy',          desc: 'How we handle your data' },
                   { label: 'Terms of Service',        desc: 'Platform rules and agreements' },
                 ].map(item => (
@@ -430,7 +430,7 @@ export default function StudentSettings() {
                   className="w-full flex items-center justify-between p-4 rounded-xl border border-stone-200 hover:bg-stone-50 transition-colors text-left">
                   <div>
                     <p className="text-sm font-medium text-foreground">Sign Out</p>
-                    <p className="text-xs text-muted-foreground">Sign out of your Tolumo account</p>
+                    <p className="text-xs text-muted-foreground">Sign out of your Tolumore account</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                 </button>

@@ -465,7 +465,7 @@ function PayoutSection() {
       {/* Platform fee notice */}
       <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
         <p className="font-semibold mb-1">Platform Fee: 15%</p>
-        <p className="text-xs">Tolumo retains 15% of each session fee. You receive 85% net of all completed, non-refunded sessions. Fees are deducted before payout.</p>
+        <p className="text-xs">Tolumore retains 15% of each session fee. You receive 85% net of all completed, non-refunded sessions. Fees are deducted before payout.</p>
       </div>
 
       <SaveBar onSave={save} saved={saved} />
@@ -860,7 +860,7 @@ const FAQS = [
   },
   {
     q: 'When are earnings paid out?',
-    a: 'Earnings are paid according to your selected payout schedule (weekly, bi-weekly, or monthly). Tolumo retains a 15% platform fee before disbursement. All payouts go to the bank account registered in Payout Details.',
+    a: 'Earnings are paid according to your selected payout schedule (weekly, bi-weekly, or monthly). Tolumore retains a 15% platform fee before disbursement. All payouts go to the bank account registered in Payout Details.',
   },
   {
     q: 'How do I get my content approved?',

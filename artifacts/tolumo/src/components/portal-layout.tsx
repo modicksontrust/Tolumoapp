@@ -23,8 +23,8 @@ export function PortalLayout({ children, role, links }: { children: React.ReactN
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-white sticky top-0 z-20">
         <div className="flex items-center gap-2">
-          <img src={`${basePath}/logo.svg`} alt="Tolumo" className="h-6 w-6" />
-          <span className="font-serif font-bold text-lg text-primary tracking-tight">Tolumo</span>
+          <img src={`${basePath}/logo.png`} alt="Tolumore" className="h-6 w-6" />
+          <span className="font-serif font-bold text-lg text-primary tracking-tight">Tolumore</span>
         </div>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-foreground">
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -38,8 +38,8 @@ export function PortalLayout({ children, role, links }: { children: React.ReactN
         fixed md:sticky top-[61px] md:top-0 h-[calc(100vh-61px)] md:h-[100dvh] z-10
       `}>
         <div className="p-6 hidden md:flex items-center gap-3">
-          <img src={`${basePath}/logo.svg`} alt="Tolumo" className="h-8 w-8 brightness-0 invert" />
-          <span className="font-serif font-bold text-2xl tracking-tight text-white">Tolumo</span>
+          <img src={`${basePath}/logo.png`} alt="Tolumore" className="h-8 w-8 brightness-0 invert" />
+          <span className="font-serif font-bold text-2xl tracking-tight text-white">Tolumore</span>
         </div>
         
         <div className="px-6 py-4 border-b border-white/10 mb-4">
