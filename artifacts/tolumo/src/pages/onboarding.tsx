@@ -1,224 +1,294 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { useClerk, useUser } from '@clerk/react';
+import { useUser } from '@clerk/react';
 import { useUpsertMe } from '@workspace/api-client-react';
-import { Button } from '@/components/ui/button';
-import { BookOpen, Presentation, Users, Briefcase, GraduationCap, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileInputRole } from '@workspace/api-client-react';
 
-const ROLES = [
-  {
-    id: ProfileInputRole.student,
-    title: 'Student',
-    description: 'I want to study and complete my LL.B degree.',
-    icon: BookOpen,
-    color: 'text-blue-600',
-    bg: 'bg-blue-50',
-    border: 'border-blue-200 hover:border-blue-600',
-  },
-  {
-    id: ProfileInputRole.tutor,
-    title: 'Tutor',
-    description: 'I am a lecturer providing modules and sessions.',
-    icon: Presentation,
-    color: 'text-amber-600',
-    bg: 'bg-amber-50',
-    border: 'border-amber-200 hover:border-amber-600',
-  },
-  {
-    id: ProfileInputRole.sub_agent,
-    title: 'Sales Partner',
-    description: 'I want to refer students and earn commissions.',
-    icon: Briefcase,
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-200 hover:border-emerald-600',
-  },
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const LAW_AREAS = [
+  'Criminal Law',
+  'Corporate & Commercial Law',
+  'Constitutional & Public Law',
+  'Property & Land Law',
+  'Family Law',
+  'Tort Law',
+  'Jurisprudence & Legal Theory',
+  'International Law',
+  'Labour & Employment Law',
+  'Intellectual Property Law',
+  'Not sure yet',
 ];
+
+const STUDY_GOALS = [
+  'Pass my LL.B exams with distinction',
+  'Prepare for the Nigerian Bar Exam (BL)',
+  'Deepen my understanding of specific subjects',
+  'Get ahead before the next semester',
+  'Supplement my lectures with better resources',
+];
+
+const YEAR_LEVELS = [
+  'Year 1 (100 Level)',
+  'Year 2 (200 Level)',
+  'Year 3 (300 Level)',
+  'Year 4 (400 Level)',
+  'Year 5 (500 Level)',
+];
+
+const TEACHING_AREAS = [
+  'Criminal Law',
+  'Corporate & Commercial Law',
+  'Constitutional & Public Law',
+  'Property & Land Law',
+  'Family Law',
+  'Tort Law',
+  'Jurisprudence & Legal Theory',
+  'International Law',
+  'Labour & Employment Law',
+  'Intellectual Property Law',
+  'Multiple subjects',
+];
+
+const inputClass =
+  'flex h-11 w-full rounded-lg border border-border bg-white px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors';
+const selectClass =
+  'flex h-11 w-full rounded-lg border border-border bg-white px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors appearance-none cursor-pointer';
+const labelClass = 'block text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2';
 
 export default function OnboardingPage() {
   const { user } = useUser();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const upsertMe = useUpsertMe();
-  
-  const [selectedRole, setSelectedRole] = useState<ProfileInputRole | null>(null);
-  const [displayName, setDisplayName] = useState(user?.fullName || '');
-  
+
+  // Role is already known from sign-up — read from Clerk metadata or sessionStorage fallback
+  const stored = (() => {
+    try { return JSON.parse(sessionStorage.getItem('tolumor_signup') || '{}'); } catch { return {}; }
+  })();
+  const role: string = (user?.unsafeMetadata?.role as string) ?? stored.role ?? 'student';
+  const isStudent = role !== 'tutor';
+
+  const [displayName, setDisplayName] = useState(
+    user?.fullName || (stored.firstName ? stored.firstName : '')
+  );
+  const [lawArea, setLawArea] = useState('');
+  const [studyGoal, setStudyGoal] = useState('');
+  const [yearLevel, setYearLevel] = useState((user?.unsafeMetadata?.yearLevel as string) ?? stored.yearLevel ?? '');
+  // Tutor fields
+  const [teachingArea, setTeachingArea] = useState('');
+  const [yearsExp, setYearsExp] = useState('');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!selectedRole) {
-      toast({
-        title: "Please select a role",
-        description: "You must choose how you want to use Tolumor.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
     if (!displayName.trim()) {
-      toast({
-        title: "Name required",
-        description: "Please enter your display name.",
-        variant: "destructive"
-      });
+      toast({ title: 'Name required', description: 'Please enter your display name.', variant: 'destructive' });
       return;
     }
 
+    const apiRole = role === 'tutor' ? ProfileInputRole.tutor : ProfileInputRole.student;
+
     upsertMe.mutate(
-      {
-        data: {
-          name: displayName,
-          role: selectedRole,
-        }
-      },
+      { data: { name: displayName.trim(), role: apiRole } },
       {
         onSuccess: (data) => {
-          toast({
-            title: "Welcome to Tolumor!",
-            description: "Your profile has been created.",
-          });
-          
-          // Route based on role
+          sessionStorage.removeItem('tolumor_signup');
           switch (data.role) {
-            case 'student': setLocation("/student"); break;
-            case 'tutor': setLocation("/tutor"); break;
-            case 'admin': setLocation("/admin"); break;
-            case 'sub_agent': setLocation("/agent"); break;
-            case 'super_agent': setLocation("/super-agent"); break;
-            case 'support': setLocation("/crm"); break;
-            default: setLocation("/");
+            case 'student': setLocation('/student'); break;
+            case 'tutor': setLocation('/tutor'); break;
+            case 'admin': setLocation('/admin'); break;
+            case 'sub_agent': setLocation('/agent'); break;
+            case 'super_agent': setLocation('/super-agent'); break;
+            case 'support': setLocation('/crm'); break;
+            default: setLocation('/');
           }
         },
-        onError: (error) => {
-          const forbidden =
-            error instanceof Error && error.message.includes("403");
-          toast({
-            title: forbidden ? "Role requires approval" : "Error",
-            description: forbidden
-              ? "Staff roles are assigned by an administrator. Choose Student or Tutor, or contact your admin."
-              : "Could not save profile. Please try again.",
-            variant: "destructive"
-          });
-        }
+        onError: () => {
+          toast({ title: 'Error', description: 'Could not save profile. Please try again.', variant: 'destructive' });
+        },
       }
     );
   };
 
   return (
     <div className="min-h-[100dvh] flex flex-col md:flex-row bg-background">
-      {/* Left side - Visual */}
-      <div className="md:w-[40%] bg-primary text-white p-8 md:p-12 lg:p-16 flex flex-col relative overflow-hidden">
-        <div className="relative z-10 flex-1 flex flex-col justify-between">
-          <div className="flex items-center gap-2 mb-12">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
-          </div>
-          
-          <div className="max-w-md">
-            <div className="inline-flex items-center justify-center rounded-full bg-accent/20 px-3 py-1 text-sm text-accent-foreground mb-6 backdrop-blur-sm border border-accent/30 font-medium">
-              Welcome
-            </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Tell us how you'll use Tolumor
+      {/* Left panel */}
+      <div className="md:w-[40%] bg-[#1a4d35] text-white p-8 md:p-12 flex flex-col relative overflow-hidden">
+        <div className="flex-1 flex flex-col justify-between relative z-10">
+          <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
+
+          <div className="max-w-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/50 mb-3">
+              Almost there
+            </p>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold leading-tight mb-5">
+              {isStudent ? 'Set up your student profile.' : 'Set up your lecturer profile.'}
             </h1>
-            <p className="text-white/80 text-lg leading-relaxed">
-              We personalize your dashboard and tools based on what you want to achieve.
+            <p className="text-white/70 text-base leading-relaxed">
+              {isStudent
+                ? 'Tell us a little more so we can personalise your learning experience from day one.'
+                : 'Help us understand your expertise so students can find your modules easily.'}
             </p>
           </div>
-          
-          <div className="mt-12 text-sm text-white/50">
-            © {new Date().getFullYear()} Tolumor Educational Services
-          </div>
+
+          <p className="text-xs text-white/30">© {new Date().getFullYear()} Tolumor Educational Services</p>
         </div>
       </div>
-      
-      {/* Right side - Form */}
-      <div className="md:w-[60%] p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-background overflow-y-auto">
-        <div className="max-w-lg w-full mx-auto">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            
-            <div className="space-y-4">
-              <label className="block text-sm font-semibold text-foreground">
-                Your Display Name
-              </label>
-              <input 
+
+      {/* Right panel — form */}
+      <div className="md:w-[60%] bg-[#F5F2EB] overflow-y-auto flex flex-col">
+        <div className="flex flex-col max-w-lg mx-auto w-full px-8 md:px-12 py-12">
+
+          <h2 className="font-serif text-2xl font-bold text-primary mb-1">
+            {isStudent ? 'Your learning profile' : 'Your teaching profile'}
+          </h2>
+          <p className="text-sm text-muted-foreground mb-8">
+            {isStudent
+              ? `Welcome, ${displayName || 'friend'}. Let's get your profile ready.`
+              : `Welcome, ${displayName || 'friend'}. A few details about your teaching.`}
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+
+            {/* Display name */}
+            <div>
+              <label className={labelClass}>Display Name</label>
+              <input
+                className={inputClass}
                 type="text"
                 value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                className="flex h-12 w-full rounded-md border border-border bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-sm"
-                placeholder="E.g. John Doe"
+                onChange={e => setDisplayName(e.target.value)}
+                placeholder="How should we address you?"
                 required
               />
             </div>
 
-            <div className="space-y-4">
-              <label className="block text-sm font-semibold text-foreground">
-                Choose Your Role
-              </label>
-              <div className="grid gap-4">
-                {ROLES.map((role) => {
-                  const Icon = role.icon;
-                  const isSelected = selectedRole === role.id;
-                  
-                  return (
-                    <div 
-                      key={role.id}
-                      onClick={() => setSelectedRole(role.id)}
-                      className={`
-                        relative flex cursor-pointer rounded-xl border p-4 shadow-sm transition-all
-                        ${isSelected ? `border-accent bg-accent/5 ring-1 ring-accent` : `border-border bg-white hover:border-accent/40`}
-                      `}
+            {isStudent ? (
+              <>
+                {/* Year level */}
+                <div>
+                  <label className={labelClass}>Current Year / Level</label>
+                  <div className="relative">
+                    <select
+                      className={selectClass}
+                      value={yearLevel}
+                      onChange={e => setYearLevel(e.target.value)}
+                      required
                     >
-                      <div className={`mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${role.bg} ${role.color} mr-4`}>
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground mb-1">{role.title}</h3>
-                        <p className="text-sm text-muted-foreground">{role.description}</p>
-                      </div>
-                      {isSelected && (
-                        <div className="absolute top-4 right-4 text-accent">
-                          <CheckCircle2 className="h-5 w-5" />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+                      <option value="">Select your year</option>
+                      {YEAR_LEVELS.map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▼</span>
+                  </div>
+                </div>
 
-            <div className="pt-4 flex items-center justify-between border-t border-border">
-              <div className="text-sm text-muted-foreground">
-                Signed in as <span className="font-medium text-foreground">{user?.primaryEmailAddress?.emailAddress}</span>
-              </div>
-              <Button 
-                type="submit" 
-                size="lg" 
-                className="bg-accent hover:bg-accent/90 text-white min-w-[140px]"
+                {/* Area of law */}
+                <div>
+                  <label className={labelClass}>Area of Law You're Most Interested In</label>
+                  <div className="relative">
+                    <select
+                      className={selectClass}
+                      value={lawArea}
+                      onChange={e => setLawArea(e.target.value)}
+                      required
+                    >
+                      <option value="">Select an area</option>
+                      {LAW_AREAS.map(a => <option key={a} value={a}>{a}</option>)}
+                    </select>
+                    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▼</span>
+                  </div>
+                </div>
+
+                {/* Study goal */}
+                <div>
+                  <label className={labelClass}>My Primary Study Goal</label>
+                  <div className="space-y-2">
+                    {STUDY_GOALS.map(goal => (
+                      <label
+                        key={goal}
+                        className={`flex items-start gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors ${
+                          studyGoal === goal
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border bg-white hover:border-primary/40'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="studyGoal"
+                          value={goal}
+                          checked={studyGoal === goal}
+                          onChange={() => setStudyGoal(goal)}
+                          className="mt-0.5 accent-[#1a4d35]"
+                          required
+                        />
+                        <span className="text-sm text-foreground">{goal}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Teaching area */}
+                <div>
+                  <label className={labelClass}>Primary Teaching Area</label>
+                  <div className="relative">
+                    <select
+                      className={selectClass}
+                      value={teachingArea}
+                      onChange={e => setTeachingArea(e.target.value)}
+                      required
+                    >
+                      <option value="">Select subject area</option>
+                      {TEACHING_AREAS.map(a => <option key={a} value={a}>{a}</option>)}
+                    </select>
+                    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▼</span>
+                  </div>
+                </div>
+
+                {/* Years of experience */}
+                <div>
+                  <label className={labelClass}>Years of Teaching Experience</label>
+                  <input
+                    className={inputClass}
+                    type="number"
+                    min="0"
+                    max="60"
+                    value={yearsExp}
+                    onChange={e => setYearsExp(e.target.value)}
+                    placeholder="e.g. 5"
+                    required
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Submit */}
+            <div className="pt-4 border-t border-border flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Signing in as&nbsp;
+                <span className="font-medium text-foreground">
+                  {user?.primaryEmailAddress?.emailAddress ?? stored.firstName ?? 'you'}
+                </span>
+              </p>
+              <button
+                type="submit"
                 disabled={upsertMe.isPending}
+                className="inline-flex items-center gap-2 rounded-lg bg-[#1a4d35] hover:bg-[#1a4d35]/90 text-white font-semibold px-6 py-2.5 text-sm transition-colors disabled:opacity-60"
               >
                 {upsertMe.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving
-                  </>
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Saving…</>
                 ) : (
-                  <>
-                    Continue
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
+                  <>Go to Dashboard <ArrowRight className="h-4 w-4" /></>
                 )}
-              </Button>
+              </button>
             </div>
-            
+
           </form>
         </div>
       </div>
     </div>
   );
 }
-
-// Needed for the checkmark icon above
-import { CheckCircle2 } from 'lucide-react';
