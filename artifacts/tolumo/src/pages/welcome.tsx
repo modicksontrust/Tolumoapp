@@ -17,28 +17,36 @@ export default function WelcomePage() {
   const [, setLocation] = useLocation();
   const [ready, setReady] = useState(false);
 
-  // Determine role from Clerk unsafeMetadata (set during signup)
-  const role = (user?.unsafeMetadata?.role as string) ?? 'student';
+  // Read signup data from sessionStorage (set by sign-up form before redirect)
+  const stored = (() => {
+    try { return JSON.parse(sessionStorage.getItem('tolumor_signup') || '{}'); }
+    catch { return {}; }
+  })();
+
+  // Prefer live Clerk data; fall back to what was saved at signup
+  const role = (user?.unsafeMetadata?.role as string) ?? stored.role ?? 'student';
   const isLecturer = role === 'tutor';
-  const firstName = user?.firstName || 'Friend';
+  const firstName = user?.firstName || stored.firstName || 'Friend';
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!user) {
-      setLocation('/sign-in');
-      return;
-    }
-    // If already welcomed, skip straight to onboarding/portal
-    if (localStorage.getItem(welcomedKey(user.id))) {
+
+    // If there's a Clerk session and the user was already welcomed, skip ahead
+    if (user && localStorage.getItem(welcomedKey(user.id))) {
       setLocation('/onboarding');
       return;
     }
+
+    // Show the welcome screen whether or not the session is established yet
+    // (email verification may still be pending — that's fine)
     setReady(true);
   }, [isLoaded, user]);
 
   function handleContinue() {
-    if (!user) return;
-    localStorage.setItem(welcomedKey(user.id), '1');
+    sessionStorage.removeItem('tolumor_signup');
+    if (user) {
+      localStorage.setItem(welcomedKey(user.id), '1');
+    }
     setLocation('/onboarding');
   }
 

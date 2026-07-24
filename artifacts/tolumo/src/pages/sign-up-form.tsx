@@ -82,6 +82,7 @@ export default function CustomSignUpForm() {
     if (!isLoaded) return;
     setError('');
     setLoading(true);
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     try {
       const result = await signUp.create({
         firstName: form.firstName,
@@ -97,34 +98,22 @@ export default function CustomSignUpForm() {
           gender: form.gender,
         },
       });
-      if (result.status === 'complete') {
+
+      // Establish session if Clerk considers signup complete immediately
+      if (result.status === 'complete' && result.createdSessionId) {
         await setActive!({ session: result.createdSessionId });
-        window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/welcome`;
-      } else {
-        // Email verification required — show OTP step
-        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-        setStep('verify');
       }
+
+      // Store signup data so the welcome page can greet the user by name
+      // even if email verification is still pending
+      sessionStorage.setItem('tolumor_signup', JSON.stringify({
+        firstName: form.firstName,
+        role,
+      }));
+
+      window.location.href = `${base}/welcome`;
     } catch (err: any) {
       setError(err?.errors?.[0]?.longMessage ?? err?.message ?? 'Something went wrong.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleVerify(e: React.FormEvent) {
-    e.preventDefault();
-    if (!isLoaded) return;
-    setError('');
-    setLoading(true);
-    try {
-      const result = await signUp.attemptEmailAddressVerification({ code });
-      if (result.status === 'complete') {
-        await setActive!({ session: result.createdSessionId });
-        window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/welcome`;
-      }
-    } catch (err: any) {
-      setError(err?.errors?.[0]?.longMessage ?? err?.message ?? 'Invalid code.');
     } finally {
       setLoading(false);
     }
