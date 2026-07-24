@@ -241,9 +241,8 @@ function TutorShell({ children }: { children: React.ReactNode }) {
         fixed md:sticky top-0 h-[100dvh] z-20
       `}>
         {/* Logo */}
-        <div className="px-6 pt-6 pb-4 flex items-center gap-3">
-          <img src={`${basePath}/logo.png`} alt="" className="h-8 w-8" />
-          <span className="font-serif font-bold text-xl text-white tracking-tight">Tolumore</span>
+        <div className="px-6 pt-6 pb-4">
+          <img src={`${basePath}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
         </div>
 
         <div className="px-6 pb-4">

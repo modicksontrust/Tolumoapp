@@ -99,9 +99,8 @@ function SAShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="w-[170px] bg-[#1a4d35] flex flex-col h-full shrink-0">
         {/* Logo */}
-        <div className="px-4 py-4 flex items-center gap-2">
-          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Tolumore" className="h-5 w-5 rounded shrink-0" />
-          <span className="text-white font-serif font-bold text-sm">Tolumore</span>
+        <div className="px-4 py-4">
+          <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
         </div>
 
         {/* User */}

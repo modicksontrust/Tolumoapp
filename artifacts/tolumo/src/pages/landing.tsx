@@ -14,8 +14,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 md:px-6 max-w-6xl h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`} alt="Tolumore" className="h-8 w-8" />
-            <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumore</span>
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-light.svg`} alt="Tolumore" className="h-8 w-auto" />
           </div>
           
           <div className="hidden md:flex items-center gap-8 font-medium text-sm">
@@ -616,8 +615,7 @@ export default function LandingPage() {
             {/* Brand */}
             <div className="max-w-xs">
               <div className="flex items-center gap-2 mb-4">
-                <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`} alt="Tolumore" className="h-8 w-8" />
-                <span className="font-serif font-bold text-xl tracking-tight text-primary">Tolumore</span>
+                <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-light.svg`} alt="Tolumore" className="h-8 w-auto" />
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                 Africa's premier law tutorial platform. Real tutors. AI-guided revision, and a proven learning structure built for the Nigerian university experience.

@@ -53,12 +53,9 @@ function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-0 z-20 bg-black/40 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
       <aside className={`fixed md:relative inset-y-0 left-0 z-30 w-[200px] bg-[#1a4d35] flex flex-col h-full shrink-0 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <div className="px-4 py-4 flex items-center gap-2.5">
-          <img src={`${basePath}/logo.png`} alt="Tolumore" className="h-8 w-8 shrink-0" />
-          <div>
-            <p className="font-serif font-bold text-lg text-white leading-none">Tolumore</p>
-            <p className="text-[8px] font-bold text-white/35 uppercase tracking-[0.2em] mt-0.5">Admin Portal</p>
-          </div>
+        <div className="px-4 py-4">
+          <img src={`${basePath}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+          <p className="text-[8px] font-bold text-white/35 uppercase tracking-[0.2em] mt-1 pl-0.5">Admin Portal</p>
         </div>
         <nav className="flex-1 px-2.5 space-y-0.5 overflow-y-auto py-2">
           {topNav.map(item => <NavItem key={item.href} {...item} active={isActive(item.href)} />)}

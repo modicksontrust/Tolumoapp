@@ -113,8 +113,7 @@ export default function OnboardingPage() {
       <div className="md:w-[40%] bg-primary text-white p-8 md:p-12 lg:p-16 flex flex-col relative overflow-hidden">
         <div className="relative z-10 flex-1 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-12">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`} alt="Tolumore" className="h-8 w-8 brightness-0 invert" />
-            <span className="font-serif font-bold text-xl tracking-tight">Tolumore</span>
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
           </div>
           
           <div className="max-w-md">

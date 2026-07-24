@@ -36,9 +36,8 @@ function AgentShell({ children }: { children: React.ReactNode }) {
       <aside className="w-[170px] bg-[#1a4d35] flex flex-col h-full shrink-0">
         {/* Logo */}
         <div className="px-4 pt-5 pb-4">
-          <div className="flex items-center gap-2 mb-4">
-            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Tolumore" className="h-7 w-7 rounded-md shrink-0" />
-            <span className="font-serif font-bold text-white text-sm">Tolumore</span>
+          <div className="flex items-center mb-4">
+            <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
           </div>
           {/* User */}
           <div className="flex items-center gap-2">

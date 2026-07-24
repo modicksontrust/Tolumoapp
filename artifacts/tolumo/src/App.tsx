@@ -106,8 +106,7 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
 
         {/* Logo */}
         <div className="relative flex items-center gap-2">
-          <img src={`${window.location.origin}${basePath}/logo.png`} alt="Tolumore" className="h-8 w-8" />
-          <span className="font-serif font-bold text-xl tracking-tight text-white">Tolumore</span>
+          <img src={`${window.location.origin}${basePath}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
         </div>
 
         {/* Quote */}

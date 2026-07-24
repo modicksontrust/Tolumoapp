@@ -118,9 +118,9 @@ function CRMShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="w-44 shrink-0 flex flex-col h-full" style={{ background: SIDEBAR }}>
         {/* Logo */}
-        <div className="px-4 pt-5 pb-3 flex items-center gap-2">
-          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Tolumore" className="h-7 w-7 rounded-lg shrink-0" />
-          <span className="text-white font-serif font-bold text-sm">Tolumore CRM</span>
+        <div className="px-4 pt-5 pb-3">
+          <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+          <p className="text-[8px] font-bold text-white/35 uppercase tracking-[0.2em] mt-1 pl-0.5">CRM Platform</p>
         </div>
 
         {/* Role dropdown */}
