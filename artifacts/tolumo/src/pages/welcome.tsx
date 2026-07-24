@@ -74,7 +74,7 @@ export default function WelcomePage() {
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
               Welcome.
             </h1>
-            <p className="font-serif text-2xl md:text-3xl font-semibold text-amber-400 text-left">
+            <p className="font-serif text-2xl md:text-3xl font-semibold text-amber-400 text-left mt-3">
               Dear {firstName},
             </p>
           </div>
