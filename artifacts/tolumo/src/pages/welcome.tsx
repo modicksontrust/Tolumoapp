@@ -107,7 +107,6 @@ export default function WelcomePage() {
                 className="h-20 w-20 rounded-full object-cover object-top shrink-0 shadow-md ring-2 ring-[#1a4d35]/20"
               />
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">Signed,</p>
                 <p className="font-bold text-primary text-sm leading-snug">Dr Moses Oruaze Dickson</p>
                 <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD</p>
                 <p className="text-xs text-muted-foreground font-medium">Founder, Tolumor</p>
