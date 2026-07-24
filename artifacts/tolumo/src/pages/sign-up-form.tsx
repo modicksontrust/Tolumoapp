@@ -98,7 +98,7 @@ export default function CustomSignUpForm() {
         },
       });
       if (result.status === 'complete') {
-        window.location.href = '/';
+        window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/welcome`;
       } else {
         // Email verification required — show OTP step
         await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
@@ -119,7 +119,7 @@ export default function CustomSignUpForm() {
     try {
       const result = await signUp.attemptEmailAddressVerification({ code });
       if (result.status === 'complete') {
-        window.location.href = '/';
+        window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/welcome`;
       }
     } catch (err: any) {
       setError(err?.errors?.[0]?.longMessage ?? err?.message ?? 'Invalid code.');
@@ -367,9 +367,8 @@ export default function CustomSignUpForm() {
               required
             >
               <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Prefer not to say</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
             </select>
             <span className="pointer-events-none absolute right-3 top-[2.2rem] text-muted-foreground">
               ▾

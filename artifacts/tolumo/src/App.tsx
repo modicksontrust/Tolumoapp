@@ -20,6 +20,7 @@ import AdminPortal from './pages/admin';
 import AgentPortal from './pages/agent';
 import SuperAgentPortal from './pages/super-agent';
 import CrmPortal from './pages/crm';
+import WelcomePage from './pages/welcome';
 import NotFound from './pages/not-found';
 
 const queryClient = new QueryClient({
@@ -324,6 +325,9 @@ function ClerkProviderWithRoutes() {
             <Route path="/sign-up/*?" component={SignUpPage} />
             <Route path="/token" component={TokenSignIn} />
             
+            <Route path="/welcome">
+              {() => <ProtectedRoute component={WelcomePage} />}
+            </Route>
             <Route path="/onboarding">
               {() => <ProtectedRoute component={OnboardingPage} />}
             </Route>
