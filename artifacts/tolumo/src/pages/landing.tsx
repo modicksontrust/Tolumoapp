@@ -17,8 +17,10 @@ export default function LandingPage() {
             <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-light.svg`} alt="Tolumor" className="h-8 w-auto" />
           </div>
           
-          <div className="hidden md:flex items-center gap-8 font-medium text-sm">
+          <div className="hidden md:flex items-center gap-6 font-medium text-sm">
             <a href="#modules" className="text-muted-foreground hover:text-primary transition-colors">Modules</a>
+            <a href="#access-opportunities" className="text-muted-foreground hover:text-primary transition-colors">Access Opportunities</a>
+            <a href="#skills-hub" className="text-muted-foreground hover:text-primary transition-colors">Skills Hub</a>
             <a href="#how-it-works" className="text-muted-foreground hover:text-primary transition-colors">How it Works</a>
             <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
             <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About Us</a>
@@ -58,7 +60,7 @@ export default function LandingPage() {
                 </h1>
 
                 <p className="text-white/70 text-lg leading-relaxed mb-10 max-w-md">
-                  The perfect companion to your law degree. Video lessons aligned with the NUC-approved curriculum, an AI revision coach, and one-on-one tutor sessions, all to help you learn deeper, skill up, and get opportunities along the way.
+                  The perfect companion to your law degree. Enjoy our high-impact video lessons aligned with the NUC-approved curriculum, an AI revision coach, top digital law research tools, and one-on-one tutor sessions — all to help you learn deeper, skill up, and get opportunities along the way.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 mb-10">
@@ -164,88 +166,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* How It Works */}
-        <section id="how-it-works" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
-          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-            {/* Header */}
-            <div className="text-center mb-14">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">The Learning Journey</p>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">How Tolumor Works</h2>
-              <p className="text-foreground max-w-lg mx-auto">
-                We've rebuilt the university law learning experience from scratch — structured, progressive, and proven to improve exam results.
-              </p>
-            </div>
-
-            {/* 4 numbered steps */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-              {[
-                {
-                  n: '01', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
-                  title: 'Subscribe & Select Your Year',
-                  body: 'Choose your current academic year (Year 1–5) and subscribe monthly at ₦3,500. Every NUC-approved module for that year unlocks instantly. Failed a module? Add it as a carryover for ₦7,500 extra.',
-                },
-                {
-                  n: '02', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M15 10l4.553-2.277A1 1 0 0121 8.677V15.5a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>,
-                  title: 'Watch Expert Video Lectures',
-                  body: 'Each topic opens with a high-quality video lecture from verified Nigerian law lecturers. Pause, rewind, and rewatch as many times as you need. Downloadable lecture notes and slides included.',
-                },
-                {
-                  n: '03', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>,
-                  title: 'Revise With Your AI Study Coach',
-                  body: 'After each video, your AI coach asks you up to 5 guided questions to test your understanding before the quiz. It adapts to your answers, deepening comprehension where you need it most.',
-                },
-                {
-                  n: '04', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>,
-                  title: 'Pass Quizzes & Earn Your Certificate',
-                  body: 'Complete the MCQ and practical essay quiz for each topic. Pass all modules in your year to earn a shareable, LinkedIn-ready certificate co-signed by our partner institutions.',
-                },
-              ].map(({ n, icon, title, body }) => (
-                <div key={n} className="rounded-2xl border border-border bg-white p-7 flex flex-col gap-5">
-                  <div className="flex items-start justify-between">
-                    <span className="font-serif text-5xl font-bold text-primary/10 leading-none select-none">{n}</span>
-                  </div>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary">
-                    {icon}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-primary text-[0.95rem] leading-snug mb-2">{title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 3 feature cards */}
-            <div className="grid sm:grid-cols-3 gap-5">
-              {[
-                {
-                  icon: <BookOpen className="h-5 w-5" />,
-                  title: 'Topic-by-Topic Progression',
-                  body: 'Topics unlock sequentially. Complete the video, notes, AI Q&A, and quiz for each topic before advancing. If you fail a quiz, the topic resets — ensuring genuine mastery, not just memorisation.',
-                },
-                {
-                  icon: <GraduationCap className="h-5 w-5" />,
-                  title: 'Book One-on-One Tutorial Sessions',
-                  body: 'Access a live marketplace of tutorial sessions hosted by verified lecturers across multiple universities. Filter by topic, see ratings, compare prices, and book with one click. Video call link provided on confirmation.',
-                },
-                {
-                  icon: <HelpCircle className="h-5 w-5" />,
-                  title: 'Your Feedback Shapes Teaching',
-                  body: "After every quiz, you're invited to rate your lecturer and leave a short note. Lecturers see aggregated feedback and trend data per topic, enabling continuous improvement across the platform.",
-                },
-              ].map(({ icon, title, body }) => (
-                <div key={title} className="rounded-2xl border border-border bg-white/60 p-7">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary mb-5">
-                    {icon}
-                  </div>
-                  <h3 className="font-bold text-primary text-[0.95rem] mb-2">{title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Modules / Curriculum */}
         <section id="modules" className="py-20 md:py-28 bg-white scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
@@ -327,6 +247,159 @@ export default function LandingPage() {
               <Link href="/sign-up" className="shrink-0 inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-primary shadow transition-colors hover:bg-white/90">
                 Get Early Access
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Access Opportunities */}
+        <section id="access-opportunities" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: label + heading */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">For Tolumor Students</p>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-6 leading-snug">
+                  Access<br className="hidden md:block" /> Opportunities
+                </h2>
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
+                  Those days of searching for jobs and opportunities are over. Here, jobs and opportunities look for you. Access Opportunities works around the clock, right at your fingertips, on the go, matching new scholarships, jobs, internships, and fellowships against your profile and keeping you updated the moment they land. Get help rewriting your CV, generating cover letters, and tracking every application in one place. Available exclusively to signed-up Tolumor students, fully included in your subscription.
+                </p>
+              </div>
+
+              {/* Right: feature highlights */}
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/></svg>, title: 'Scholarships & Fellowships', body: 'Matched to your profile the moment they land.' },
+                  { icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z"/></svg>, title: 'Jobs & Internships', body: 'Legal roles matched automatically to your skills.' },
+                  { icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>, title: 'CV & Cover Letters', body: 'AI-assisted writing tools, built into your dashboard.' },
+                  { icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>, title: 'Application Tracker', body: 'Every application, status, and deadline in one place.' },
+                ].map(({ icon, title, body }) => (
+                  <div key={title} className="rounded-2xl border border-border bg-white p-5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary mb-4">
+                      {icon}
+                    </div>
+                    <h4 className="font-bold text-primary text-sm mb-1">{title}</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Skills Hub */}
+        <section id="skills-hub" className="py-20 md:py-28 bg-white scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: feature tiles */}
+              <div className="grid grid-cols-2 gap-4 order-2 md:order-1">
+                {[
+                  { label: 'Legal Drafting', color: 'bg-primary/5 text-primary' },
+                  { label: 'Negotiation Skills', color: 'bg-accent/10 text-accent' },
+                  { label: 'Communication', color: 'bg-primary/5 text-primary' },
+                  { label: 'Digital Tools', color: 'bg-accent/10 text-accent' },
+                  { label: 'Research Methods', color: 'bg-accent/10 text-accent' },
+                  { label: 'Career Readiness', color: 'bg-primary/5 text-primary' },
+                ].map(({ label, color }) => (
+                  <div key={label} className={`rounded-xl border border-border px-4 py-3 text-sm font-semibold ${color}`}>
+                    {label}
+                  </div>
+                ))}
+              </div>
+
+              {/* Right: label + heading + copy */}
+              <div className="order-1 md:order-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">Inside the Platform</p>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-6 leading-snug">
+                  Skills Hub
+                </h2>
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
+                  Practical skills to complement your law degree. Beyond the courtroom and the classroom, Skills Hub connects you to hands-on training in the skills employers actually need, from legal drafting and negotiation to communication and digital tools. The world is changing fast, and Skills Hub keeps you ready for it — practical, flexible training built right alongside your legal education, so you walk out job-ready for this dynamic and contemporary age, not just law-school ready.
+                </p>
+                <p className="mt-4 text-xs text-muted-foreground italic">Available after signup, inside the platform.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works */}
+        <section id="how-it-works" className="py-20 md:py-28 bg-[#F5F2EB] scroll-mt-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+            {/* Header */}
+            <div className="text-center mb-14">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">The Learning Journey</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">How Tolumor Works</h2>
+              <p className="text-foreground max-w-lg mx-auto">
+                We've rebuilt the university law learning experience from scratch — structured, progressive, and proven to improve exam results.
+              </p>
+            </div>
+
+            {/* 4 numbered steps */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+              {[
+                {
+                  n: '01', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
+                  title: 'Subscribe & Select Your Year',
+                  body: 'Choose your current academic year (Year 1–5) and subscribe monthly at ₦3,500. Every NUC-approved module for that year unlocks instantly. Failed a module? Add it as a carryover for ₦7,500 extra.',
+                },
+                {
+                  n: '02', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M15 10l4.553-2.277A1 1 0 0121 8.677V15.5a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>,
+                  title: 'Watch Expert Video Lectures',
+                  body: 'Each topic opens with a high-quality video lecture from verified Nigerian law lecturers. Pause, rewind, and rewatch as many times as you need. Downloadable lecture notes and slides included.',
+                },
+                {
+                  n: '03', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>,
+                  title: 'Revise With Your AI Study Coach',
+                  body: 'After each video, your AI coach asks you up to 5 guided questions to test your understanding before the quiz. It adapts to your answers, deepening comprehension where you need it most.',
+                },
+                {
+                  n: '04', icon: <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>,
+                  title: 'Pass Quizzes & Earn Your Certificate',
+                  body: 'Complete the MCQ and practical essay quiz for each topic. Pass all modules in your year to earn a shareable, LinkedIn-ready certificate co-signed by our partner institutions.',
+                },
+              ].map(({ n, icon, title, body }) => (
+                <div key={n} className="rounded-2xl border border-border bg-white p-7 flex flex-col gap-5">
+                  <div className="flex items-start justify-between">
+                    <span className="font-serif text-5xl font-bold text-primary/10 leading-none select-none">{n}</span>
+                  </div>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary">
+                    {icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-primary text-[0.95rem] leading-snug mb-2">{title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 3 feature cards */}
+            <div className="grid sm:grid-cols-3 gap-5">
+              {[
+                {
+                  icon: <BookOpen className="h-5 w-5" />,
+                  title: 'Topic-by-Topic Progression',
+                  body: 'Topics unlock sequentially. Complete the video, notes, AI Q&A, and quiz for each topic before advancing. If you fail a quiz, the topic resets — ensuring genuine mastery, not just memorisation.',
+                },
+                {
+                  icon: <GraduationCap className="h-5 w-5" />,
+                  title: 'Book One-on-One Tutorial Sessions',
+                  body: 'Access a live marketplace of tutorial sessions hosted by verified lecturers across multiple universities. Filter by topic, see ratings, compare prices, and book with one click. Video call link provided on confirmation.',
+                },
+                {
+                  icon: <HelpCircle className="h-5 w-5" />,
+                  title: 'Your Feedback Shapes Teaching',
+                  body: "After every quiz, you're invited to rate your lecturer and leave a short note. Lecturers see aggregated feedback and trend data per topic, enabling continuous improvement across the platform.",
+                },
+              ].map(({ icon, title, body }) => (
+                <div key={title} className="rounded-2xl border border-border bg-white/60 p-7">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/5 text-primary mb-5">
+                    {icon}
+                  </div>
+                  <h3 className="font-bold text-primary text-[0.95rem] mb-2">{title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

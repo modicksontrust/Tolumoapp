@@ -1,0 +1,20 @@
+Page Scroll Order (top to bottom)
+
+	1.	Hero section — existing headline “Learn Law From Nigeria’s Top Lecturers,” “Now Live — Law Faculty, University of Lagos” badge stays as is. Description text updated to:
+“The perfect companion to your law degree. Video lessons aligned with the NUC-approved curriculum, an AI revision coach, and one-on-one tutor sessions, all to help you learn deeper, skill up, and get opportunities along the way.”
+	2.	Modules — already live. Clicking “Modules” in the nav bar takes the user directly to the currently available, NUC-curriculum-aligned modules. No change needed here.
+	3.	Access Opportunities — clicking scrolls down to an explanatory card on the same page (no separate interface link, no button). Card copy:
+“Those days of searching for jobs and opportunities are over. Here, jobs and opportunities look for you. Access Opportunities works around the clock, right at your fingertips, on the go, matching new scholarships, jobs, internships, and fellowships against your profile and keeping you updated the moment they land. Get help rewriting your CV, generating cover letters, and tracking every application in one place. Available exclusively to signed-up Tolumor students, fully included in your subscription.”
+	4.	Skills Hub — clicking scrolls down to its own explanatory card on the same page. This section does NOT link out anywhere from the landing page itself — access only happens after signup, inside the platform (where it leads to a separate, Udemy/Coursera-style interface). Card copy:
+“Practical skills to complement your law degree. Beyond the courtroom and the classroom, Skills Hub connects you to hands-on training in the skills employers actually need, from legal drafting and negotiation to communication and digital tools. The world is changing fast, and Skills Hub keeps you ready for it — practical, flexible training built right alongside your legal education, so you walk out job-ready for this dynamic and contemporary age, not just law-school ready.”
+	5.	How it Works — page section explaining the platform flow (sign up, subscribe, watch videos, pass quizzes, unlock next topic, book tutors, etc.)
+	6.	Pricing — page section showing subscription tiers (standard / VIP).
+	7.	About Us — page section with founder’s story / platform mission.
+
+Critical Rule — No Buttons on Explanatory Cards
+Neither the Access Opportunities card nor the Skills Hub card should have any clickable button (no “Try it,” “Learn more,” “Get started,” etc.). These cards exist purely to explain what each feature offers. Actual access to either feature is only available after a user has signed up and is inside the platform — there is no landing-page click-through to either interface.
+
+Notes
+
+	•	Skills Hub, once inside the platform, leads to a fully separate interface (styled similarly to Udemy/Coursera) dedicated to skills training — this build is separate from the landing page itself.
+	•	Access Opportunities is the public-facing rename of the “Careers and Opportunities Hub” feature for the main Tolumor landing page and student experience.
