@@ -71,9 +71,6 @@ export default function WelcomePage() {
               alt="Tolumor"
               className="h-8 w-auto mx-auto mb-8"
             />
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/50 mb-1">
-              {isLecturer ? 'Lecturer Welcome' : 'Student Welcome'}
-            </p>
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-1">
               Welcome,
             </h1>
