@@ -394,15 +394,7 @@ export default function CustomSignUpForm() {
         {/* Submit */}
         <button
           type="submit"
-          disabled={!isLoaded || loading}
-          onClick={(e) => {
-            // belt-and-suspenders: if the form's onSubmit isn't firing for any
-            // reason, call it directly from the button click
-            if (isLoaded && !loading) {
-              e.preventDefault();
-              handleSubmit(e as any);
-            }
-          }}
+          disabled={loading}
           style={
             role === 'student'
               ? { backgroundColor: 'hsl(43,74%,49%)', color: '#fff' }
@@ -410,9 +402,7 @@ export default function CustomSignUpForm() {
           }
           className="w-full rounded-lg py-3 text-sm font-semibold tracking-wide transition-opacity disabled:opacity-60 mt-1"
         >
-          {!isLoaded
-            ? 'Loading…'
-            : loading
+          {loading
             ? role === 'student'
               ? 'Creating account…'
               : 'Submitting application…'
