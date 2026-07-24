@@ -71,10 +71,10 @@ export default function WelcomePage() {
               alt="Tolumor"
               className="h-8 w-auto mx-auto mb-8"
             />
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-1">
-              Welcome,
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
+              Welcome.
             </h1>
-            <p className="font-serif text-2xl md:text-3xl font-semibold text-amber-400">
+            <p className="font-serif text-2xl md:text-3xl font-semibold text-amber-400 text-left">
               Dear {firstName}.
             </p>
           </div>
