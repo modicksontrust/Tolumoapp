@@ -268,7 +268,7 @@ function DetailModal({ opp, onClose }: { opp: Opportunity; onClose: () => void }
               <p className="font-semibold text-foreground text-sm">{opp.deadline}</p>
             </div>
             <div className="bg-stone-100 rounded-xl px-4 py-3">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Added to Tolumore</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Added to Tolumor</p>
               <p className="font-semibold text-foreground text-sm">{opp.added}</p>
             </div>
           </div>

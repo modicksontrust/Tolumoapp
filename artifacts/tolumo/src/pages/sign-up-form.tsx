@@ -174,7 +174,7 @@ export default function CustomSignUpForm() {
         </h1>
         <p className="text-sm text-white/60">
           {role === 'student'
-            ? 'Join 12,400+ African university students already on Tolumore.'
+            ? 'Join 12,400+ African university students already on Tolumor.'
             : 'Join our growing network of verified Nigerian law lecturers.'}
         </p>
       </div>

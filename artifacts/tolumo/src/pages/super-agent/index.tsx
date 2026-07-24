@@ -29,7 +29,7 @@ const PENDING = [
   {
     id: 1, name: 'Tunde Afolabi', initials: 'TA', uni: 'Lagos State University',
     bank: 'First Bank ****4521',
-    bio: '"Final-year law student and community leader. I manage a WhatsApp group of 300+ LASU law students and believe Tolumore fills a real gap in how we access quality tutorials."',
+    bio: '"Final-year law student and community leader. I manage a WhatsApp group of 300+ LASU law students and believe Tolumor fills a real gap in how we access quality tutorials."',
   },
   {
     id: 2, name: 'Amaka Okonkwo', initials: 'AO', uni: 'Nnamdi Azikiwe University',
@@ -100,7 +100,7 @@ function SAShell({ children }: { children: React.ReactNode }) {
       <aside className="w-[170px] bg-[#1a4d35] flex flex-col h-full shrink-0">
         {/* Logo */}
         <div className="px-4 py-4">
-          <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
         </div>
 
         {/* User */}
@@ -199,7 +199,7 @@ function CommandCentre() {
     <div className="max-w-4xl mx-auto space-y-5">
       <div>
         <h1 className="text-xl font-serif font-bold text-foreground">Command Centre</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">Tolumore Super Agent — aggregate view across all institutions</p>
+        <p className="text-xs text-muted-foreground mt-0.5">Tolumor Super Agent — aggregate view across all institutions</p>
       </div>
 
       {/* Stat cards */}
@@ -932,7 +932,7 @@ function SASettings() {
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Email</label>
               <input value="olu.m@tolumo.ng" readOnly
                 className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm text-muted-foreground bg-stone-50 outline-none" />
-              <p className="text-[10px] text-muted-foreground mt-1">Managed by Tolumore — contact Admin to change.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Managed by Tolumor — contact Admin to change.</p>
             </div>
             <div>
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Phone</label>
@@ -989,7 +989,7 @@ function SASettings() {
           <div className="space-y-5">
             <h2 className="font-serif font-bold text-lg">Global Settings</h2>
             <div className="flex items-start gap-2 p-3.5 bg-stone-50 border-l-4 border-[#1a4d35] rounded-r-xl text-xs text-muted-foreground">
-              These values are set by Tolumore Admin and are read-only. Contact Admin via Help &amp; Support to request changes.
+              These values are set by Tolumor Admin and are read-only. Contact Admin via Help &amp; Support to request changes.
             </div>
             {[
               { label: 'Commission Rate',  sublabel: 'Your share of each Sub-Agent\'s student revenue.', value: '5% of Sub-Agent commission (net)' },

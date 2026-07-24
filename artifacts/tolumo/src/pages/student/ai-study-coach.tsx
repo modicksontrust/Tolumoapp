@@ -246,7 +246,7 @@ export default function AIStudyCoach() {
                 <Send className="h-4 w-4 text-white" />
               </button>
             </div>
-            <p className="text-[10px] text-stone-400 text-center mt-2">Powered by Tolumore AI · Study responses are for revision only</p>
+            <p className="text-[10px] text-stone-400 text-center mt-2">Powered by Tolumor AI · Study responses are for revision only</p>
           </div>
         </div>
       </div>

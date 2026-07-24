@@ -219,7 +219,7 @@ function MyEarnings() {
         <div className="px-6 py-4 border-t border-stone-100 bg-stone-50/40">
           <p className="text-xs text-muted-foreground leading-relaxed">
             <span className="font-semibold text-foreground">Earnings policy:</span>{' '}
-            Tolumore retains 15% of each tutorial session fee as a platform service charge.
+            Tolumor retains 15% of each tutorial session fee as a platform service charge.
             Your net earnings are transferred to your registered bank account within 3 working
             days after each session concludes.
           </p>

@@ -106,7 +106,7 @@ function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'sign
 
         {/* Logo */}
         <div className="relative flex items-center gap-2">
-          <img src={`${window.location.origin}${basePath}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+          <img src={`${window.location.origin}${basePath}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
         </div>
 
         {/* Quote */}
@@ -246,7 +246,7 @@ function UserPortalRouter() {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center bg-background">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <img src={`${basePath}/logo.png`} alt="Tolumore" className="h-12 w-12 opacity-50" />
+          <img src={`${basePath}/logo.png`} alt="Tolumor" className="h-12 w-12 opacity-50" />
           <p className="text-muted-foreground font-serif">Loading your portal...</p>
         </div>
       </div>
@@ -301,13 +301,13 @@ function ClerkProviderWithRoutes() {
       localization={{
         signIn: {
           start: {
-            title: "Welcome to Tolumore",
+            title: "Welcome to Tolumor",
             subtitle: "Sign in to your learning portal",
           },
         },
         signUp: {
           start: {
-            title: "Join Tolumore",
+            title: "Join Tolumor",
             subtitle: "Begin your LL.B journey today",
           },
         },

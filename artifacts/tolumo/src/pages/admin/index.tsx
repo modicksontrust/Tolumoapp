@@ -54,7 +54,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       )}
       <aside className={`fixed md:relative inset-y-0 left-0 z-30 w-[200px] bg-[#1a4d35] flex flex-col h-full shrink-0 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="px-4 py-4">
-          <img src={`${basePath}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+          <img src={`${basePath}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
           <p className="text-[8px] font-bold text-white/35 uppercase tracking-[0.2em] mt-1 pl-0.5">Admin Portal</p>
         </div>
         <nav className="flex-1 px-2.5 space-y-0.5 overflow-y-auto py-2">
@@ -122,7 +122,7 @@ function AdminDashboard() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground">Platform Overview</h1>
-        <p className="text-sm text-muted-foreground mt-1">Tolumore admin dashboard — July 2025</p>
+        <p className="text-sm text-muted-foreground mt-1">Tolumor admin dashboard — July 2025</p>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -839,7 +839,7 @@ function AnalyticsPage() {
 // ── Announcements ─────────────────────────────────────────────────────────────
 
 const PAST_ANNOUNCEMENTS = [
-  { title: 'Welcome to Tolumore — Semester 2 begins!',         date: '1 Jan 2025',  audience: 'All Students' },
+  { title: 'Welcome to Tolumor — Semester 2 begins!',         date: '1 Jan 2025',  audience: 'All Students' },
   { title: 'New module: Criminal Law & Procedure is live',   date: '15 Mar 2025', audience: 'Law Students' },
   { title: 'Platform maintenance — Sunday 2am–4am',          date: '28 May 2025', audience: 'All Users'    },
 ];

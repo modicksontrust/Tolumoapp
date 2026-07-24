@@ -63,7 +63,7 @@ type ChatMsg = { role: 'ai' | 'user'; text: string; chips?: string[] };
 function nowTime() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
 const REPLIES: Record<string, { text: string; chips?: string[] }> = {
-  default: { text: "Hi! I'm your Tolumore AI Study Coach. Ask me to explain a concept, quiz you on a topic, or help you prepare for your test.", chips: ['Quiz me on federalism', 'Explain mens rea', 'Help me revise Contract Law', 'Book a tutor'] },
+  default: { text: "Hi! I'm your Tolumor AI Study Coach. Ask me to explain a concept, quiz you on a topic, or help you prepare for your test.", chips: ['Quiz me on federalism', 'Explain mens rea', 'Help me revise Contract Law', 'Book a tutor'] },
   quiz: { text: "Let's go! In *Lakanmi v. A.G. Western State*, the Supreme Court held that:\n\nA) Military decrees override the Constitution\nB) The Constitution is supreme over military decrees ✓\nC) States have sovereign immunity\nD) Emergency powers are absolute", chips: ['A', 'B ✓', 'C', 'D'] },
   explain: { text: "Of course! Which concept from your modules would you like explained? I cover Constitutional Law, Law of Contract, Criminal Law, Law of Torts, Jurisprudence, and Land Law.", chips: ['Federalism', 'Offer & Acceptance', 'Mens Rea', 'Duty of Care'] },
   booking: { text: "Your next session is with Prof. Adeyemi on Mon 14 Jul at 10:00am covering Federalism & Devolution of Powers.", chips: ['View Tutorial Sessions'] },
@@ -105,7 +105,7 @@ function AIChatWidget() {
             <div className="h-9 w-9 rounded-xl bg-white/15 p-1 overflow-hidden shrink-0"><Logo /></div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-white">AI Study Coach</p>
-              <p className="flex items-center gap-1.5 text-[11px] text-white/70 mt-0.5"><span className="h-2 w-2 rounded-full bg-green-400" />Online · Powered by Tolumore</p>
+              <p className="flex items-center gap-1.5 text-[11px] text-white/70 mt-0.5"><span className="h-2 w-2 rounded-full bg-green-400" />Online · Powered by Tolumor</p>
             </div>
             <button onClick={() => setOpen(false)} className="h-7 w-7 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/15"><X className="h-4 w-4" /></button>
           </div>
@@ -136,7 +136,7 @@ function AIChatWidget() {
               <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input); } }} placeholder="Type a message..." className="flex-1 text-sm px-4 py-2.5 rounded-full border border-stone-200 outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 bg-stone-50 placeholder:text-stone-400" />
               <button onClick={() => send(input)} disabled={!input.trim()} className="h-9 w-9 rounded-full bg-primary flex items-center justify-center shrink-0 disabled:opacity-35 hover:bg-primary/90"><Send className="h-4 w-4 text-white" /></button>
             </div>
-            <p className="text-[10px] text-stone-400 text-center mt-2">Powered by Tolumore AI</p>
+            <p className="text-[10px] text-stone-400 text-center mt-2">Powered by Tolumor AI</p>
           </div>
         </div>
       )}
@@ -189,7 +189,7 @@ function StudentShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className={`fixed md:relative inset-y-0 left-0 z-30 w-[200px] bg-[#1a4d35] flex flex-col h-full shrink-0 transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="px-4 py-4">
-          <img src={`${basePath}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+          <img src={`${basePath}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
           <p className="text-[8px] font-bold text-white/35 uppercase tracking-[0.2em] mt-1 pl-0.5">Learning Portal</p>
         </div>
         <nav className="flex-1 px-2.5 space-y-0.5 overflow-y-auto py-2">
@@ -560,7 +560,7 @@ function HelpPage() {
           { label: 'Help Centre',       desc: 'Browse FAQs and how-to guides' },
           { label: 'Contact Support',   desc: 'Open a ticket with our team' },
           { label: 'Report a Bug',      desc: 'Tell us what went wrong' },
-          { label: 'Request a Feature', desc: 'Suggest improvements to Tolumore' },
+          { label: 'Request a Feature', desc: 'Suggest improvements to Tolumor' },
           { label: 'Privacy Policy',    desc: 'How we handle your data' },
           { label: 'Terms of Service',  desc: 'Platform rules and agreements' },
         ].map(item => (

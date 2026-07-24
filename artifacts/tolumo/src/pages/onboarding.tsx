@@ -52,7 +52,7 @@ export default function OnboardingPage() {
     if (!selectedRole) {
       toast({
         title: "Please select a role",
-        description: "You must choose how you want to use Tolumore.",
+        description: "You must choose how you want to use Tolumor.",
         variant: "destructive"
       });
       return;
@@ -77,7 +77,7 @@ export default function OnboardingPage() {
       {
         onSuccess: (data) => {
           toast({
-            title: "Welcome to Tolumore!",
+            title: "Welcome to Tolumor!",
             description: "Your profile has been created.",
           });
           
@@ -113,7 +113,7 @@ export default function OnboardingPage() {
       <div className="md:w-[40%] bg-primary text-white p-8 md:p-12 lg:p-16 flex flex-col relative overflow-hidden">
         <div className="relative z-10 flex-1 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-12">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
           </div>
           
           <div className="max-w-md">
@@ -121,7 +121,7 @@ export default function OnboardingPage() {
               Welcome
             </div>
             <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Tell us how you'll use Tolumore
+              Tell us how you'll use Tolumor
             </h1>
             <p className="text-white/80 text-lg leading-relaxed">
               We personalize your dashboard and tools based on what you want to achieve.
@@ -129,7 +129,7 @@ export default function OnboardingPage() {
           </div>
           
           <div className="mt-12 text-sm text-white/50">
-            © {new Date().getFullYear()} Tolumore Educational Services
+            © {new Date().getFullYear()} Tolumor Educational Services
           </div>
         </div>
       </div>

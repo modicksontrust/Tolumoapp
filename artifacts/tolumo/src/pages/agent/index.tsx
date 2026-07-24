@@ -37,7 +37,7 @@ function AgentShell({ children }: { children: React.ReactNode }) {
         {/* Logo */}
         <div className="px-4 pt-5 pb-4">
           <div className="flex items-center mb-4">
-            <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumore" className="h-8 w-auto" />
+            <img src={`${import.meta.env.BASE_URL}logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
           </div>
           {/* User */}
           <div className="flex items-center gap-2">
@@ -208,11 +208,11 @@ function ReEngageModal({ name, onClose }: { name: string; onClose: () => void })
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 space-y-4">
         <h2 className="font-serif font-bold text-lg text-foreground">Re-engage {name}</h2>
         <p className="text-sm text-muted-foreground">
-          Reach out through your own channels — Tolumore doesn't share personal contact details directly.
+          Reach out through your own channels — Tolumor doesn't share personal contact details directly.
           Use the message below as a template via WhatsApp, SMS, or any platform you both use.
         </p>
         <div className="bg-stone-50 rounded-xl p-4 font-mono text-sm text-foreground leading-relaxed">
-          Hi! Just checking in — your Tolumore subscription lapsed and you might be missing new course content.
+          Hi! Just checking in — your Tolumor subscription lapsed and you might be missing new course content.
           Monthly plan is still just ₦3,500. Rejoin with my link: tolumo.ng/ref/08472
         </div>
         <div className="flex items-center gap-3">
@@ -606,7 +606,7 @@ const INITIAL_MESSAGES = [
   {
     from: 'agent' as const,
     sender: 'Olu Martins',
-    subtitle: 'Super Agent · Tolumore HQ',
+    subtitle: 'Super Agent · Tolumor HQ',
     broadcast: true,
     text: "Good morning Chiamaka! Quick update — we're running a referral push campaign this month. I'll be sharing updated flyers shortly. Please ensure all your active students have the latest course module info.",
     time: '9:14 AM',
@@ -653,7 +653,7 @@ function Inbox() {
         <div className="h-9 w-9 rounded-full bg-[#1a4d35] text-white font-bold text-sm flex items-center justify-center shrink-0">OM</div>
         <div>
           <p className="font-semibold text-foreground text-sm">Olu Martins</p>
-          <p className="text-xs text-muted-foreground">Super Agent · Tolumore HQ</p>
+          <p className="text-xs text-muted-foreground">Super Agent · Tolumor HQ</p>
         </div>
       </div>
 
@@ -859,7 +859,7 @@ function AgentSettings() {
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Email</label>
               <input value="chiamaka.a@tolumo.ng" readOnly
                 className="w-full h-10 px-3 rounded-xl border border-stone-200 text-sm text-muted-foreground bg-stone-50 outline-none" />
-              <p className="text-[10px] text-muted-foreground mt-1">Managed by Tolumore — contact Admin to change.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Managed by Tolumor — contact Admin to change.</p>
             </div>
             <div>
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Phone</label>
