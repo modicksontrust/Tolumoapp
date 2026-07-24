@@ -24,7 +24,7 @@ const LAW_AREAS = [
 
 const STUDY_GOALS = [
   'Pass my LL.B exams with distinction',
-  'Prepare for the Nigerian Bar Exam (BL)',
+  'Connect with like-minds',
   'Deepen my understanding of specific subjects',
   'Get ahead before the next semester',
   'Supplement my lectures with better resources',
