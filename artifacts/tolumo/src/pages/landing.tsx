@@ -292,14 +292,13 @@ export default function LandingPage() {
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               {/* Left: feature tiles */}
-              <div className="grid grid-cols-2 gap-4 order-2 md:order-1">
+              <div className="flex flex-col gap-3 order-2 md:order-1">
                 {[
-                  { label: 'Legal Drafting', color: 'bg-primary/5 text-primary' },
-                  { label: 'Negotiation Skills', color: 'bg-accent/10 text-accent' },
-                  { label: 'Communication', color: 'bg-primary/5 text-primary' },
-                  { label: 'Digital Tools', color: 'bg-accent/10 text-accent' },
-                  { label: 'Research Methods', color: 'bg-accent/10 text-accent' },
-                  { label: 'Career Readiness', color: 'bg-primary/5 text-primary' },
+                  { label: 'Communication Skills', color: 'bg-primary/5 text-primary' },
+                  { label: 'Digital Skills', color: 'bg-accent/10 text-accent' },
+                  { label: 'Legal Research & Technology Skills', color: 'bg-primary/5 text-primary' },
+                  { label: 'Entrepreneurship & Business Skills', color: 'bg-accent/10 text-accent' },
+                  { label: 'Emotional Intelligence & Conflict Resolution Skills', color: 'bg-primary/5 text-primary' },
                 ].map(({ label, color }) => (
                   <div key={label} className={`rounded-xl border border-border px-4 py-3 text-sm font-semibold ${color}`}>
                     {label}
@@ -316,7 +315,10 @@ export default function LandingPage() {
                 <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
                   Practical skills to complement your law degree. Beyond the courtroom and the classroom, Skills Hub connects you to hands-on training in the skills employers actually need, from legal drafting and negotiation to communication and digital tools. The world is changing fast, and Skills Hub keeps you ready for it — practical, flexible training built right alongside your legal education, so you walk out job-ready for this dynamic and contemporary age, not just law-school ready.
                 </p>
-                <p className="mt-4 text-xs text-muted-foreground italic">Available after signup, inside the platform.</p>
+                <div className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-accent/10 border border-accent/30 px-5 py-2.5">
+                  <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse shrink-0" />
+                  <span className="text-sm font-semibold text-accent">Available exclusively after signup — inside the platform</span>
+                </div>
               </div>
             </div>
           </div>
