@@ -58,7 +58,7 @@ export default function LandingPage() {
                 </h1>
 
                 <p className="text-white/70 text-lg leading-relaxed mb-10 max-w-md">
-                  Complete your 5-year LL.B with expert video tutorials, AI-guided revision, and one-on-one tutorial sessions — every module fully NUC-approved.
+                  The perfect companion to your law degree. Video lessons aligned with the NUC-approved curriculum, an AI revision coach, and one-on-one tutor sessions, all to help you learn deeper, skill up, and get opportunities along the way.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 mb-10">
