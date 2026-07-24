@@ -599,7 +599,7 @@ export default function LandingPage() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white font-serif font-bold text-sm">M</div>
                   <div>
                     <p className="text-sm font-bold text-primary">Dr Moses Oruaze Dickson</p>
-                    <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD &nbsp;·&nbsp; Founder, Tolumor.</p>
+                    <p className="text-xs text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD<br />Founder, Tolumor.</p>
                   </div>
                 </div>
               </div>
