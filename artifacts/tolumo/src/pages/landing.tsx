@@ -547,12 +547,8 @@ export default function LandingPage() {
               {/* Left: sticky founder card */}
               <div className="md:sticky md:top-24 space-y-5">
                 {/* Profile card */}
-                <div className="rounded-2xl bg-primary p-8 text-white text-center">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent text-white font-serif text-2xl font-bold">
-                    M
-                  </div>
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/40 mb-3">Dr Moses Oruaze Dickson</p>
-                  <p className="text-[9px] text-white/40 tracking-wider">LLB · BL · LLM · MSc · LLM · PhD</p>
+                <div className="rounded-2xl overflow-hidden aspect-square w-full">
+                  <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/founder.jpeg`} alt="Dr Moses Oruaze Dickson" className="w-full h-full object-cover object-top" />
                 </div>
                 {/* Name + title below card */}
                 <div>
