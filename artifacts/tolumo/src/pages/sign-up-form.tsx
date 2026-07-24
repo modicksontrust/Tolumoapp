@@ -51,7 +51,7 @@ const selectClass =
 const labelStyle = { color: 'rgba(255,255,255,0.6)' };
 
 export default function CustomSignUpForm() {
-  const { signUp, isLoaded } = useSignUp();
+  const { signUp, isLoaded, setActive } = useSignUp();
 
   const [role, setRole] = useState<'student' | 'tutor'>('student');
   const [step, setStep] = useState<'form' | 'verify'>('form');
@@ -98,6 +98,7 @@ export default function CustomSignUpForm() {
         },
       });
       if (result.status === 'complete') {
+        await setActive!({ session: result.createdSessionId });
         window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/welcome`;
       } else {
         // Email verification required — show OTP step
@@ -119,6 +120,7 @@ export default function CustomSignUpForm() {
     try {
       const result = await signUp.attemptEmailAddressVerification({ code });
       if (result.status === 'complete') {
+        await setActive!({ session: result.createdSessionId });
         window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/welcome`;
       }
     } catch (err: any) {
