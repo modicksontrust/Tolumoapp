@@ -593,7 +593,7 @@ export default function LandingPage() {
                     In Nigerian law faculties, a single lecturer often teaches hundreds of students with limited time for individual support. Textbooks are expensive, past questions are scattered, and revision support is inconsistent across institutions.
                   </p>
                   <p>
-                    Tolumor changes that. Built by <strong className="text-primary font-semibold">Solalina</strong> in partnership with practising lawyers and academics, we've built a structured, NUC-aligned learning platform that meets students where they are — whether studying in Lagos, Zaria, Nsukka or Port Harcourt.
+                    Tolumor changes that. Built by <strong className="text-primary font-semibold">Goldcoast Technologies</strong> in partnership with practising lawyers and academics, we've built a structured, NUC-aligned learning platform that meets students where they are — whether studying in Lagos, Zaria, Nsukka or Port Harcourt.
                   </p>
                   <p>
                     Every feature — from the AI Study Coach to the post-quiz feedback loop — was designed with one goal: to help more Nigerian law students pass their exams, graduate on time, and enter the profession with confidence.
@@ -759,7 +759,7 @@ export default function LandingPage() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-5">Company</p>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li><a href="#about" className="hover:text-primary transition-colors">About Tolumor</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Solalina</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Goldcoast Technologies</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Triax Solicitors</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Goldcoast Foundation</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Press Enquiries</a></li>
@@ -769,7 +769,7 @@ export default function LandingPage() {
 
           {/* Bottom bar */}
           <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <p>© 2025 Tolumor · Operated by Solalina. All rights reserved.</p>
+            <p>© 2025 Tolumor · Operated by Goldcoast Technologies. All rights reserved.</p>
             <p>Built for African students, by educators who care.</p>
           </div>
         </div>
