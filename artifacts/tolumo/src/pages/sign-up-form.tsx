@@ -386,6 +386,7 @@ export default function CustomSignUpForm() {
               onChange={set('password')}
               required
               minLength={8}
+              autoComplete="new-password"
             />
           </div>
         </div>

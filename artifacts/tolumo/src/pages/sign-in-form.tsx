@@ -27,9 +27,8 @@ export default function CustomSignInForm() {
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
       }
-      // Whether complete or needs_second_factor, go straight to the app.
-      // Auth guards are off during development.
-      window.location.href = '/';
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+      window.location.href = base || '/';
     } catch (err: any) {
       setError(err?.errors?.[0]?.longMessage ?? err?.message ?? 'Incorrect email or password.');
     } finally {
