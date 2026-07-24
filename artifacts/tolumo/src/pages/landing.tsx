@@ -29,7 +29,7 @@ export default function LandingPage() {
               Log in
             </Link>
             <Link href="/sign-up" className="inline-flex h-9 items-center justify-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
-              Enroll Now
+              Signup Now
             </Link>
           </div>
         </div>
