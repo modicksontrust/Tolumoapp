@@ -291,19 +291,49 @@ export default function LandingPage() {
         <section id="skills-hub" className="py-20 md:py-28 bg-white scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6 max-w-6xl">
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              {/* Left: feature tiles */}
-              <div className="flex flex-col gap-3 order-2 md:order-1">
-                {[
-                  { label: 'Communication Skills', color: 'bg-primary/5 text-primary' },
-                  { label: 'Digital Skills', color: 'bg-accent/10 text-accent' },
-                  { label: 'Legal Research & Technology Skills', color: 'bg-primary/5 text-primary' },
-                  { label: 'Entrepreneurship & Business Skills', color: 'bg-accent/10 text-accent' },
-                  { label: 'Emotional Intelligence & Conflict Resolution Skills', color: 'bg-primary/5 text-primary' },
-                ].map(({ label, color }) => (
-                  <div key={label} className={`rounded-xl border border-border px-4 py-3 text-sm font-semibold ${color}`}>
-                    {label}
-                  </div>
-                ))}
+              {/* Left: image cards */}
+              <div className="order-2 md:order-1">
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    {
+                      label: 'Communication Skills',
+                      img: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop',
+                      gradient: 'from-[#1a4d35]/90 to-[#1a4d35]/40',
+                    },
+                    {
+                      label: 'Digital Skills',
+                      img: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=800&auto=format&fit=crop',
+                      gradient: 'from-[#b45309]/90 to-[#b45309]/40',
+                    },
+                    {
+                      label: 'Legal Research & Technology Skills',
+                      img: 'https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?q=80&w=800&auto=format&fit=crop',
+                      gradient: 'from-[#1e3a5f]/90 to-[#1e3a5f]/40',
+                    },
+                    {
+                      label: 'Entrepreneurship & Business Skills',
+                      img: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=800&auto=format&fit=crop',
+                      gradient: 'from-[#7c3aed]/90 to-[#7c3aed]/40',
+                    },
+                  ].map(({ label, img, gradient }) => (
+                    <div key={label} className="relative rounded-2xl overflow-hidden h-36 group">
+                      <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${gradient}`} />
+                      <p className="absolute bottom-3 left-3 right-3 text-xs font-bold text-white leading-snug">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                {/* Last card full-width */}
+                <div className="relative rounded-2xl overflow-hidden h-28 group mt-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1200&auto=format&fit=crop"
+                    alt="Emotional Intelligence & Conflict Resolution Skills"
+                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f4c3a]/90 to-[#0f4c3a]/30" />
+                  <p className="absolute bottom-3 left-4 text-sm font-bold text-white">Emotional Intelligence &amp; Conflict Resolution Skills</p>
+                </div>
               </div>
 
               {/* Right: label + heading + copy */}
