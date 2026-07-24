@@ -67,11 +67,17 @@ export default function CustomSignInForm() {
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={!isLoaded || loading}
+        onClick={(e) => {
+          if (isLoaded && !loading) {
+            e.preventDefault();
+            handleSubmit(e as any);
+          }
+        }}
         style={{ backgroundColor: 'hsl(43,74%,49%)', color: '#fff' }}
         className="w-full rounded-lg py-3 text-sm font-semibold tracking-wide transition-opacity disabled:opacity-60"
       >
-        {loading ? 'Signing in…' : 'Sign In'}
+        {!isLoaded ? 'Loading…' : loading ? 'Signing in…' : 'Sign In'}
       </button>
     </form>
   );
