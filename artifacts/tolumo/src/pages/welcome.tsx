@@ -97,7 +97,7 @@ export default function WelcomePage() {
           </div>
 
           {/* Sign-off — under the letter */}
-          <div className="shrink-0 flex items-center justify-between pt-6 mt-5 border-t-2 border-[#1a4d35]/15">
+          <div className="flex items-center justify-between pt-6 mt-auto border-t-2 border-[#1a4d35]/15">
             <div className="flex items-center gap-4">
               <img
                 src={founderImg()}
