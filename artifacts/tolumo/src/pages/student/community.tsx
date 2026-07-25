@@ -547,11 +547,18 @@ export default function CommunityPage() {
                 onRemove={removeMessage} onMute={muteAuthor}
               />
 
-              {/* Threaded replies */}
+              {/* Thread panel */}
               {replies.length > 0 && (
-                <div className={`mt-2 space-y-2 pl-11 relative ${isOwn ? 'pr-0' : ''}`}>
-                  {/* Vertical thread line */}
-                  <div className="absolute left-[22px] top-0 bottom-2 w-px bg-stone-200" />
+                <div className="mt-2 ml-11 rounded-2xl border border-stone-200 bg-stone-50 overflow-hidden">
+                  {/* Thread header */}
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-200 bg-white/70">
+                    <CornerDownRight className="h-3.5 w-3.5 text-stone-400" />
+                    <span className="text-[11px] font-semibold text-stone-500">
+                      {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+                    </span>
+                  </div>
+                  {/* Replies */}
+                  <div className="px-4 py-3 space-y-4">
                   {replies.map(reply => (
                     <MessageBubble
                       key={reply.id}
@@ -562,6 +569,7 @@ export default function CommunityPage() {
                       onRemove={removeMessage} onMute={muteAuthor}
                     />
                   ))}
+                  </div>
                 </div>
               )}
             </div>
