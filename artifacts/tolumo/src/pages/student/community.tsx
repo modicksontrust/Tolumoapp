@@ -186,39 +186,29 @@ const IS_MODERATOR = false;
 function ReactionRow({ msgId, reactions = {}, isOwn, onReact }: {
   msgId: string; reactions?: Reactions; isOwn: boolean; onReact: (msgId: string, emoji: string) => void;
 }) {
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const totals = EMOJIS.filter(e => (reactions[e]?.length ?? 0) > 0);
-
   return (
     <div className={`flex items-center gap-1 mt-1 flex-wrap ${isOwn ? 'justify-end' : ''}`}>
-      {totals.map(emoji => {
+      {EMOJIS.map(emoji => {
         const reactors = reactions[emoji] ?? [];
+        const count = reactors.length;
         const youReacted = reactors.includes(CURRENT_STUDENT.name);
         return (
-          <button key={emoji} onClick={() => onReact(msgId, emoji)} title={reactors.join(', ')}
-            className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors
+          <button
+            key={emoji}
+            onClick={() => onReact(msgId, emoji)}
+            title={count > 0 ? reactors.join(', ') : emoji}
+            className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border transition-all
               ${youReacted
                 ? 'bg-[#1a4d35]/10 border-[#1a4d35]/30 text-[#1a4d35]'
-                : 'bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100'}`}
+                : count > 0
+                  ? 'bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100'
+                  : 'bg-transparent border-stone-150 text-stone-400 hover:bg-stone-50 hover:border-stone-200'
+              }`}
           >
-            {emoji} {reactors.length}
+            {emoji}{count > 0 && <span className="ml-0.5">{count}</span>}
           </button>
         );
       })}
-      <div className="relative">
-        <button onClick={() => setPickerOpen(o => !o)}
-          className="flex items-center justify-center h-6 w-6 rounded-full border border-stone-200 bg-stone-50 text-stone-400 hover:bg-stone-100 hover:text-stone-600 text-xs transition-colors"
-          title="Add reaction"
-        >+</button>
-        {pickerOpen && (
-          <div className={`absolute bottom-8 z-20 bg-white rounded-xl shadow-lg border border-stone-200 px-2 py-1.5 flex gap-1 ${isOwn ? 'right-0' : 'left-0'}`}>
-            {EMOJIS.map(e => (
-              <button key={e} onClick={() => { onReact(msgId, e); setPickerOpen(false); }}
-                className="text-base hover:scale-125 transition-transform px-0.5">{e}</button>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -352,7 +342,7 @@ function MessageBubble({
           <ReactionRow msgId={msg.id} reactions={msg.reactions} isOwn={isOwn} onReact={onReact} />
           <button
             onClick={() => onReply(msg)}
-            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-[#1a4d35] transition-colors opacity-0 group-hover:opacity-100"
+            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-[#1a4d35] transition-colors"
           >
             <CornerDownRight className="h-3 w-3" />
             Reply
