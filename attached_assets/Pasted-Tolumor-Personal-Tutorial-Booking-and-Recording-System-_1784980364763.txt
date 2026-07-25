@@ -1,0 +1,11 @@
+Tolumor, Personal Tutorial Booking and Recording System, Functional Prompt.
+
+Trigger point: immediately after a student submits mandatory topic feedback, star rating plus written note, a button appears reading “Book a Personal Tutorial on This Topic.”
+
+Student booking flow: tapping the button opens a filtered list showing only lecturers who have scheduled tutorial sessions tagged specifically to that topic. Each listing displays the lecturer’s name, photo, average rating, available time slots, and session price. The student selects a slot and completes payment, held by the platform until the session is confirmed conducted. Once paid, the student receives a booking confirmation with date, time, lecturer name, a join link, and reminder notifications counting down to the session.
+
+Lecturer dashboard interfaces: a Tutorial Scheduling interface for creating slots tagged by topic, with date, time, duration, capacity, and price. A Bookings Overview interface showing all bookings per topic, with student names, payment status, and session status. Automatic join link generation per booking, visible to both lecturer and student. A Payments interface showing held versus released payouts, feeding into the existing lecturer credit and payout system. An Attendance and Completion Marking interface, where marking a session complete triggers payout release and credit awarding, and marking it not conducted triggers the existing cancellation and refund policy.
+
+History sections: students get a “Past Tutorials” section listing every completed session with topic, lecturer, date, and a link to the recorded video. Lecturers get a “Previous Tutorials” section listing all past sessions they’ve conducted, with recorded video access and student attendance details.
+
+Recording and retention rule: every tutorial session is recorded automatically by default, with no lecturer opt-in required. A visible note appears in both the Past Tutorials and Previous Tutorials sections stating that recordings remain available for six months from the session date, after which they are automatically and permanently deleted.

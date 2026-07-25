@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
+import BookingModal from './booking-modal';
 import {
   CheckCircle2, Lock, ChevronLeft, ChevronRight, ChevronDown,
   Play, Pause, SkipBack, SkipForward, Volume2,
@@ -305,6 +306,7 @@ export default function CurrentTopic() {
   const [quizSecs, setQuizSecs] = useState(600); // 10:00
 
   // Feedback
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackNote, setFeedbackNote] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
@@ -1124,34 +1126,55 @@ export default function CurrentTopic() {
 
           {/* ══ FEEDBACK SUBMITTED ══ */}
           {quizPhase === 'feedback' && feedbackSubmitted && (
-            <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-10 text-center space-y-4">
-              <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-foreground">
-                {testPassed ? 'Topic Complete! 🎉' : 'Feedback Received'}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-                {testPassed
-                  ? `Your feedback has been sent to ${MODULE.tutor}. Topic ${topic.id} is now fully credited to your certificate progress.`
-                  : `Your feedback has been sent to ${MODULE.tutor}. Now restart this topic from the video — no shortcuts.`
-                }
-              </p>
-              {testPassed ? (
-                <div className="flex gap-3 justify-center pt-2">
-                  <button onClick={() => setLocation('/student/modules')} className="px-6 py-2.5 rounded-xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors">
-                    Back to Module Library
-                  </button>
-                  <button onClick={resetAll} className="px-6 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">
-                    Revisit Topic
-                  </button>
+            <div className="space-y-4">
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-10 text-center space-y-4">
+                <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="h-8 w-8 text-green-600" />
                 </div>
-              ) : (
-                <button onClick={resetAll} className="w-full max-w-xs mx-auto flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">
-                  <RefreshCw className="h-4 w-4" /> Retake Topic from Beginning
-                </button>
-              )}
+                <h3 className="text-xl font-serif font-bold text-foreground">
+                  {testPassed ? 'Topic Complete! 🎉' : 'Feedback Received'}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                  {testPassed
+                    ? `Your feedback has been sent to ${MODULE.tutor}. Topic ${topic.id} is now fully credited to your certificate progress.`
+                    : `Your feedback has been sent to ${MODULE.tutor}. Now restart this topic from the video — no shortcuts.`
+                  }
+                </p>
+                {testPassed ? (
+                  <div className="flex gap-3 justify-center pt-2">
+                    <button onClick={() => setLocation('/student/modules')} className="px-6 py-2.5 rounded-xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors">
+                      Back to Module Library
+                    </button>
+                    <button onClick={resetAll} className="px-6 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">
+                      Revisit Topic
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={resetAll} className="w-full max-w-xs mx-auto flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">
+                    <RefreshCw className="h-4 w-4" /> Retake Topic from Beginning
+                  </button>
+                )}
+              </div>
+
+              {/* ── Book a Personal Tutorial ── */}
+              <button
+                onClick={() => setBookingOpen(true)}
+                className="w-full flex items-center justify-between gap-4 px-6 py-5 rounded-2xl border-2 border-[#1a4d35]/20 bg-[#1a4d35]/5 hover:bg-[#1a4d35]/10 hover:border-[#1a4d35]/30 transition-all group"
+              >
+                <div className="text-left">
+                  <p className="font-bold text-[#1a4d35] text-base">Book a Personal Tutorial on This Topic</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Browse lecturers with sessions tagged to {topic.title} — pick a slot, confirm, and get your join link instantly.
+                  </p>
+                </div>
+                <ChevronRight className="h-5 w-5 text-[#1a4d35] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              </button>
             </div>
+          )}
+
+          {/* Booking modal */}
+          {bookingOpen && (
+            <BookingModal topic={topic.title} onClose={() => setBookingOpen(false)} />
           )}
 
         </div>
