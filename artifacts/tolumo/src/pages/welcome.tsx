@@ -71,12 +71,12 @@ export default function WelcomePage() {
         <div className="flex-1 bg-[#F5F2EB] rounded-2xl flex flex-col px-9 pt-6 pb-6 min-h-0">
 
           {/* Opening */}
-          <p className="font-serif text-xl font-semibold text-amber-700 mb-4 shrink-0">
+          <p className="font-serif text-xl font-semibold text-amber-700 mb-3 shrink-0">
             Dear {firstName},
           </p>
 
           {/* Body */}
-          <div className="flex flex-col gap-4 pb-2">
+          <div className="flex flex-col gap-3 pb-1">
             {isLecturer ? (
               <p className="text-sm text-foreground leading-[1.9] text-justify">
                 Welcome to Tolumor. For years, your knowledge lived inside four walls, shared with whoever was lucky enough to sit in your class. Not anymore. Here, your teaching outlives the semester, and your reach outgrows the classroom. Every lesson you upload becomes a lifeline for a student you may never meet, in a school you may never visit. This is bigger than content — it's your legacy, multiplied. Let's build it together.
@@ -97,7 +97,7 @@ export default function WelcomePage() {
           </div>
 
           {/* Sign-off — under the letter */}
-          <div className="flex items-center justify-between pt-6 mt-auto border-t-2 border-[#1a4d35]/15">
+          <div className="flex items-center justify-between pt-5 mt-6 border-t-2 border-[#1a4d35]/15">
             <div className="flex items-center gap-4">
               <img
                 src={founderImg()}
