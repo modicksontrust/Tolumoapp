@@ -134,6 +134,7 @@ const BELL_NOTIFS = [
   { id: 5, title: 'Tunde Olatunji 👍 reacted to your message', body: 'Your message in the 200 Level Community got a reaction from Tunde Olatunji.', time: '25m ago', unread: true },
   { id: 6, title: 'Fatima Bello replied in the discussion thread', body: "Fatima Bello replied to your comment in the Federalism & Devolution topic thread.", time: '12m ago', unread: true },
   { id: 7, title: 'You scored 88% on Criminal Law Topic 1!', body: 'Great work — keep it up.', time: '3d ago', unread: false },
+  { id: 8, title: 'Prof. Adeyemi recommended an opportunity to you', body: 'Prof. Adeyemi recommended "Commonwealth Split-Site PhD Scholarship" to you. Check it out in the Scholarships & Opportunities section.', time: '1h ago', unread: true },
 ];
 
 function NotificationPanel({ onClose }: { onClose: () => void }) {

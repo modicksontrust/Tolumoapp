@@ -4,6 +4,9 @@ import MyContent from './my-content';
 import TutorialSchedule from './tutorial-schedule';
 import StudentAnalytics from './student-analytics';
 import SettingsPage, { HelpSupportPage } from './settings';
+import LecturerOpportunities from './opportunities';
+import TutorStudentCommunity from './student-community';
+import LecturerLounge from './lecturer-lounge';
 import { useClerk, useUser } from '@clerk/react';
 import {
   LayoutDashboard, BookOpen, Calendar, BarChart2,
@@ -12,7 +15,7 @@ import {
   Edit, Trash2, Plus, Clock, Users, TrendingUp,
   CheckCircle2, Star, Award, Users2,
   MessageCircle, Send, Bot, Minimize2, Mic, MicOff, PhoneOff,
-  Info, Zap, Gift, Trophy,
+  Info, Zap, Gift, Trophy, GraduationCap, Shield,
 } from 'lucide-react';
 import {
   useGetTutorSummary,
@@ -73,6 +76,18 @@ const INITIAL_NOTIFS: Notif[] = [
     time: '4h ago',
     cta: 'View analytics',
     ctaHref: '/tutor/analytics',
+    unread: true,
+  },
+  {
+    id: 5,
+    icon: GraduationCap,
+    iconBg: 'bg-[#e8f0ee]',
+    iconColor: 'text-[#1a4d35]',
+    title: 'New opportunity added',
+    body: 'A British Academy Postdoctoral Fellowship was added to your Opportunities feed. Use Recommend to share it with your students.',
+    time: '2h ago',
+    cta: 'View opportunities',
+    ctaHref: '/tutor/opportunities',
     unread: true,
   },
   {
@@ -190,6 +205,9 @@ const NAV = [
   { href: '/tutor/content', label: 'My Content', icon: BookOpen },
   { href: '/tutor/schedule', label: 'Tutorial Schedule', icon: Calendar },
   { href: '/tutor/analytics', label: 'Student Analytics', icon: BarChart2 },
+  { href: '/tutor/opportunities', label: 'Opportunities', icon: GraduationCap },
+  { href: '/tutor/community', label: 'Student Community', icon: Users },
+  { href: '/tutor/lounge', label: 'Lecturer Lounge', icon: Shield },
 ];
 
 const NAV_BOTTOM = [
@@ -1217,6 +1235,9 @@ export default function TutorPortal() {
         <Route path="/tutor/content/:id" component={LessonManager} />
         <Route path="/tutor/schedule" component={TutorialSchedule} />
         <Route path="/tutor/analytics" component={StudentAnalytics} />
+        <Route path="/tutor/opportunities">{() => <LecturerOpportunities />}</Route>
+        <Route path="/tutor/community">{() => <TutorStudentCommunity />}</Route>
+        <Route path="/tutor/lounge">{() => <LecturerLounge />}</Route>
         <Route path="/tutor/help">{() => <div className="max-w-6xl mx-auto"><HelpSupportPage /></div>}</Route>
         <Route path="/tutor/settings">{() => <SettingsPage />}</Route>
       </Switch>
