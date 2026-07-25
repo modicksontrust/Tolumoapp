@@ -121,7 +121,7 @@ const SEED_BY_ROOM: Record<string, Message[]> = {
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const EMOJIS = ['👍', '❤️', '🔥', '🎯'];
+const EMOJIS = ['👍', '👎', '❤️', '🔥', '🎯'];
 
 function formatTs(ts: number): string {
   const diff = Date.now() - ts;
