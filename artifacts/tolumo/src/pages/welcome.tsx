@@ -54,10 +54,12 @@ export default function WelcomePage() {
 
       {/* Left panel — branding */}
       <div className="md:w-[38%] bg-[#1a4d35] flex flex-col justify-between px-10 py-10">
-        <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-7 w-auto" />
+        <div>
+          <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-7 w-auto mb-2" />
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/40">A letter to you</p>
+        </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/40 mb-3">A letter to you</p>
           <h1 className="font-serif text-5xl font-bold text-white leading-tight mb-4">
             Welcome.
           </h1>
