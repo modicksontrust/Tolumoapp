@@ -662,25 +662,69 @@ export default function CurrentTopic() {
               .filter(u => u.topicId === String(topic.id))
               .sort((a, b) => b.ts - a.ts);
             return updates.length > 0 ? (
-              <div className="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
-                <div className="flex items-center gap-3 px-5 py-3.5 bg-amber-50 border-b border-amber-100">
-                  <Newspaper className="h-4 w-4 text-amber-600 shrink-0" />
-                  <p className="font-bold text-sm text-foreground">Recent Updates</p>
-                  <span className="ml-auto text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
-                    {updates.length} update{updates.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
-                <div className="divide-y divide-stone-100">
-                  {updates.map(u => (
-                    <div key={u.id} className="px-5 py-4">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <span className="text-xs font-bold text-foreground">{u.author}</span>
-                        <span className="text-[10px] text-stone-300">·</span>
-                        <span className="text-[10px] text-muted-foreground">{fmtUpdateTs(u.ts)}</span>
+              <div className="rounded-2xl overflow-hidden shadow-md border border-orange-900/20">
+                {/* Header */}
+                <div className="relative px-5 py-5 overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, #7c2d12 0%, #9a3412 55%, #c2410c 100%)' }}>
+                  {/* Subtle grid texture */}
+                  <div className="absolute inset-0 opacity-[0.07]"
+                    style={{ backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 19px,#fff 19px,#fff 20px),repeating-linear-gradient(90deg,transparent,transparent 19px,#fff 19px,#fff 20px)' }} />
+                  <div className="relative">
+                    {/* Top row: live dot + label + count */}
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        {/* Pulsing dot */}
+                        <span className="relative flex h-2.5 w-2.5 shrink-0">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-300 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-200" />
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-200">
+                          Live Legal Developments
+                        </span>
                       </div>
-                      <p className="text-sm text-foreground leading-relaxed">{u.text}</p>
+                      <span className="flex items-center gap-1 text-[10px] font-bold bg-white/15 border border-white/20 text-orange-100 px-2 py-0.5 rounded-full">
+                        <Newspaper className="h-3 w-3" />
+                        {updates.length} update{updates.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    {/* Title */}
+                    <h3 className="text-base font-serif font-bold text-white leading-snug">
+                      The law has moved since this topic was recorded
+                    </h3>
+                    <p className="text-xs text-orange-200/80 mt-1 leading-relaxed">
+                      Your lecturer flagged these developments after publication. They may affect exam answers — read before you proceed.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Updates list */}
+                <div className="bg-white divide-y divide-stone-100">
+                  {updates.map((u, idx) => (
+                    <div key={u.id} className="px-5 py-4 flex gap-3">
+                      {/* Left accent bar */}
+                      <div className="w-0.5 rounded-full bg-orange-400 shrink-0 self-stretch" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          {idx === 0 && (
+                            <span className="text-[9px] font-black uppercase tracking-widest bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
+                              Latest
+                            </span>
+                          )}
+                          <span className="text-xs font-bold text-foreground">{u.author}</span>
+                          <span className="text-[10px] text-stone-300">·</span>
+                          <span className="text-[10px] text-muted-foreground">{fmtUpdateTs(u.ts)}</span>
+                        </div>
+                        <p className="text-sm text-foreground leading-relaxed">{u.text}</p>
+                      </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Footer note */}
+                <div className="bg-orange-50 border-t border-orange-100 px-5 py-3">
+                  <p className="text-[11px] text-orange-700/80 leading-relaxed">
+                    <strong>Note:</strong> These updates supplement — not replace — the original topic content. Both may appear in assessments.
+                  </p>
                 </div>
               </div>
             ) : (
