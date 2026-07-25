@@ -110,7 +110,7 @@ export default function OnboardingPage() {
       {/* Left panel */}
       <div className="md:w-[40%] bg-[#1a4d35] text-white p-8 md:p-12 flex flex-col relative overflow-hidden">
         <div className="flex-1 flex flex-col justify-between relative z-10">
-          <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto" />
+          <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-8 w-auto cursor-pointer" onClick={() => setLocation('/')} />
 
           <div className="max-w-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/50 mb-3">
