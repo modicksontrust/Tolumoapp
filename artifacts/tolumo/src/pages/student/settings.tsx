@@ -4,7 +4,7 @@ import {
   User, Building2, CreditCard, Star, Bell, Bookmark,
   SlidersHorizontal, HelpCircle, LogOut, CheckCircle2,
   Camera, CreditCard as CardIcon, ExternalLink, AlertTriangle,
-  ChevronRight, X,
+  ChevronRight, X, Crown,
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { useClerk } from '@clerk/react';
@@ -33,15 +33,16 @@ function Field({ label, sublabel, children }: { label: string; sublabel?: string
 
 // ── nav items ─────────────────────────────────────────────────────────────────
 const NAV = [
-  { id: 'profile',        label: 'Profile',                icon: User,             red: false },
-  { id: 'school',         label: 'School & Level',         icon: Building2,        red: false },
-  { id: 'billing',        label: 'Subscription & Billing', icon: CreditCard,       red: false },
-  { id: 'credits',        label: 'Credits & Redemption',   icon: Star,             red: false },
-  { id: 'notifications',  label: 'Notifications',          icon: Bell,             red: false },
-  { id: 'saved',          label: 'Saved Opportunities',    icon: Bookmark,         red: false },
-  { id: 'preferences',    label: 'Preferences',            icon: SlidersHorizontal,red: false },
-  { id: 'help',           label: 'Help & Support',         icon: HelpCircle,       red: false },
-  { id: 'account',        label: 'Account',                icon: LogOut,           red: true  },
+  { id: 'profile',        label: 'Profile',                icon: User,             red: false, vip: false },
+  { id: 'school',         label: 'School & Level',         icon: Building2,        red: false, vip: false },
+  { id: 'billing',        label: 'Subscription & Billing', icon: CreditCard,       red: false, vip: false },
+  { id: 'credits',        label: 'Credits & Redemption',   icon: Star,             red: false, vip: false },
+  { id: 'upgrade',        label: 'Upgrade to VIP',         icon: Crown,            red: false, vip: true  },
+  { id: 'notifications',  label: 'Notifications',          icon: Bell,             red: false, vip: false },
+  { id: 'saved',          label: 'Saved Opportunities',    icon: Bookmark,         red: false, vip: false },
+  { id: 'preferences',    label: 'Preferences',            icon: SlidersHorizontal,red: false, vip: false },
+  { id: 'help',           label: 'Help & Support',         icon: HelpCircle,       red: false, vip: false },
+  { id: 'account',        label: 'Account',                icon: LogOut,           red: true,  vip: false },
 ] as const;
 type SectionId = typeof NAV[number]['id'];
 
@@ -91,6 +92,16 @@ export default function StudentSettings() {
         <aside className="w-56 shrink-0">
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden divide-y divide-stone-100">
             {NAV.map(n => {
+              if (n.vip) {
+                return (
+                  <button key={n.id} onClick={() => setLocation('/student/vip')}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold transition-colors text-left text-amber-600 hover:bg-amber-50 border-t border-stone-100">
+                    <n.icon className="h-4 w-4 shrink-0 text-amber-500" />
+                    <span>{n.label}</span>
+                    <ChevronRight className="ml-auto h-3.5 w-3.5 text-amber-400" />
+                  </button>
+                );
+              }
               const isActive = active === n.id;
               return (
                 <button key={n.id} onClick={() => setActive(n.id)}

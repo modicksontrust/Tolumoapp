@@ -7,7 +7,7 @@ import {
   Bell, Search, ChevronLeft, ChevronRight, X, Star, Lock,
   CheckCircle2, Clock, MessageCircle, Send, Users,
   Menu, ChevronRight as ArrowRight, Unlock, LibraryBig,
-  Info, Zap, Gift, Trophy,
+  Info, Zap, Gift, Trophy, Crown, Sparkles,
 } from 'lucide-react';
 import MyModules from './my-modules';
 import TutorialSessions from './tutorial-sessions';
@@ -16,6 +16,7 @@ import CurrentTopic from './current-topic';
 import Scholarships from './scholarships';
 import MyCertificate from './my-certificate';
 import TriaxLawLibrary from './triax-law-library';
+import VIPUpgradePage from './vip';
 
 // ── Credits ─────────────────────────────────────────────────────────────────────
 const STUDENT_CREDITS = 340;
@@ -255,7 +256,16 @@ function AIChatWidget() {
 }
 
 // ── Shell ──────────────────────────────────────────────────────────────────────
-function NavItem({ href, icon: Icon, label, active }: { href: string; icon: React.ElementType; label: string; active: boolean }) {
+function NavItem({ href, icon: Icon, label, active, vip }: { href: string; icon: React.ElementType; label: string; active: boolean; vip?: boolean }) {
+  if (vip) {
+    return (
+      <Link href={href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors mt-1
+        ${active ? 'bg-amber-500/30 text-amber-300' : 'text-amber-400/80 hover:bg-amber-500/20 hover:text-amber-300'}`}>
+        <Icon className="h-4 w-4 shrink-0 text-amber-400" />
+        <span className="truncate">{label}</span>
+      </Link>
+    );
+  }
   return (
     <Link href={href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-white/15 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white'}`}>
       <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-white' : 'text-white/50'}`} />
@@ -278,13 +288,14 @@ function StudentShell({ children }: { children: React.ReactNode }) {
   const unread = BELL_NOTIFS.filter(n => n.unread).length;
 
   const topNav = [
-    { href: '/student', label: 'Home', icon: Home },
-    { href: '/student/modules', label: 'Module Library', icon: LibraryBig },
-    { href: '/student/topic', label: 'Current Topic', icon: PlayCircle },
-    { href: '/student/sessions', label: 'My Tutorial Sessions', icon: Calendar },
-    { href: '/student/scholarships', label: 'Scholarships & Opportunities', icon: Award },
-    { href: '/student/subscription', label: 'Subscription', icon: CreditCard },
-    { href: '/student/certificate', label: 'My Certificate', icon: GraduationCap },
+    { href: '/student',            label: 'Home',                         icon: Home },
+    { href: '/student/modules',    label: 'Module Library',               icon: LibraryBig },
+    { href: '/student/topic',      label: 'Current Topic',                icon: PlayCircle },
+    { href: '/student/sessions',   label: 'My Tutorial Sessions',         icon: Calendar },
+    { href: '/student/scholarships',label: 'Scholarships & Opportunities',icon: Award },
+    { href: '/student/subscription',label: 'Subscription',               icon: CreditCard },
+    { href: '/student/certificate', label: 'My Certificate',              icon: GraduationCap },
+    { href: '/student/vip',        label: 'Upgrade to VIP',              icon: Crown, vip: true },
   ];
 
   const isActive = (href: string) => href === '/student' ? location === '/student' : location.startsWith(href);
@@ -423,6 +434,27 @@ function StudentDashboard() {
               Expire 30 days after last login or 7 days after subscription lapse.
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* ── VIP Teaser Card ── */}
+      <div className="relative overflow-hidden rounded-2xl bg-[#0f2d1e] border border-amber-500/20 shadow-sm">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(245,158,11,0.08) 0%, transparent 60%)' }} />
+        <div className="relative px-5 py-4 flex items-center gap-4">
+          <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center shrink-0">
+            <Crown className="h-5 w-5 text-amber-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <p className="font-bold text-white text-sm">Tolumor VIP</p>
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[9px] font-bold uppercase tracking-wider border border-amber-500/25">New</span>
+            </div>
+            <p className="text-xs text-white/55 leading-snug">Priority bookings · Verified badge · Voice Q&A · Early access · Human career coaching · Double credits</p>
+          </div>
+          <button onClick={() => setLocation('/student/vip')}
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold transition-colors whitespace-nowrap shadow-md shadow-amber-500/20">
+            See everything VIP includes <ArrowRight className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
@@ -735,6 +767,7 @@ export default function StudentPortal() {
         <Route path="/student/subscription" component={Subscription} />
         <Route path="/student/certificate" component={MyCertificate} />
         <Route path="/student/settings" component={StudentSettings} />
+        <Route path="/student/vip" component={VIPUpgradePage} />
         <Route path="/student/help" component={HelpPage} />
         <Route component={StudentDashboard} />
       </Switch>
