@@ -83,7 +83,10 @@ export default function WelcomePage() {
                   Welcome to Tolumor. For years, your knowledge lived inside four walls, shared with whoever was lucky enough to sit in your class. Not anymore. Here, your teaching outlives the semester, and your reach outgrows the classroom.
                 </p>
                 <p className="text-sm text-foreground leading-[1.9] text-justify mt-2">
-                  Every lesson you upload becomes a lifeline for a student you may never meet, in a school you may never visit. This is bigger than content — it's your legacy, multiplied. Let's build it together.
+                  Every lesson you upload becomes a lifeline for a student you may never meet, in a school you may never visit. This is bigger than content — it's your legacy, multiplied.
+                </p>
+                <p className="text-sm text-foreground leading-[1.9] mt-2">
+                  Let's build it together.
                 </p>
               </>
             ) : (
