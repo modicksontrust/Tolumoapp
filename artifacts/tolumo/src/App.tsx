@@ -14,6 +14,7 @@ import { useGetMe } from '@workspace/api-client-react';
 // Pages
 import LandingPage from './pages/landing';
 import OnboardingPage from './pages/onboarding';
+import SubscribePage from './pages/subscribe';
 import StudentPortal from './pages/student';
 import TutorPortal from './pages/tutor';
 import AdminPortal from './pages/admin';
@@ -330,6 +331,9 @@ function ClerkProviderWithRoutes() {
             </Route>
             <Route path="/onboarding">
               {() => <ProtectedRoute component={OnboardingPage} />}
+            </Route>
+            <Route path="/subscribe">
+              {() => <ProtectedRoute component={SubscribePage} />}
             </Route>
             <Route path="/student/*?">
               {() => <ProtectedRoute component={StudentPortal} />}
