@@ -93,9 +93,17 @@ export default function OnboardingPage() {
     upsertMe.mutate(
       { data: { name: displayName.trim(), role: apiRole } },
       {
-        onSuccess: () => {
-          // Route through the subscription wall before the dashboard
-          setLocation('/subscribe');
+        onSuccess: (data) => {
+          sessionStorage.removeItem('tolumor_signup');
+          switch (data.role) {
+            case 'student':    setLocation('/student'); break;
+            case 'tutor':      setLocation('/tutor'); break;
+            case 'admin':      setLocation('/admin'); break;
+            case 'sub_agent':  setLocation('/agent'); break;
+            case 'super_agent':setLocation('/super-agent'); break;
+            case 'support':    setLocation('/crm'); break;
+            default:           setLocation('/');
+          }
         },
         onError: () => {
           toast({ title: 'Error', description: 'Could not save profile. Please try again.', variant: 'destructive' });
@@ -256,7 +264,7 @@ export default function OnboardingPage() {
                 {upsertMe.isPending ? (
                   <><Loader2 className="h-4 w-4 animate-spin" /> Saving…</>
                 ) : (
-                  <>Proceed to Subscribe <ArrowRight className="h-4 w-4" /></>
+                  <>Proceed to Dashboard <ArrowRight className="h-4 w-4" /></>
                 )}
               </button>
             </div>
