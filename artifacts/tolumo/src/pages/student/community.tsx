@@ -55,76 +55,86 @@ const SEED_COMM_NOTIFS: CommNotif[] = [
 
 // ── Seed messages ─────────────────────────────────────────────────────────────
 const SEED_200: Message[] = [
+
+  // ── Thread 1: 3 replies, reactions throughout ──────────────────────────────
   {
-    id: 'm1', authorName: 'Tunde Olatunji', authorInitials: 'TO',
-    authorSchool: 'University of Ibadan', authorYear: '200', isVip: true,
-    text: 'Has anyone else found the separation of powers topic in Module 2 particularly dense? I had to re-watch the video twice before it clicked for me. The diagram in the lecture notes helped a lot.',
-    ts: Date.now() - 1000 * 60 * 47,
-    reactions: { '👍': ['Adaeze Okonkwo', 'Chisom Nwosu'], '🔥': ['Kelechi Amara'] },
-  },
-  {
-    id: 'm1-r1', authorName: 'Adaeze Okonkwo', authorInitials: 'AO',
-    authorSchool: 'University of Nigeria, Nsukka', authorYear: '200', isVip: false,
-    text: 'Same! The diagram saved me honestly. I also ended up drawing my own version by hand while re-watching — that really cemented it.',
-    ts: Date.now() - 1000 * 60 * 43,
-    reactions: { '🎯': ['Tunde Olatunji'] },
-    replyToId: 'm1', replyToName: 'Tunde Olatunji',
-    replyToText: 'Has anyone else found the separation of powers topic in Module 2 particularly dense?',
-  },
-  {
-    id: 'm1-r2', authorName: 'Kelechi Amara', authorInitials: 'KA',
-    authorSchool: 'Rivers State University', authorYear: '200', isVip: false,
-    text: 'The AI Q&A on that topic is also very helpful — I kept asking follow-up questions and it gave detailed answers with case references.',
-    ts: Date.now() - 1000 * 60 * 40,
-    reactions: {},
-    replyToId: 'm1', replyToName: 'Tunde Olatunji',
-    replyToText: 'Has anyone else found the separation of powers topic in Module 2 particularly dense?',
-  },
-  {
-    id: 'm3', authorName: 'Fatima Bello', authorInitials: 'FB',
+    id: 't1', authorName: 'Fatima Bello', authorInitials: 'FB',
     authorSchool: 'Ahmadu Bello University', authorYear: '200', isVip: true,
-    text: 'Quick reminder to everyone — the Part 2 written test requires you to apply the law to a scenario, not just define it. I failed first attempt by just defining "federalism". Apply it to the given facts!',
-    ts: Date.now() - 1000 * 60 * 28,
-    reactions: { '🎯': ['Tunde Olatunji', 'Emeka Eze'], '👍': ['Adaeze Okonkwo'] },
+    text: 'Can someone explain the "covering the field" doctrine simply? I understand it means federal law can override state law on concurrent matters, but when exactly does it kick in? Does the federal law have to explicitly say it covers the field?',
+    ts: Date.now() - 1000 * 60 * 72,
+    reactions: { '👍': ['Tunde Olatunji', 'Chisom Nwosu', 'Kelechi Amara'], '🔥': ['Emeka Eze'] },
   },
   {
-    id: 'm3-r1', authorName: 'Chisom Nwosu', authorInitials: 'CN',
-    authorSchool: 'University of Lagos', authorYear: '200', isVip: false,
-    text: "Thank you for this Fatima — I nearly made that exact mistake. I was going to just define federalism and move on. Saving this message!",
-    ts: Date.now() - 1000 * 60 * 24,
-    reactions: { '❤️': ['Fatima Bello'] },
-    replyToId: 'm3', replyToName: 'Fatima Bello',
-    replyToText: 'Quick reminder to everyone — the Part 2 written test requires you to apply the law to a scenario, not just define it.',
-  },
-  {
-    id: 'm4', authorName: 'Emeka Eze', authorInitials: 'EE',
-    authorSchool: 'Enugu State University', authorYear: '200', isVip: false,
-    text: "That's such an important point Fatima, thank you! I passed the MCQs first try but the written section caught me off guard. The keyword matching is stricter than I expected.",
-    ts: Date.now() - 1000 * 60 * 21,
-    reactions: {},
-  },
-  {
-    id: 'm5', authorName: 'Prof. Oluwaseun Adeyemi', authorInitials: 'OA',
-    authorSchool: 'Tolumor Faculty', authorYear: '200', isVip: false, isLecturer: true,
-    text: 'Great discussion here. For Part 2, think like a judge — you have the facts, identify the constitutional issue, cite the relevant provision, then apply it. IRAC method works perfectly. Keep pushing! 📚',
-    ts: Date.now() - 1000 * 60 * 14,
-    reactions: { '❤️': ['Fatima Bello', 'Chisom Nwosu', 'Emeka Eze'] },
-  },
-  {
-    id: 'm6', authorName: 'Kelechi Amara', authorInitials: 'KA',
-    authorSchool: 'Rivers State University', authorYear: '200', isVip: false,
-    text: 'Does anyone know if the tutorial sessions with Prof. Adeyemi are recorded for later? I have a clash on the slot I wanted to book.',
-    ts: Date.now() - 1000 * 60 * 7,
-    reactions: {},
-  },
-  {
-    id: 'm7', authorName: 'Tunde Olatunji', authorInitials: 'TO',
+    id: 't1-r1', authorName: 'Tunde Olatunji', authorInitials: 'TO',
     authorSchool: 'University of Ibadan', authorYear: '200', isVip: true,
-    text: 'Yes! All sessions are auto-recorded and you get a replay link in My Tutorial Sessions for 6 months from the date. Just book whichever slot works, the recording will be there.',
-    ts: Date.now() - 1000 * 60 * 3,
-    reactions: { '👍': ['Kelechi Amara'] },
-    replyToId: 'm6', replyToName: 'Kelechi Amara',
-    replyToText: 'Does anyone know if the tutorial sessions with Prof. Adeyemi are recorded for later?',
+    text: 'No, it doesn\'t need to be explicit. The court asks whether the federal legislation is so comprehensive that it "covers the field" — leaving no room for state legislation on the same subject. Even silence can be deliberate. The intent of Parliament matters more than the words.',
+    ts: Date.now() - 1000 * 60 * 65,
+    reactions: { '👍': ['Fatima Bello', 'Adaeze Okonkwo'], '🎯': ['Chisom Nwosu'] },
+    replyToId: 't1', replyToName: 'Fatima Bello',
+    replyToText: 'Can someone explain the "covering the field" doctrine simply?',
+  },
+  {
+    id: 't1-r2', authorName: 'Adaeze Okonkwo', authorInitials: 'AO',
+    authorSchool: 'University of Nigeria, Nsukka', authorYear: '200', isVip: false,
+    text: 'The landmark case is A.-G. Ogun State v A.-G. Federation (1982). The Supreme Court held that where federal law comprehensively covers a concurrent-list subject, any state law on that same subject is void for inconsistency — even if the state law predates the federal one.',
+    ts: Date.now() - 1000 * 60 * 58,
+    reactions: { '🎯': ['Tunde Olatunji', 'Fatima Bello', 'Emeka Eze'] },
+    replyToId: 't1', replyToName: 'Fatima Bello',
+    replyToText: 'Can someone explain the "covering the field" doctrine simply?',
+  },
+  {
+    id: 't1-r3', authorName: 'Chisom Nwosu', authorInitials: 'CN',
+    authorSchool: 'University of Lagos', authorYear: '200', isVip: false,
+    text: 'Tunde and Adaeze, this is exactly what I needed. The case citation is perfect for the written test too — thank you both! 🙏',
+    ts: Date.now() - 1000 * 60 * 51,
+    reactions: { '❤️': ['Tunde Olatunji', 'Adaeze Okonkwo', 'Fatima Bello'] },
+    replyToId: 't1', replyToName: 'Fatima Bello',
+    replyToText: 'Can someone explain the "covering the field" doctrine simply?',
+  },
+
+  // ── Thread 2: Prof post with 2 replies ─────────────────────────────────────
+  {
+    id: 't2', authorName: 'Prof. Oluwaseun Adeyemi', authorInitials: 'OA',
+    authorSchool: 'Tolumor Faculty', authorYear: '200', isVip: false, isLecturer: true,
+    text: 'Reminder to everyone: the Part 2 written test requires you to apply the law to a scenario — not just define it. Use IRAC. Identify the constitutional issue, cite the relevant provision (section number + CFRN 1999), then apply it to the given facts. That is what earns marks.',
+    ts: Date.now() - 1000 * 60 * 38,
+    reactions: { '❤️': ['Fatima Bello', 'Chisom Nwosu', 'Emeka Eze', 'Kelechi Amara'], '👍': ['Adaeze Okonkwo', 'Tunde Olatunji'] },
+  },
+  {
+    id: 't2-r1', authorName: 'Emeka Eze', authorInitials: 'EE',
+    authorSchool: 'Enugu State University', authorYear: '200', isVip: false,
+    text: 'Prof, does citing the section number alone count, or do we need the full heading too? For example, "S.4(2), CFRN 1999" vs "Section 4(2) — Legislative Powers of the National Assembly, CFRN 1999"?',
+    ts: Date.now() - 1000 * 60 * 31,
+    reactions: { '👍': ['Kelechi Amara', 'Fatima Bello'] },
+    replyToId: 't2', replyToName: 'Prof. Oluwaseun Adeyemi',
+    replyToText: 'Reminder to everyone: the Part 2 written test requires you to apply the law to a scenario — not just define it.',
+  },
+  {
+    id: 't2-r2', authorName: 'Prof. Oluwaseun Adeyemi', authorInitials: 'OA',
+    authorSchool: 'Tolumor Faculty', authorYear: '200', isVip: false, isLecturer: true,
+    text: 'Good question Emeka. Section number + year of the Constitution is sufficient. "S.4(2) CFRN 1999" is perfectly acceptable. Adding the heading does no harm but is not required. What matters is accuracy — wrong section, no mark.',
+    ts: Date.now() - 1000 * 60 * 24,
+    reactions: { '👍': ['Emeka Eze', 'Kelechi Amara', 'Chisom Nwosu'], '🎯': ['Fatima Bello'] },
+    replyToId: 't2', replyToName: 'Prof. Oluwaseun Adeyemi',
+    replyToText: 'Reminder to everyone: the Part 2 written test requires you to apply the law to a scenario — not just define it.',
+  },
+
+  // ── Standalone message with reactions, no thread yet ───────────────────────
+  {
+    id: 't3', authorName: 'Kelechi Amara', authorInitials: 'KA',
+    authorSchool: 'Rivers State University', authorYear: '200', isVip: false,
+    text: 'For those struggling with the MCQ format — the trick I found useful: eliminate the two obviously wrong options first, then compare the remaining two against the exact wording of the provision. The answers are usually in the statute, not your memory.',
+    ts: Date.now() - 1000 * 60 * 11,
+    reactions: { '👍': ['Tunde Olatunji', 'Emeka Eze'], '🔥': ['Chisom Nwosu'] },
+  },
+
+  // ── Latest message, nothing yet — invites users to reply ───────────────────
+  {
+    id: 't4', authorName: 'Adaeze Okonkwo', authorInitials: 'AO',
+    authorSchool: 'University of Nigeria, Nsukka', authorYear: '200', isVip: false,
+    text: 'Anyone booked a tutorial session yet? I\'m torn between the Thursday 10am and Friday 2pm slots with Prof. Adeyemi — which would you pick?',
+    ts: Date.now() - 1000 * 60 * 4,
+    reactions: {},
   },
 ];
 
