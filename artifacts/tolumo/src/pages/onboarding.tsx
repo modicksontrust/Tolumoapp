@@ -133,7 +133,7 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-          <p className="text-xs text-white/30">© {new Date().getFullYear()} Tolumor Educational Services</p>
+          <p className="text-xs text-white/30">© {new Date().getFullYear()} Goldcoast Technologies</p>
         </div>
       </div>
 
