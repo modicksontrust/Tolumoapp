@@ -7,8 +7,48 @@ import {
   MessageCircle, Search, AlertCircle,
   Headphones, BookOpen, Scale, FileText,
   Clock, Plus, XCircle, RefreshCw, Info, X, Star, Send,
-  Users, ThumbsUp, Crown,
+  Users, ThumbsUp, Crown, Newspaper,
 } from 'lucide-react';
+
+// ── Topic legal updates (shared via localStorage with tutor side) ──────────────
+const UPDATES_KEY = 'tolumo_topic_legal_updates';
+type TopicUpdate = { id: string; topicId: string; text: string; ts: number; author: string };
+
+const SEED_UPDATES: TopicUpdate[] = [
+  {
+    id: 'u1',
+    topicId: '1',
+    author: 'Prof. Oluwaseun Adeyemi',
+    text: 'The Constitution of the Federal Republic of Nigeria (Third Alteration) Act 2023 received presidential assent on 12 June 2023. It amends Section 84 regarding the independence of the electoral commission. Students should note this development when answering questions on constitutional supremacy and federal legislative powers.',
+    ts: Date.now() - 1000 * 60 * 60 * 18,
+  },
+  {
+    id: 'u2',
+    topicId: '1',
+    author: 'Prof. Oluwaseun Adeyemi',
+    text: 'The Supreme Court reaffirmed the "covering the field" doctrine in AG Lagos State v Eko Hotels Ltd (SC/CV/433/2021), decided March 2024. The Court held that federal legislation under the Exclusive List ousts any inconsistent state provision, even where the state legislation predates the federal enactment. This reinforces the A.-G. Ogun State principle covered in the Landmark Case section above.',
+    ts: Date.now() - 1000 * 60 * 60 * 72,
+  },
+];
+
+function initUpdates(): TopicUpdate[] {
+  try {
+    const raw = localStorage.getItem(UPDATES_KEY);
+    if (raw) return JSON.parse(raw);
+    localStorage.setItem(UPDATES_KEY, JSON.stringify(SEED_UPDATES));
+    return SEED_UPDATES;
+  } catch { return SEED_UPDATES; }
+}
+
+function fmtUpdateTs(ts: number): string {
+  const diff = Date.now() - ts;
+  const h = Math.floor(diff / 3600000);
+  if (h < 1) return 'just now';
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 // ── Per-topic discussion thread data ──────────────────────────────────────────
 type ThreadPost = { id: string; name: string; initials: string; school: string; isVip: boolean; text: string; ts: number };
@@ -269,7 +309,7 @@ type StepId = 'watch' | 'read' | 'summary' | 'research' | 'qa' | 'quiz';
 const STEPS: { id: StepId; label: string }[] = [
   { id: 'watch',    label: 'Watch' },
   { id: 'read',     label: 'Read / Listen' },
-  { id: 'summary',  label: 'Summary' },
+  { id: 'summary',  label: 'Summary & Updates' },
   { id: 'research', label: 'Research' },
   { id: 'qa',       label: 'Q&A' },
   { id: 'quiz',     label: 'Quiz' },
@@ -316,6 +356,7 @@ export default function CurrentTopic() {
   const [quizSecs, setQuizSecs] = useState(600); // 10:00
 
   // Feedback
+  const [allUpdates, setAllUpdates] = useState<TopicUpdate[]>(initUpdates);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [threadPosts, setThreadPosts] = useState<ThreadPost[]>(SEED_THREAD);
   const [threadDraft, setThreadDraft] = useState('');
@@ -615,9 +656,44 @@ export default function CurrentTopic() {
             </div>
           </div>
 
+          {/* ── Recent Legal Updates ── */}
+          {(() => {
+            const updates = allUpdates
+              .filter(u => u.topicId === String(topic.id))
+              .sort((a, b) => b.ts - a.ts);
+            return updates.length > 0 ? (
+              <div className="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
+                <div className="flex items-center gap-3 px-5 py-3.5 bg-amber-50 border-b border-amber-100">
+                  <Newspaper className="h-4 w-4 text-amber-600 shrink-0" />
+                  <p className="font-bold text-sm text-foreground">Recent Updates</p>
+                  <span className="ml-auto text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+                    {updates.length} update{updates.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="divide-y divide-stone-100">
+                  {updates.map(u => (
+                    <div key={u.id} className="px-5 py-4">
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span className="text-xs font-bold text-foreground">{u.author}</span>
+                        <span className="text-[10px] text-stone-300">·</span>
+                        <span className="text-[10px] text-muted-foreground">{fmtUpdateTs(u.ts)}</span>
+                      </div>
+                      <p className="text-sm text-foreground leading-relaxed">{u.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-muted-foreground">
+                <Newspaper className="h-3.5 w-3.5 text-stone-400 shrink-0" />
+                <span>No legal updates have been posted for this topic yet.</span>
+              </div>
+            );
+          })()}
+
           <button onClick={() => goNext('summary')}
             className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
-            Summary reviewed — Start Research <ChevronRight className="h-4 w-4" />
+            Summary &amp; Updates reviewed — Start Research <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       )}

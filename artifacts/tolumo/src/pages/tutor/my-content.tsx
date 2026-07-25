@@ -1,5 +1,46 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle2, Upload, Pencil, Plus, X, ChevronDown } from 'lucide-react';
+import { CheckCircle2, Upload, Pencil, Plus, X, ChevronDown, Newspaper, Send } from 'lucide-react';
+
+// ── Topic legal updates ───────────────────────────────────────────────────────
+const UPDATES_KEY = 'tolumo_topic_legal_updates';
+type TopicUpdate = { id: string; topicId: string; text: string; ts: number; author: string };
+
+const SEED_UPDATES: TopicUpdate[] = [
+  {
+    id: 'u1', topicId: '1',
+    author: 'Prof. Oluwaseun Adeyemi',
+    text: 'The Constitution of the Federal Republic of Nigeria (Third Alteration) Act 2023 received presidential assent on 12 June 2023. It amends Section 84 regarding the independence of the electoral commission. Students should note this development when answering questions on constitutional supremacy and federal legislative powers.',
+    ts: Date.now() - 1000 * 60 * 60 * 18,
+  },
+  {
+    id: 'u2', topicId: '1',
+    author: 'Prof. Oluwaseun Adeyemi',
+    text: 'The Supreme Court reaffirmed the "covering the field" doctrine in AG Lagos State v Eko Hotels Ltd (SC/CV/433/2021), decided March 2024. The Court held that federal legislation under the Exclusive List ousts any inconsistent state provision, even where the state legislation predates the federal enactment. This reinforces the A.-G. Ogun State principle covered in the Landmark Case section.',
+    ts: Date.now() - 1000 * 60 * 60 * 72,
+  },
+];
+
+function loadUpdates(): TopicUpdate[] {
+  try {
+    const raw = localStorage.getItem(UPDATES_KEY);
+    if (raw) return JSON.parse(raw);
+    localStorage.setItem(UPDATES_KEY, JSON.stringify(SEED_UPDATES));
+    return SEED_UPDATES;
+  } catch { return SEED_UPDATES; }
+}
+function saveUpdates(u: TopicUpdate[]) {
+  localStorage.setItem(UPDATES_KEY, JSON.stringify(u));
+}
+
+function fmtTs(ts: number): string {
+  const diff = Date.now() - ts;
+  const h = Math.floor(diff / 3600000);
+  if (h < 1) return 'just now';
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type ContentItem = { url: string; name: string } | null;
@@ -61,6 +102,62 @@ function load(): Topic[] {
   } catch { return DEFAULT_TOPICS; }
 }
 function save(t: Topic[]) { localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); }
+
+// ── Post Update Modal ────────────────────────────────────────────────────────
+function PostUpdateModal({ topic, onSave, onClose }: { topic: Topic; onSave: (text: string) => void; onClose: () => void }) {
+  const [text, setText] = useState('');
+  const MAX = 600;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+              <Newspaper className="h-4 w-4 text-amber-600" />
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground">{topic.title}</p>
+              <h3 className="font-serif font-bold text-base text-foreground leading-tight">Post a Legal Update</h3>
+            </div>
+          </div>
+          <button onClick={onClose} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-stone-100 text-muted-foreground transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Write a short plain-text note flagging a new case, statute, amendment, or legal development relevant to this topic.
+            Students who have already completed this topic will be notified automatically.
+          </p>
+          <div>
+            <textarea
+              value={text}
+              onChange={e => setText(e.target.value.slice(0, MAX))}
+              rows={6}
+              placeholder="e.g. The Supreme Court ruled in ABC v XYZ [2024] that… This updates the position covered in this topic's Landmark Case section."
+              className="w-full resize-none rounded-xl border border-stone-200 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#1a4d35]/40 transition-colors"
+            />
+            <p className="text-[11px] text-muted-foreground text-right mt-1">{text.length} / {MAX}</p>
+          </div>
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose}
+              className="flex-1 rounded-xl border border-stone-200 py-2.5 text-sm font-semibold text-foreground hover:bg-stone-50 transition-colors">
+              Cancel
+            </button>
+            <button
+              disabled={text.trim().length < 20}
+              onClick={() => { onSave(text.trim()); onClose(); }}
+              style={{ backgroundColor: 'hsl(153,54%,15%)' }}
+              className="flex-1 rounded-xl py-2.5 text-sm font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+            >
+              <Send className="h-3.5 w-3.5" /> Publish Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Upload / Q&A Modal ────────────────────────────────────────────────────────
 type ColKey = 'video' | 'notes' | 'slides' | 'qa';
@@ -254,11 +351,25 @@ function ContentCell({ value, onUpload, onEdit }: {
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function MyContent() {
   const [topics, setTopics] = useState<Topic[]>(load);
+  const [updates, setUpdates] = useState<TopicUpdate[]>(loadUpdates);
   const [addOpen, setAddOpen] = useState(false);
   const [editTopic, setEditTopic] = useState<Topic | null>(null);
   const [upload, setUpload] = useState<{ topicId: string; col: ColKey } | null>(null);
+  const [postingUpdateFor, setPostingUpdateFor] = useState<Topic | null>(null);
 
   useEffect(() => { save(topics); }, [topics]);
+  useEffect(() => { saveUpdates(updates); }, [updates]);
+
+  function addUpdate(topicId: string, text: string) {
+    const u: TopicUpdate = {
+      id: `upd-${Date.now()}`,
+      topicId,
+      text,
+      ts: Date.now(),
+      author: 'Prof. Oluwaseun Adeyemi',
+    };
+    setUpdates(prev => [u, ...prev]);
+  }
 
   function addTopic(title: string, status: 'published' | 'draft') {
     const id = Date.now().toString();
@@ -322,12 +433,26 @@ export default function MyContent() {
                   {/* Topic name */}
                   <td className="px-5 py-4">
                     <p className="font-medium text-foreground text-sm">{topic.title}</p>
-                    <button
-                      onClick={() => setEditTopic(topic)}
-                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary mt-0.5"
-                    >
-                      <Pencil className="h-3 w-3" /> Edit
-                    </button>
+                    <div className="flex items-center gap-3 mt-1">
+                      <button
+                        onClick={() => setEditTopic(topic)}
+                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                      >
+                        <Pencil className="h-3 w-3" /> Edit
+                      </button>
+                      <span className="text-stone-300">·</span>
+                      <button
+                        onClick={() => setPostingUpdateFor(topic)}
+                        className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 font-medium"
+                      >
+                        <Newspaper className="h-3 w-3" /> Post Update
+                        {updates.filter(u => u.topicId === topic.id).length > 0 && (
+                          <span className="ml-0.5 text-[10px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">
+                            {updates.filter(u => u.topicId === topic.id).length}
+                          </span>
+                        )}
+                      </button>
+                    </div>
                   </td>
 
                   {/* Content columns */}
@@ -384,6 +509,13 @@ export default function MyContent() {
           col={upload.col}
           onSave={val => updateContent(upload.topicId, upload.col, val)}
           onClose={() => setUpload(null)}
+        />
+      )}
+      {postingUpdateFor && (
+        <PostUpdateModal
+          topic={postingUpdateFor}
+          onSave={text => addUpdate(postingUpdateFor.id, text)}
+          onClose={() => setPostingUpdateFor(null)}
         />
       )}
     </div>
