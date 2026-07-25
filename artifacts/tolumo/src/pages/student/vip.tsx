@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import {
   Crown, CalendarCheck, BadgeCheck, Zap, Sparkles,
-  Briefcase, Users, Mic, Star, ArrowLeft, ChevronRight,
+  Briefcase, Users, Mic, Star, ArrowLeft, ChevronRight, Video,
 } from 'lucide-react';
 
 const BENEFITS = [
@@ -45,6 +45,11 @@ const BENEFITS = [
     icon: Star,
     title: 'Faster Credits & Double Referrals',
     body: "Your credits grow faster too — bonus credits just for being VIP, plus double credits on referrals, feedback, and everyday course activity.",
+  },
+  {
+    icon: Video,
+    title: 'Video Clips in Comments',
+    body: "Attach short video clips directly to your messages in any topic discussion thread or year-group community room. Standard students are text-only — only VIP members can bring video into the conversation.",
   },
 ];
 

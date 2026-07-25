@@ -131,7 +131,9 @@ const BELL_NOTIFS = [
   { id: 2, title: 'New topic unlocked in Constitutional Law', body: 'You can now access Topic 4.', time: '2h ago', unread: true },
   { id: 3, title: 'Tutorial confirmed — Mon 14 Jul at 10:00am', body: 'Prof. Adeyemi confirmed your session.', time: '1d ago', unread: true },
   { id: 4, title: '📰 Legal update on a topic you completed', body: 'Prof. Adeyemi posted a new development on Topic 1: Introduction to Nigerian Legal System. View it in the Topic Summary & Updates section.', time: '18h ago', unread: true },
-  { id: 5, title: 'You scored 88% on Criminal Law Topic 1!', body: 'Great work — keep it up.', time: '3d ago', unread: false },
+  { id: 5, title: 'Tunde Olatunji 👍 reacted to your message', body: 'Your message in the 200 Level Community got a reaction from Tunde Olatunji.', time: '25m ago', unread: true },
+  { id: 6, title: 'Fatima Bello replied in the discussion thread', body: "Fatima Bello replied to your comment in the Federalism & Devolution topic thread.", time: '12m ago', unread: true },
+  { id: 7, title: 'You scored 88% on Criminal Law Topic 1!', body: 'Great work — keep it up.', time: '3d ago', unread: false },
 ];
 
 function NotificationPanel({ onClose }: { onClose: () => void }) {
