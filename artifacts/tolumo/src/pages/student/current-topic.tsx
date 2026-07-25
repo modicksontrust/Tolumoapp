@@ -7,7 +7,17 @@ import {
   MessageCircle, Search, AlertCircle,
   Headphones, BookOpen, Scale, FileText,
   Clock, Plus, XCircle, RefreshCw, Info, X, Star, Send,
+  Users, ThumbsUp, Crown,
 } from 'lucide-react';
+
+// ── Per-topic discussion thread data ──────────────────────────────────────────
+type ThreadPost = { id: string; name: string; initials: string; school: string; isVip: boolean; text: string; ts: number };
+const SEED_THREAD: ThreadPost[] = [
+  { id: 'tp1', name: 'Tunde Olatunji',  initials: 'TO', school: 'University of Ibadan',     isVip: true,  text: 'The IRAC method really clicked for me on the Part 2 problem question here. Identify the constitutional issue first, then cite the provision, then apply it to the given facts — examiner-approved structure.',              ts: Date.now() - 1000 * 60 * 72 },
+  { id: 'tp2', name: 'Adaeze Okonkwo',  initials: 'AO', school: 'UNN Nsukka',               isVip: false, text: 'Agreed with Tunde. Also, the AI Q&A is great for this topic — I asked it to generate extra problem scenarios for practice and it gave me 4 new ones with model answers.',                                                   ts: Date.now() - 1000 * 60 * 51 },
+  { id: 'tp3', name: 'Fatima Bello',    initials: 'FB', school: 'Ahmadu Bello University',  isVip: true,  text: 'For anyone struggling with the devolution sub-topic: focus on which matters are on the Exclusive Legislative List vs the Concurrent List. That distinction drives most of the exam questions.',                          ts: Date.now() - 1000 * 60 * 29 },
+  { id: 'tp4', name: 'Emeka Eze',       initials: 'EE', school: 'Enugu State University',   isVip: false, text: 'One thing that tripped me: the 1999 Constitution (as amended) wording matters. Make sure you\'re referencing the right section numbers — the pre-amendment versions differ.',                                              ts: Date.now() - 1000 * 60 * 11 },
+];
 
 // ── Module & topics ────────────────────────────────────────────────────────────
 const MODULE = { code: 'LAW 201', name: 'Constitutional Law 201', tutor: 'Prof. Oluwaseun Adeyemi' };
@@ -307,6 +317,8 @@ export default function CurrentTopic() {
 
   // Feedback
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [threadPosts, setThreadPosts] = useState<ThreadPost[]>(SEED_THREAD);
+  const [threadDraft, setThreadDraft] = useState('');
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackNote, setFeedbackNote] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
@@ -473,6 +485,12 @@ export default function CurrentTopic() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ── Discussion in-progress notice ── */}
+          <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-muted-foreground">
+            <Lock className="h-3.5 w-3.5 text-stone-400 shrink-0" />
+            <span>Discussion thread for this topic unlocks once you complete the full flow — keep going.</span>
           </div>
 
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 flex items-start gap-4">
@@ -1169,6 +1187,109 @@ export default function CurrentTopic() {
                 </div>
                 <ChevronRight className="h-5 w-5 text-[#1a4d35] shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </button>
+
+              {/* ── Topic Discussion Thread ── */}
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                {/* Thread header */}
+                <div className="flex items-center gap-3 px-5 py-4 border-b border-stone-100">
+                  <div className="h-8 w-8 rounded-lg bg-[#1a4d35]/10 flex items-center justify-center shrink-0">
+                    <MessageCircle className="h-4 w-4 text-[#1a4d35]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm text-foreground">Topic Discussion Thread</p>
+                    <p className="text-xs text-muted-foreground">Open to students who have completed this topic</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Users className="h-3.5 w-3.5" />
+                    <span>{threadPosts.length} posts</span>
+                  </div>
+                </div>
+
+                {/* Posts */}
+                <div className="divide-y divide-stone-100">
+                  {threadPosts.map(post => (
+                    <div key={post.id} className="px-5 py-4 flex gap-3">
+                      <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 text-[11px] font-bold ${post.isVip ? 'bg-amber-500 text-white' : 'bg-stone-200 text-stone-700'}`}>
+                        {post.initials}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className="text-xs font-bold text-foreground">{post.name}</span>
+                          {post.isVip && (
+                            <span className="flex items-center gap-0.5 text-[10px] font-bold bg-amber-400 text-white px-1.5 py-0.5 rounded-full">
+                              <Crown className="h-2.5 w-2.5" /> VIP
+                            </span>
+                          )}
+                          <span className="text-[10px] text-muted-foreground">{post.school}</span>
+                          <span className="text-[10px] text-stone-300">·</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {Math.round((Date.now() - post.ts) / 60000) < 60
+                              ? `${Math.round((Date.now() - post.ts) / 60000)}m ago`
+                              : `${Math.round((Date.now() - post.ts) / 3600000)}h ago`}
+                          </span>
+                        </div>
+                        <p className="text-sm text-foreground leading-relaxed">{post.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Compose */}
+                <div className="px-5 py-4 border-t border-stone-100 bg-stone-50/60">
+                  <div className="flex items-end gap-3">
+                    <div className="h-8 w-8 rounded-full bg-[#1a4d35] flex items-center justify-center shrink-0 text-[11px] font-bold text-white">CN</div>
+                    <div className="flex-1">
+                      <textarea
+                        value={threadDraft}
+                        onChange={e => setThreadDraft(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            const text = threadDraft.trim();
+                            if (!text) return;
+                            const post: ThreadPost = {
+                              id: `p-${Date.now()}`,
+                              name: 'Chisom Nwosu',
+                              initials: 'CN',
+                              school: 'University of Lagos',
+                              isVip: false,
+                              text,
+                              ts: Date.now(),
+                            };
+                            setThreadPosts(prev => [...prev, post]);
+                            setThreadDraft('');
+                          }
+                        }}
+                        placeholder="Share a note or question about this topic…"
+                        rows={2}
+                        className="w-full resize-none rounded-xl border border-stone-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-[#1a4d35]/40 transition-colors"
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const text = threadDraft.trim();
+                        if (!text) return;
+                        const post: ThreadPost = {
+                          id: `p-${Date.now()}`,
+                          name: 'Chisom Nwosu',
+                          initials: 'CN',
+                          school: 'University of Lagos',
+                          isVip: false,
+                          text,
+                          ts: Date.now(),
+                        };
+                        setThreadPosts(prev => [...prev, post]);
+                        setThreadDraft('');
+                      }}
+                      disabled={!threadDraft.trim()}
+                      className="h-9 w-9 rounded-xl bg-[#1a4d35] text-white flex items-center justify-center shrink-0 hover:bg-[#1a4d35]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    >
+                      <Send className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-1.5 pl-11">Enter to post · Shift+Enter for a new line</p>
+                </div>
+              </div>
             </div>
           )}
 

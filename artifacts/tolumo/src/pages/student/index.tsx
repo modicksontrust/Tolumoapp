@@ -17,6 +17,7 @@ import Scholarships from './scholarships';
 import MyCertificate from './my-certificate';
 import TriaxLawLibrary from './triax-law-library';
 import VIPUpgradePage from './vip';
+import CommunityPage from './community';
 
 // ── Credits ─────────────────────────────────────────────────────────────────────
 const STUDENT_CREDITS = 340;
@@ -292,6 +293,7 @@ function StudentShell({ children }: { children: React.ReactNode }) {
     { href: '/student/modules',    label: 'Module Library',               icon: LibraryBig },
     { href: '/student/topic',      label: 'Current Topic',                icon: PlayCircle },
     { href: '/student/sessions',   label: 'My Tutorial Sessions',         icon: Calendar },
+    { href: '/student/community',  label: 'Community',                    icon: Users },
     { href: '/student/scholarships',label: 'Scholarships & Opportunities',icon: Award },
     { href: '/student/subscription',label: 'Subscription',               icon: CreditCard },
     { href: '/student/certificate', label: 'My Certificate',              icon: GraduationCap },
@@ -753,6 +755,7 @@ export default function StudentPortal() {
         <Route path="/student/modules" component={MyModules} />
         <Route path="/student/topic" component={CurrentTopic} />
         <Route path="/student/sessions" component={TutorialSessions} />
+        <Route path="/student/community" component={CommunityPage} />
         <Route path="/student/scholarships" component={Scholarships} />
         <Route path="/student/subscription" component={Subscription} />
         <Route path="/student/certificate" component={MyCertificate} />

@@ -1,0 +1,16 @@
+Unlock timing: the discussion thread is locked while the student is actively progressing through the topic flow, video, lecture notes, summary, research, pre-test Q&A, and quiz. It only unlocks after the student submits their mandatory topic feedback, star rating plus written note, becoming visible as a stop before they move on to the next topic, alongside the tutorial booking option.
+
+In-progress notice: while the student is watching the topic video, a small, unobtrusive banner or note appears near the video player, along the lines of “Discussion thread for this topic unlocks once you complete the full flow, keep going,” so students know it’s coming without being tempted to hunt for it or get distracted mid-lesson.
+
+Thread behavior: once unlocked, any student who has completed that topic can post a comment or question, and other students can see and reply, creating an open, ongoing conversation specific to that topic. Lecturers may optionally view or participate publicly in the thread if they choose to.
+Tolumor, Year-Group Community Chat Room, Functional Prompt.
+
+Purpose: give students a live, ongoing peer community tied to their academic year or level, letting them interact nationwide with others at the same stage of law school, distinct from per-topic discussion threads.
+
+Access and placement: a dedicated “Community” tab sits in the main navigation, always visible, not buried inside a topic or settings page. Tapping it takes the student straight into their current year-group chat room.
+
+Assignment logic: every student is automatically placed into the chat room matching their year or level at sign-up, with no manual selection needed. When a student progresses to the next academic year, the system automatically moves them into the new year’s room and revokes access to the previous one, keeping cohorts current and relevant.
+
+Moderation: lecturers and admins can view and moderate all year-group rooms, with the ability to remove messages or mute or ban students who violate conduct guidelines. Lecturers may optionally post in these rooms too, though the space is primarily peer-to-peer.
+
+Identity display: each message shows the student’s name, school, and VIP badge if applicable, consistent with identity display elsewhere on the platform.
