@@ -1,0 +1,23 @@
+*Tolumor — Research Button Redesign, Design & Functional Prompt*
+
+*Feature:* Redesign of the "Research" button appearing within each topic on Tolumor.
+
+*Current behavior:* [to be replaced]
+
+*New behavior:* Tapping the Research button on any topic no longer opens an in-house list of cases and statutes. Instead, it launches the student into the *Triax Law Library*, powered by the LawPavilion partnership integration.
+
+*Flow:*
+
+1. Student is inside a topic (post-video or at any point within the topic view) and taps "Research."
+2. This opens a lightweight bridge screen, not the full library directly. The bridge screen displays:
+   - Heading: "Cases and Statutes for this Topic"
+   - A list of 3–5 pre-tagged leading cases and/or statutes relevant specifically to that topic, pulled dynamically via the LawPavilion API (not a manually maintained dataset — sourced live/synced from LawPavilion's database, tagged to the topic on the backend)
+   - A single, clearly visible button: "Explore Full Library"
+3. Tapping "Explore Full Library" takes the student into the complete Triax Law Library interface — full access to Appellate Law Reports (Supreme Court & Court of Appeal), Index & Digest (1960 to date), Laws of the Federation, Rules of Court, Latest Judgments with alerts, Textbooks & Journals, Unlimited Search, My Practice Notes, Legal Analytics, Annotated Laws of the Federation, and Commercial Law Report — all per the existing LawPavilion feature list already agreed for the Triax Law Library integration.
+
+*Rationale (for dev/design context):*
+- Avoids duplicating LawPavilion's own research infrastructure in-house, which would require constant content maintenance the team can't realistically sustain.
+- Avoids dropping a student straight from a short topic video into a full legal research database with no framing — the bridge screen softens that jump and keeps the moment topic-relevant.
+- Keeps the LawPavilion partnership functionally central to the platform, not just a backend integration nobody notices.
+
+*Dependency:* This entire feature is gated on the LawPavilion partnership terms being finalized (API integration availability and pricing, currently pending their internal team's briefing). Design and flow are locked and ready to build the moment terms are confirmed.

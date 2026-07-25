@@ -5,7 +5,7 @@ import {
   Play, Pause, SkipBack, SkipForward, Volume2,
   MessageCircle, Search, AlertCircle,
   Headphones, BookOpen, Scale, FileText, Gavel, Newspaper,
-  Clock, Plus, XCircle, RefreshCw, Info,
+  Clock, Plus, XCircle, RefreshCw, Info, X,
 } from 'lucide-react';
 
 // ── Module & topics ────────────────────────────────────────────────────────────
@@ -84,25 +84,29 @@ const SELF_CHECK = [
   'What does Section 2(2) CFRN establish?',
 ];
 
-// ── Research ───────────────────────────────────────────────────────────────────
-const TRIAX_LIBRARY = {
-  cases: [
-    { name: 'A.-G. Ogun State v A.-G. Federation', citation: '(1982) 3 NCLR 166' },
-    { name: 'Tukur v Government of Gongola State', citation: '(1989) 4 NWLR (Pt 117) 517' },
-    { name: 'General Sani Abacha v Gani Fawehinmi', citation: '(2000) 6 NWLR (Pt 660) 228' },
-  ],
-  laws: [
-    { name: 'CFRN 1999', desc: 'Constitution of the Federal Republic of Nigeria 1999' },
-    { name: 'LUA 1978', desc: 'Land Use Act 1978' },
-  ],
-  court: [{ name: 'Supreme Court Rules 2014' }],
-  judgements: [{ name: 'Okeke v Federal Republic of Nigeria — Digital Evidence Admissibility', court: 'Supreme Court of Nigeria · 11 April 2023' }],
-  journals: [
-    { name: 'The Doctrine of Covering the Field in Nigerian Federalism', by: 'Prof. T.O. Elias · Nigerian Law Journal' },
-    { name: 'Domestication of International Human Rights Treaties in Nigeria', by: 'Prof. B.O. Nwabueze · University of Lagos Law Review' },
-  ],
-  textbooks: [{ name: 'Nigerian Constitutional Law', by: 'Prof. B.O. Nwabueze' }],
-};
+// ── Research — bridge screen items (will be pulled live from LawPavilion API once integration is confirmed) ──
+const TOPIC_REFERENCES: { type: 'case' | 'statute'; name: string; detail: string }[] = [
+  { type: 'case',    name: 'A.-G. Ogun State v A.-G. Federation',       detail: '(1982) 3 NCLR 166 — leading authority on covering the field' },
+  { type: 'case',    name: 'Tukur v Government of Gongola State',        detail: '(1989) 4 NWLR (Pt 117) 517 — concurrent-list conflict' },
+  { type: 'case',    name: 'General Sani Abacha v Gani Fawehinmi',       detail: '(2000) 6 NWLR (Pt 660) 228 — international treaty domestication' },
+  { type: 'statute', name: 'Constitution of the Federal Republic of Nigeria 1999', detail: 'Sections 4, 12 & Second Schedule' },
+  { type: 'statute', name: 'Land Use Act 1978',                          detail: 'Cap. L5, LFN 2004 — property rights under federalism' },
+];
+
+// Full library feature list (shown inside "Explore Full Library" modal)
+const FULL_LIBRARY_FEATURES = [
+  'Appellate Law Reports — Supreme Court & Court of Appeal',
+  'Index & Digest (1960 to date)',
+  'Laws of the Federation',
+  'Rules of Court',
+  'Latest Judgments with alerts',
+  'Textbooks & Journals',
+  'Unlimited Search',
+  'My Practice Notes',
+  'Legal Analytics',
+  'Annotated Laws of the Federation',
+  'Commercial Law Report',
+];
 
 const RESEARCH_QUESTIONS = [
   "How has the Supreme Court applied 'covering the field' after 1982?",
@@ -180,7 +184,7 @@ export default function CurrentTopic() {
   const [notesRead, setNotesRead] = useState(false);
 
   // Research
-  const [expandedQ, setExpandedQ] = useState<number | null>(null);
+  const [showFullLibrary, setShowFullLibrary] = useState(false);
 
   // Q&A
   const [qaIndex, setQaIndex] = useState(0);
@@ -472,164 +476,61 @@ export default function CurrentTopic() {
       {/* ══ RESEARCH ══ */}
       {step === 'research' && (
         <div className="space-y-4">
-          {/* Intro card */}
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 flex items-start gap-4">
-            <div className="h-9 w-9 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
-              <Search className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="font-semibold text-foreground mb-1">Research Step</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Before moving to Q&A, explore the cases, laws, and materials referenced in this topic. Use the Triax Law Library below to read case holdings, study key legislation, and review recommended judgements. Deep research now makes your Q&A session far more effective.
-              </p>
-            </div>
-          </div>
 
-          {/* Triax Law Library */}
+          {/* Bridge screen card */}
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+            {/* Header */}
+            <div className="bg-[#1a4d35] px-5 py-4">
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-stone-100 flex items-center justify-center">
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                  <Scale className="h-4 w-4 text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-foreground text-sm">TRIAX LAW LIBRARY</p>
-                  <p className="text-xs text-muted-foreground">Cases, laws &amp; resources referenced in this topic</p>
+                  <p className="font-bold text-white text-sm">Cases and Statutes for this Topic</p>
+                  <p className="text-xs text-white/60 mt-0.5">Powered by Triax Law Library · LawPavilion</p>
                 </div>
               </div>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </div>
 
-            <div className="px-5 py-4 space-y-5">
-              {/* Cases */}
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Cases Referenced</p>
-                <div className="space-y-1">
-                  {TRIAX_LIBRARY.cases.map((c, i) => (
-                    <div key={i} className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-b-0">
-                      <div className="h-7 w-7 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
-                        <Scale className="h-3.5 w-3.5 text-amber-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground leading-tight">{c.name}</p>
-                        <p className="text-xs text-muted-foreground">{c.citation}</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Relevant Laws */}
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Relevant Laws</p>
-                <div className="space-y-1">
-                  {TRIAX_LIBRARY.laws.map((l, i) => (
-                    <div key={i} className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-b-0">
-                      <div className="h-7 w-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                        <FileText className="h-3.5 w-3.5 text-blue-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground">{l.name}</p>
-                        <p className="text-xs text-muted-foreground">{l.desc}</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Rules of Court */}
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Rules of Court</p>
-                {TRIAX_LIBRARY.court.map((r, i) => (
-                  <div key={i} className="flex items-center gap-3 py-2.5">
-                    <div className="h-7 w-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
-                      <Gavel className="h-3.5 w-3.5 text-stone-500" />
-                    </div>
-                    <p className="flex-1 text-sm font-medium text-foreground">{r.name}</p>
-                    <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Recommended Judgements */}
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Recommended Judgements</p>
-                {TRIAX_LIBRARY.judgements.map((j, i) => (
-                  <div key={i} className="flex items-center gap-3 py-2.5">
-                    <div className="h-7 w-7 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-                      <Scale className="h-3.5 w-3.5 text-green-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground leading-tight">{j.name}</p>
-                      <p className="text-xs text-muted-foreground">{j.court}</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Related Journals */}
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Related Journals</p>
-                <div className="space-y-1">
-                  {TRIAX_LIBRARY.journals.map((j, i) => (
-                    <div key={i} className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-b-0">
-                      <div className="h-7 w-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
-                        <Newspaper className="h-3.5 w-3.5 text-stone-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground leading-tight">{j.name}</p>
-                        <p className="text-xs text-muted-foreground">{j.by}</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Textbooks */}
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Textbooks</p>
-                {TRIAX_LIBRARY.textbooks.map((b, i) => (
-                  <div key={i} className="flex items-center gap-3 py-2.5">
-                    <div className="h-7 w-7 rounded-full bg-stone-100 flex items-center justify-center shrink-0">
-                      <BookOpen className="h-3.5 w-3.5 text-stone-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">{b.name}</p>
-                      <p className="text-xs text-muted-foreground">{b.by}</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Open Library link */}
-              <button className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
-                <Plus className="h-3.5 w-3.5" /> Open Full Library
-              </button>
-            </div>
-          </div>
-
-          {/* Suggested Research Questions */}
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="px-5 py-4 border-b border-stone-100">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Suggested Research Questions</p>
-            </div>
+            {/* Pre-tagged references */}
             <div className="divide-y divide-stone-100">
-              {RESEARCH_QUESTIONS.map((q, i) => (
-                <button
-                  key={i}
-                  onClick={() => setExpandedQ(expandedQ === i ? null : i)}
-                  className="w-full flex items-center gap-3 px-5 py-3.5 text-left hover:bg-stone-50 transition-colors"
-                >
-                  <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <p className="flex-1 text-sm text-foreground leading-relaxed">{q}</p>
-                  <ChevronRight className="h-4 w-4 text-stone-300 shrink-0" />
-                </button>
+              {TOPIC_REFERENCES.map((ref, i) => (
+                <div key={i} className="flex items-start gap-3 px-5 py-3.5">
+                  <div className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                    ref.type === 'case' ? 'bg-amber-50' : 'bg-blue-50'
+                  }`}>
+                    {ref.type === 'case'
+                      ? <Scale className="h-3.5 w-3.5 text-amber-600" />
+                      : <FileText className="h-3.5 w-3.5 text-blue-600" />
+                    }
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground leading-snug">{ref.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{ref.detail}</p>
+                  </div>
+                  <span className={`shrink-0 mt-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    ref.type === 'case'
+                      ? 'bg-amber-50 text-amber-600'
+                      : 'bg-blue-50 text-blue-600'
+                  }`}>
+                    {ref.type === 'case' ? 'Case' : 'Statute'}
+                  </span>
+                </div>
               ))}
+            </div>
+
+            {/* Explore Full Library CTA */}
+            <div className="px-5 pb-5 pt-3">
+              <button
+                onClick={() => setShowFullLibrary(true)}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors shadow-md"
+              >
+                <BookOpen className="h-4 w-4" />
+                Explore Full Library
+              </button>
+              <p className="text-center text-[10px] text-muted-foreground mt-2">
+                Opens the complete Triax Law Library — powered by LawPavilion
+              </p>
             </div>
           </div>
 
@@ -644,9 +545,59 @@ export default function CurrentTopic() {
               Skip to Quiz →
             </button>
           </div>
-          <button className="w-full flex items-center justify-center gap-2 py-3 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
-            <Plus className="h-3.5 w-3.5" /> Open Full Library
-          </button>
+        </div>
+      )}
+
+      {/* ══ FULL LIBRARY MODAL ══ */}
+      {showFullLibrary && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full md:max-w-md rounded-t-3xl md:rounded-2xl shadow-2xl overflow-hidden max-h-[90dvh] flex flex-col">
+            {/* Modal header */}
+            <div className="bg-[#1a4d35] px-5 py-5 shrink-0">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mb-1">Triax Law Library</p>
+                  <p className="font-bold text-white text-base leading-snug">Full Library Access</p>
+                  <p className="text-xs text-white/60 mt-1">Powered by LawPavilion partnership</p>
+                </div>
+                <button onClick={() => setShowFullLibrary(false)} className="text-white/60 hover:text-white transition-colors mt-0.5">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Feature list */}
+            <div className="overflow-y-auto flex-1 px-5 py-4">
+              <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                The full Triax Law Library gives you complete access to Nigeria's most comprehensive legal research database. Available immediately upon LawPavilion integration confirmation.
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">What's included</p>
+              <div className="space-y-2.5">
+                {FULL_LIBRARY_FEATURES.map((feature, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="h-5 w-5 rounded-full bg-[#1a4d35]/10 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="h-3 w-3 text-[#1a4d35]" />
+                    </div>
+                    <p className="text-sm text-foreground">{feature}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-5 py-4 border-t border-stone-100 shrink-0 space-y-2">
+              <button
+                disabled
+                className="w-full py-3.5 rounded-xl bg-stone-100 text-stone-400 font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <BookOpen className="h-4 w-4" />
+                Open Library — Coming Soon
+              </button>
+              <p className="text-center text-[10px] text-muted-foreground">
+                Awaiting LawPavilion API integration finalisation
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
