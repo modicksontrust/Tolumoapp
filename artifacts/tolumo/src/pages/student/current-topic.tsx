@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import BookingModal from './booking-modal';
 import {
@@ -7,7 +7,7 @@ import {
   MessageCircle, Search, AlertCircle,
   Headphones, BookOpen, Scale, FileText,
   Clock, Plus, XCircle, RefreshCw, Info, X, Star, Send,
-  Users, ThumbsUp, Crown, Newspaper,
+  Users, ThumbsUp, Crown, Newspaper, CornerDownRight, Video,
 } from 'lucide-react';
 
 // ── Topic legal updates (shared via localStorage with tutor side) ──────────────
@@ -51,12 +51,97 @@ function fmtUpdateTs(ts: number): string {
 }
 
 // ── Per-topic discussion thread data ──────────────────────────────────────────
-type ThreadPost = { id: string; name: string; initials: string; school: string; isVip: boolean; text: string; ts: number };
+type ThreadReactions = Record<string, string[]>; // emoji → reactor names
+type ThreadPost = {
+  id: string; name: string; initials: string; school: string; isVip: boolean;
+  text: string; ts: number;
+  reactions?: ThreadReactions;
+  videoUrl?: string; videoName?: string;
+  replyToId?: string; replyToName?: string; replyToText?: string;
+};
+
+const THREAD_EMOJIS = ['👍', '👎', '❤️', '🔥', '🎯'];
+const THREAD_STUDENT = { name: 'Chisom Nwosu', initials: 'CN', school: 'University of Lagos', isVip: false };
+
+function threadGetRoot(postId: string, all: ThreadPost[]): string {
+  const p = all.find(x => x.id === postId);
+  if (!p?.replyToId) return postId;
+  return threadGetRoot(p.replyToId, all);
+}
+
+function fmtThreadTs(ts: number): string {
+  const m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
 const SEED_THREAD: ThreadPost[] = [
-  { id: 'tp1', name: 'Tunde Olatunji',  initials: 'TO', school: 'University of Ibadan',     isVip: true,  text: 'The IRAC method really clicked for me on the Part 2 problem question here. Identify the constitutional issue first, then cite the provision, then apply it to the given facts — examiner-approved structure.',              ts: Date.now() - 1000 * 60 * 72 },
-  { id: 'tp2', name: 'Adaeze Okonkwo',  initials: 'AO', school: 'UNN Nsukka',               isVip: false, text: 'Agreed with Tunde. Also, the AI Q&A is great for this topic — I asked it to generate extra problem scenarios for practice and it gave me 4 new ones with model answers.',                                                   ts: Date.now() - 1000 * 60 * 51 },
-  { id: 'tp3', name: 'Fatima Bello',    initials: 'FB', school: 'Ahmadu Bello University',  isVip: true,  text: 'For anyone struggling with the devolution sub-topic: focus on which matters are on the Exclusive Legislative List vs the Concurrent List. That distinction drives most of the exam questions.',                          ts: Date.now() - 1000 * 60 * 29 },
-  { id: 'tp4', name: 'Emeka Eze',       initials: 'EE', school: 'Enugu State University',   isVip: false, text: 'One thing that tripped me: the 1999 Constitution (as amended) wording matters. Make sure you\'re referencing the right section numbers — the pre-amendment versions differ.',                                              ts: Date.now() - 1000 * 60 * 11 },
+  // ── Thread 1: IRAC method — 3 replies, reactions throughout ─────────────────
+  {
+    id: 'tp1', name: 'Tunde Olatunji', initials: 'TO', school: 'University of Ibadan', isVip: true,
+    text: 'The IRAC method really clicked for me on the Part 2 problem question here. Identify the constitutional issue first, then cite the provision (section number + CFRN 1999), then apply it to the given facts — examiner-approved structure.',
+    ts: Date.now() - 1000 * 60 * 95,
+    reactions: { '👍': ['Adaeze Okonkwo', 'Chisom Nwosu', 'Fatima Bello'], '🔥': ['Emeka Eze'] },
+  },
+  {
+    id: 'tp1-r1', name: 'Adaeze Okonkwo', initials: 'AO', school: 'UNN Nsukka', isVip: false,
+    text: 'This is exactly what I needed to hear before attempting Part 2. I kept writing long definitions instead of applying the law. Tried IRAC just now and it felt much more structured.',
+    ts: Date.now() - 1000 * 60 * 84,
+    reactions: { '👍': ['Tunde Olatunji'], '❤️': ['Fatima Bello'] },
+    replyToId: 'tp1', replyToName: 'Tunde Olatunji',
+    replyToText: 'The IRAC method really clicked for me on the Part 2 problem question here.',
+  },
+  {
+    id: 'tp1-r2', name: 'Chisom Nwosu', initials: 'CN', school: 'University of Lagos', isVip: false,
+    text: 'Same experience as Adaeze. Also — for the "issue" step, being specific helps: instead of "federalism issue", write "whether the State Assembly has power to legislate on X, a matter on the Exclusive Legislative List under S.4(2) CFRN 1999".',
+    ts: Date.now() - 1000 * 60 * 76,
+    reactions: { '🎯': ['Tunde Olatunji', 'Adaeze Okonkwo', 'Fatima Bello'] },
+    replyToId: 'tp1', replyToName: 'Tunde Olatunji',
+    replyToText: 'The IRAC method really clicked for me on the Part 2 problem question here.',
+  },
+  {
+    id: 'tp1-r3', name: 'Fatima Bello', initials: 'FB', school: 'Ahmadu Bello University', isVip: true,
+    text: 'Chisom that\'s a great tip! Being that precise in the "Issue" step shows the examiner you\'ve correctly identified the legal problem, not just restated the facts.',
+    ts: Date.now() - 1000 * 60 * 68,
+    reactions: { '👍': ['Chisom Nwosu', 'Emeka Eze'] },
+    replyToId: 'tp1', replyToName: 'Tunde Olatunji',
+    replyToText: 'The IRAC method really clicked for me on the Part 2 problem question here.',
+  },
+
+  // ── Thread 2: Exclusive vs Concurrent List — 2 replies ──────────────────────
+  {
+    id: 'tp3', name: 'Fatima Bello', initials: 'FB', school: 'Ahmadu Bello University', isVip: true,
+    text: 'For anyone struggling with the devolution sub-topic: focus on which matters sit on the Exclusive Legislative List vs the Concurrent List. That distinction drives most of the exam questions. When in doubt, ask: "Can a State House of Assembly even touch this?"',
+    ts: Date.now() - 1000 * 60 * 48,
+    reactions: { '🎯': ['Tunde Olatunji', 'Emeka Eze'], '👍': ['Adaeze Okonkwo', 'Chisom Nwosu'] },
+  },
+  {
+    id: 'tp3-r1', name: 'Emeka Eze', initials: 'EE', school: 'Enugu State University', isVip: false,
+    text: 'The mnemonic I use: EL = "Exclusively Lagos" (Federal only), CL = "Can Lagos?" (both, but federal wins on conflict). Ridiculous but it works.',
+    ts: Date.now() - 1000 * 60 * 39,
+    reactions: { '😂': ['Fatima Bello'], '👍': ['Kelechi Amara', 'Chisom Nwosu'] },
+    replyToId: 'tp3', replyToName: 'Fatima Bello',
+    replyToText: 'For anyone struggling with the devolution sub-topic: focus on which matters sit on the Exclusive Legislative List vs the Concurrent List.',
+  },
+  {
+    id: 'tp3-r2', name: 'Adaeze Okonkwo', initials: 'AO', school: 'UNN Nsukka', isVip: false,
+    text: 'Emeka 😭 that is genuinely helpful though, I\'m keeping that. Also, don\'t forget the Residual List — matters not listed at all belong exclusively to the States. Easy to miss in exam pressure.',
+    ts: Date.now() - 1000 * 60 * 27,
+    reactions: { '🎯': ['Tunde Olatunji', 'Fatima Bello'] },
+    replyToId: 'tp3', replyToName: 'Fatima Bello',
+    replyToText: 'For anyone struggling with the devolution sub-topic: focus on which matters sit on the Exclusive Legislative List vs the Concurrent List.',
+  },
+
+  // ── Standalone post — reactions, no thread yet ───────────────────────────────
+  {
+    id: 'tp4', name: 'Emeka Eze', initials: 'EE', school: 'Enugu State University', isVip: false,
+    text: 'One thing that tripped me: the 1999 Constitution (as amended) wording matters. Always reference the amended version — section numbers shifted slightly from the original. The AI Q&A is great for checking which version of a provision applies.',
+    ts: Date.now() - 1000 * 60 * 14,
+    reactions: { '👍': ['Tunde Olatunji', 'Chisom Nwosu'], '🔥': ['Fatima Bello'] },
+  },
 ];
 
 // ── Module & topics ────────────────────────────────────────────────────────────
@@ -360,6 +445,11 @@ export default function CurrentTopic() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [threadPosts, setThreadPosts] = useState<ThreadPost[]>(SEED_THREAD);
   const [threadDraft, setThreadDraft] = useState('');
+  const [threadReplyingTo, setThreadReplyingTo] = useState<{ id: string; name: string; text: string } | null>(null);
+  const [threadPendingVideo, setThreadPendingVideo] = useState<{ url: string; name: string } | null>(null);
+  const threadTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const threadVideoInputRef = useRef<HTMLInputElement>(null);
+  const threadBottomRef = useRef<HTMLDivElement>(null);
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackNote, setFeedbackNote] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
@@ -1309,107 +1399,259 @@ export default function CurrentTopic() {
               </button>
 
               {/* ── Topic Discussion Thread ── */}
-              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-                {/* Thread header */}
-                <div className="flex items-center gap-3 px-5 py-4 border-b border-stone-100">
-                  <div className="h-8 w-8 rounded-lg bg-[#1a4d35]/10 flex items-center justify-center shrink-0">
-                    <MessageCircle className="h-4 w-4 text-[#1a4d35]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm text-foreground">Topic Discussion Thread</p>
-                    <p className="text-xs text-muted-foreground">Open to students who have completed this topic</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Users className="h-3.5 w-3.5" />
-                    <span>{threadPosts.length} posts</span>
-                  </div>
-                </div>
+              {(() => {
+                // helpers scoped here to use threadPosts state
+                const topLevel = threadPosts.filter(p => !p.replyToId);
+                const threadReplies = (rootId: string) =>
+                  threadPosts.filter(p => p.replyToId && threadGetRoot(p.id, threadPosts) === rootId);
 
-                {/* Posts */}
-                <div className="divide-y divide-stone-100">
-                  {threadPosts.map(post => (
-                    <div key={post.id} className="px-5 py-4 flex gap-3">
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 text-[11px] font-bold ${post.isVip ? 'bg-amber-500 text-white' : 'bg-stone-200 text-stone-700'}`}>
+                function handleThreadReact(postId: string, emoji: string) {
+                  setThreadPosts(prev => prev.map(p => {
+                    if (p.id !== postId) return p;
+                    const reacts = { ...(p.reactions ?? {}) };
+                    const cur = reacts[emoji] ?? [];
+                    if (cur.includes(THREAD_STUDENT.name)) {
+                      reacts[emoji] = cur.filter(n => n !== THREAD_STUDENT.name);
+                    } else {
+                      reacts[emoji] = [...cur, THREAD_STUDENT.name];
+                    }
+                    return { ...p, reactions: reacts };
+                  }));
+                }
+
+                function handleThreadSend() {
+                  const text = threadDraft.trim();
+                  if (!text && !threadPendingVideo) return;
+                  const post: ThreadPost = {
+                    id: `tp-${Date.now()}`,
+                    name: THREAD_STUDENT.name, initials: THREAD_STUDENT.initials,
+                    school: THREAD_STUDENT.school, isVip: THREAD_STUDENT.isVip,
+                    text, ts: Date.now(),
+                    reactions: {},
+                    videoUrl: threadPendingVideo?.url,
+                    videoName: threadPendingVideo?.name,
+                    ...(threadReplyingTo ? {
+                      replyToId: threadReplyingTo.id,
+                      replyToName: threadReplyingTo.name,
+                      replyToText: threadReplyingTo.text,
+                    } : {}),
+                  };
+                  setThreadPosts(prev => [...prev, post]);
+                  setThreadDraft('');
+                  setThreadReplyingTo(null);
+                  setThreadPendingVideo(null);
+                  setTimeout(() => threadBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+                }
+
+                function ThreadPostBubble({ post, isReply = false }: { post: ThreadPost; isReply?: boolean }) {
+                  const isOwn = post.name === THREAD_STUDENT.name;
+                  return (
+                    <div className={`flex gap-2.5 group ${isOwn ? 'flex-row-reverse' : ''}`}>
+                      {/* Avatar */}
+                      <div className={`${isReply ? 'h-7 w-7 text-[10px]' : 'h-8 w-8 text-[11px]'} rounded-full flex items-center justify-center shrink-0 font-bold
+                        ${isOwn ? 'bg-[#1a4d35] text-white' : post.isVip ? 'bg-amber-500 text-white' : 'bg-stone-200 text-stone-700'}`}>
                         {post.initials}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className="text-xs font-bold text-foreground">{post.name}</span>
+                      <div className={`flex-1 min-w-0 flex flex-col gap-0.5 ${isOwn ? 'items-end' : 'items-start'}`}>
+                        {/* Identity */}
+                        <div className={`flex items-center gap-1.5 flex-wrap ${isOwn ? 'justify-end' : ''}`}>
+                          <span className="text-xs font-bold text-foreground">{isOwn ? 'You' : post.name}</span>
                           {post.isVip && (
                             <span className="flex items-center gap-0.5 text-[10px] font-bold bg-amber-400 text-white px-1.5 py-0.5 rounded-full">
                               <Crown className="h-2.5 w-2.5" /> VIP
                             </span>
                           )}
-                          <span className="text-[10px] text-muted-foreground">{post.school}</span>
+                          {!isReply && <span className="text-[10px] text-muted-foreground">{post.school}</span>}
                           <span className="text-[10px] text-stone-300">·</span>
-                          <span className="text-[10px] text-muted-foreground">
-                            {Math.round((Date.now() - post.ts) / 60000) < 60
-                              ? `${Math.round((Date.now() - post.ts) / 60000)}m ago`
-                              : `${Math.round((Date.now() - post.ts) / 3600000)}h ago`}
-                          </span>
+                          <span className="text-[10px] text-muted-foreground">{fmtThreadTs(post.ts)}</span>
                         </div>
-                        <p className="text-sm text-foreground leading-relaxed">{post.text}</p>
+                        {/* Bubble */}
+                        <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed max-w-full
+                          ${isOwn ? 'bg-[#1a4d35] text-white rounded-tr-sm' : 'bg-white text-foreground border border-stone-200 shadow-sm rounded-tl-sm'}`}>
+                          {post.replyToText && (
+                            <p className={`text-[11px] mb-1.5 truncate italic border-l-2 pl-2 leading-snug
+                              ${isOwn ? 'text-white/60 border-white/30' : 'text-muted-foreground border-stone-300'}`}>
+                              {post.replyToName}: {post.replyToText}
+                            </p>
+                          )}
+                          {post.text}
+                          {post.videoName && (
+                            <div className={`mt-2 flex items-center gap-2 px-3 py-2 rounded-xl max-w-[200px]
+                              ${isOwn ? 'bg-black/20 border border-white/20' : 'bg-stone-100 border border-stone-200'}`}>
+                              <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${isOwn ? 'bg-white/20' : 'bg-[#1a4d35]/10'}`}>
+                                <Video className={`h-3.5 w-3.5 ${isOwn ? 'text-white' : 'text-[#1a4d35]'}`} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-xs font-semibold truncate ${isOwn ? 'text-white' : 'text-foreground'}`}>{post.videoName}</p>
+                                <p className={`text-[10px] ${isOwn ? 'text-white/60' : 'text-muted-foreground'}`}>Video clip</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        {/* Reactions + Reply */}
+                        <div className={`flex items-center gap-2 flex-wrap ${isOwn ? 'justify-end' : ''}`}>
+                          {/* Emoji row */}
+                          <div className={`flex items-center gap-1 flex-wrap ${isOwn ? 'justify-end' : ''}`}>
+                            {THREAD_EMOJIS.map(emoji => {
+                              const reactors = post.reactions?.[emoji] ?? [];
+                              const count = reactors.length;
+                              const youReacted = reactors.includes(THREAD_STUDENT.name);
+                              return (
+                                <button key={emoji} onClick={() => handleThreadReact(post.id, emoji)}
+                                  title={count > 0 ? reactors.join(', ') : emoji}
+                                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border transition-all
+                                    ${youReacted
+                                      ? 'bg-[#1a4d35]/10 border-[#1a4d35]/30 text-[#1a4d35]'
+                                      : count > 0
+                                        ? 'bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100'
+                                        : 'bg-transparent border-stone-200 text-stone-400 hover:bg-stone-50'}`}>
+                                  {emoji}{count > 0 && <span className="ml-0.5">{count}</span>}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          {/* Reply button */}
+                          <button
+                            onClick={() => {
+                              setThreadReplyingTo({ id: post.id, name: post.name, text: post.text });
+                              threadTextareaRef.current?.focus();
+                            }}
+                            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-[#1a4d35] transition-colors"
+                          >
+                            <CornerDownRight className="h-3 w-3" /> Reply
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                }
 
-                {/* Compose */}
-                <div className="px-5 py-4 border-t border-stone-100 bg-stone-50/60">
-                  <div className="flex items-end gap-3">
-                    <div className="h-8 w-8 rounded-full bg-[#1a4d35] flex items-center justify-center shrink-0 text-[11px] font-bold text-white">CN</div>
-                    <div className="flex-1">
-                      <textarea
-                        value={threadDraft}
-                        onChange={e => setThreadDraft(e.target.value)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            const text = threadDraft.trim();
-                            if (!text) return;
-                            const post: ThreadPost = {
-                              id: `p-${Date.now()}`,
-                              name: 'Chisom Nwosu',
-                              initials: 'CN',
-                              school: 'University of Lagos',
-                              isVip: false,
-                              text,
-                              ts: Date.now(),
-                            };
-                            setThreadPosts(prev => [...prev, post]);
-                            setThreadDraft('');
-                          }
-                        }}
-                        placeholder="Share a note or question about this topic…"
-                        rows={2}
-                        className="w-full resize-none rounded-xl border border-stone-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-[#1a4d35]/40 transition-colors"
-                      />
+                return (
+                  <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                    {/* Header */}
+                    <div className="flex items-center gap-3 px-5 py-4 border-b border-stone-100">
+                      <div className="h-8 w-8 rounded-lg bg-[#1a4d35]/10 flex items-center justify-center shrink-0">
+                        <MessageCircle className="h-4 w-4 text-[#1a4d35]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm text-foreground">Topic Discussion Thread</p>
+                        <p className="text-xs text-muted-foreground">Open to students who have completed this topic</p>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Users className="h-3.5 w-3.5" />
+                        <span>{topLevel.length} posts</span>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        const text = threadDraft.trim();
-                        if (!text) return;
-                        const post: ThreadPost = {
-                          id: `p-${Date.now()}`,
-                          name: 'Chisom Nwosu',
-                          initials: 'CN',
-                          school: 'University of Lagos',
-                          isVip: false,
-                          text,
-                          ts: Date.now(),
-                        };
-                        setThreadPosts(prev => [...prev, post]);
-                        setThreadDraft('');
-                      }}
-                      disabled={!threadDraft.trim()}
-                      className="h-9 w-9 rounded-xl bg-[#1a4d35] text-white flex items-center justify-center shrink-0 hover:bg-[#1a4d35]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                    >
-                      <Send className="h-3.5 w-3.5" />
-                    </button>
+
+                    {/* Post list */}
+                    <div className="px-5 py-4 space-y-5">
+                      {topLevel.map(post => {
+                        const replies = threadReplies(post.id);
+                        return (
+                          <div key={post.id}>
+                            <ThreadPostBubble post={post} />
+                            {replies.length > 0 && (
+                              <div className="mt-2 ml-10 rounded-2xl border border-stone-200 bg-stone-50 overflow-hidden">
+                                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-200 bg-white/70">
+                                  <CornerDownRight className="h-3.5 w-3.5 text-stone-400" />
+                                  <span className="text-[11px] font-semibold text-stone-500">
+                                    {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+                                  </span>
+                                </div>
+                                <div className="px-4 py-3 space-y-4">
+                                  {replies.map(reply => (
+                                    <ThreadPostBubble key={reply.id} post={reply} isReply />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <div ref={threadBottomRef} />
+                    </div>
+
+                    {/* Compose */}
+                    <div className="px-5 py-4 border-t border-stone-100 bg-stone-50/60">
+                      {/* Replying-to banner */}
+                      {threadReplyingTo && (
+                        <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-xl bg-[#1a4d35]/5 border border-[#1a4d35]/20">
+                          <CornerDownRight className="h-3.5 w-3.5 text-[#1a4d35] shrink-0" />
+                          <span className="text-xs text-[#1a4d35] font-semibold shrink-0">Replying to {threadReplyingTo.name}:</span>
+                          <span className="text-xs text-muted-foreground truncate flex-1">{threadReplyingTo.text}</span>
+                          <button onClick={() => setThreadReplyingTo(null)} className="text-muted-foreground hover:text-red-500 transition-colors shrink-0">
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      )}
+                      {/* Video preview */}
+                      {threadPendingVideo && (
+                        <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-xl bg-stone-100 border border-stone-200">
+                          <Video className="h-4 w-4 text-[#1a4d35] shrink-0" />
+                          <span className="text-xs text-foreground flex-1 truncate">{threadPendingVideo.name}</span>
+                          <button onClick={() => setThreadPendingVideo(null)} className="text-muted-foreground hover:text-red-500 transition-colors">
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      )}
+                      <div className="flex items-end gap-2">
+                        <div className="h-8 w-8 rounded-full bg-[#1a4d35] flex items-center justify-center shrink-0 text-[11px] font-bold text-white">CN</div>
+                        <div className="flex-1">
+                          <textarea
+                            ref={threadTextareaRef}
+                            value={threadDraft}
+                            onChange={e => setThreadDraft(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleThreadSend(); }
+                              if (e.key === 'Escape') setThreadReplyingTo(null);
+                            }}
+                            placeholder={threadReplyingTo ? `Reply to ${threadReplyingTo.name}…` : 'Share a note or question about this topic…'}
+                            rows={2}
+                            className="w-full resize-none rounded-xl border border-stone-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-[#1a4d35]/40 transition-colors"
+                          />
+                        </div>
+                        {/* VIP video */}
+                        <input ref={threadVideoInputRef} type="file" accept="video/*" className="hidden"
+                          onChange={e => {
+                            const f = e.target.files?.[0];
+                            if (f) setThreadPendingVideo({ url: URL.createObjectURL(f), name: f.name });
+                            e.target.value = '';
+                          }} />
+                        <div className="relative group">
+                          <button
+                            onClick={() => THREAD_STUDENT.isVip ? threadVideoInputRef.current?.click() : undefined}
+                            title={THREAD_STUDENT.isVip ? 'Attach video clip' : 'VIP exclusive — upgrade to attach videos'}
+                            className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border transition-all
+                              ${THREAD_STUDENT.isVip
+                                ? 'bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100'
+                                : 'bg-stone-50 border-stone-200 text-stone-300 cursor-default'}`}
+                          >
+                            {THREAD_STUDENT.isVip
+                              ? <Video className="h-3.5 w-3.5" />
+                              : <span className="relative"><Video className="h-3.5 w-3.5" /><Lock className="h-2 w-2 absolute -bottom-0.5 -right-0.5 text-stone-400" /></span>
+                            }
+                          </button>
+                          {!THREAD_STUDENT.isVip && (
+                            <div className="absolute bottom-11 right-0 w-40 bg-stone-900 text-white text-[11px] leading-snug px-3 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                              <span className="font-bold text-amber-400">VIP exclusive</span> — upgrade to attach video clips.
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          onClick={handleThreadSend}
+                          disabled={!threadDraft.trim() && !threadPendingVideo}
+                          className="h-9 w-9 rounded-xl bg-[#1a4d35] text-white flex items-center justify-center shrink-0 hover:bg-[#1a4d35]/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                        >
+                          <Send className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-1.5 pl-10">
+                        Enter to post · Shift+Enter for a new line{threadReplyingTo ? ' · Esc to cancel reply' : ''}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1.5 pl-11">Enter to post · Shift+Enter for a new line</p>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           )}
 
