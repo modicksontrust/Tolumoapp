@@ -7,6 +7,7 @@ import SettingsPage, { HelpSupportPage } from './settings';
 import LecturerOpportunities from './opportunities';
 import TutorStudentCommunity from './student-community';
 import LecturerLounge from './lecturer-lounge';
+import TutorSkillsHub from './skills-hub';
 import { useClerk, useUser } from '@clerk/react';
 import {
   LayoutDashboard, BookOpen, Calendar, BarChart2,
@@ -206,6 +207,7 @@ const NAV = [
   { href: '/tutor/schedule', label: 'Tutorial Schedule', icon: Calendar },
   { href: '/tutor/analytics', label: 'Student Analytics', icon: BarChart2 },
   { href: '/tutor/opportunities', label: 'Access Opportunities', icon: GraduationCap },
+  { href: '/tutor/skills-hub', label: 'Skills Hub', icon: Zap },
   { href: '/tutor/community', label: 'Student Community', icon: Users },
   { href: '/tutor/lounge', label: 'Lecturer Lounge', icon: Shield },
 ];
@@ -1236,6 +1238,7 @@ export default function TutorPortal() {
         <Route path="/tutor/schedule" component={TutorialSchedule} />
         <Route path="/tutor/analytics" component={StudentAnalytics} />
         <Route path="/tutor/opportunities">{() => <LecturerOpportunities />}</Route>
+        <Route path="/tutor/skills-hub">{() => <TutorSkillsHub />}</Route>
         <Route path="/tutor/community">{() => <TutorStudentCommunity />}</Route>
         <Route path="/tutor/lounge">{() => <LecturerLounge />}</Route>
         <Route path="/tutor/help">{() => <div className="max-w-6xl mx-auto"><HelpSupportPage /></div>}</Route>
