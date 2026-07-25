@@ -75,7 +75,9 @@ export default function OnboardingPage() {
     user?.fullName || (stored.firstName ? stored.firstName : '')
   );
   const [lawArea, setLawArea] = useState('');
-  const [studyGoal, setStudyGoal] = useState('');
+  const [studyGoals, setStudyGoals] = useState<string[]>([]);
+  const toggleGoal = (goal: string) =>
+    setStudyGoals(prev => prev.includes(goal) ? prev.filter(g => g !== goal) : [...prev, goal]);
   const [yearLevel, setYearLevel] = useState((user?.unsafeMetadata?.yearLevel as string) ?? stored.yearLevel ?? '');
   // Tutor fields
   const [teachingArea, setTeachingArea] = useState('');
@@ -184,27 +186,25 @@ export default function OnboardingPage() {
                   </div>
                 </div>
 
-                {/* Study goal */}
+                {/* Study goals — multi-select */}
                 <div>
-                  <label className={labelClass}>My Primary Study Goal</label>
+                  <label className={labelClass}>My Primary Study Goal(s)</label>
                   <div className="space-y-2">
                     {STUDY_GOALS.map(goal => (
                       <label
                         key={goal}
                         className={`flex items-start gap-3 rounded-lg border px-4 py-3 cursor-pointer transition-colors ${
-                          studyGoal === goal
+                          studyGoals.includes(goal)
                             ? 'border-primary bg-primary/5'
                             : 'border-border bg-white hover:border-primary/40'
                         }`}
                       >
                         <input
-                          type="radio"
-                          name="studyGoal"
+                          type="checkbox"
                           value={goal}
-                          checked={studyGoal === goal}
-                          onChange={() => setStudyGoal(goal)}
+                          checked={studyGoals.includes(goal)}
+                          onChange={() => toggleGoal(goal)}
                           className="mt-0.5 accent-[#1a4d35]"
-                          required
                         />
                         <span className="text-sm text-foreground">{goal}</span>
                       </label>
