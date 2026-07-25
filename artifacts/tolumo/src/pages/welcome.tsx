@@ -97,23 +97,23 @@ export default function WelcomePage() {
           </div>
 
           {/* Sign-off — under the letter */}
-          <div className="shrink-0 flex items-center justify-between pt-5 mt-4 border-t border-border">
-            <div className="flex items-center gap-3">
+          <div className="shrink-0 flex items-center justify-between pt-6 mt-5 border-t-2 border-[#1a4d35]/15">
+            <div className="flex items-center gap-4">
               <img
                 src={founderImg()}
                 alt="Dr Moses Oruaze Dickson"
-                className="h-11 w-11 rounded-full object-cover object-top ring-2 ring-[#1a4d35]/20"
+                className="h-14 w-14 rounded-full object-cover object-top ring-2 ring-[#1a4d35]/30 shadow-md"
               />
               <div>
-                <p className="font-bold text-primary text-xs leading-snug">Dr Moses Oruaze Dickson</p>
-                <p className="text-[10px] text-muted-foreground">LLB · BL · LLM · MSc · LLM · PhD</p>
-                <p className="text-[10px] text-muted-foreground">Founder, Tolumor</p>
+                <p className="font-bold text-[#1a4d35] text-sm leading-snug">Dr Moses Oruaze Dickson</p>
+                <p className="text-xs text-[#1a4d35]/70 mt-0.5">LLB · BL · LLM · MSc · LLM · PhD</p>
+                <p className="text-xs font-medium text-[#1a4d35]/70">Founder, Tolumor</p>
               </div>
             </div>
 
             <button
               onClick={handleContinue}
-              className="rounded-xl bg-[#1a4d35] text-white font-bold px-6 py-2.5 text-sm tracking-wide hover:bg-[#1a4d35]/90 transition-colors shadow-lg shrink-0"
+              className="rounded-xl bg-[#1a4d35] text-white font-bold px-7 py-3 text-sm tracking-wide hover:bg-[#1a4d35]/90 transition-colors shadow-lg shrink-0"
             >
               {isLecturer ? "Let's Build It →" : "Let's Get to Work →"}
             </button>
