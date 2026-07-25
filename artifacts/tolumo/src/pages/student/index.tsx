@@ -260,7 +260,7 @@ function AIChatWidget() {
 function NavItem({ href, icon: Icon, label, active, vip }: { href: string; icon: React.ElementType; label: string; active: boolean; vip?: boolean }) {
   if (vip) {
     return (
-      <Link href={href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors mt-1
+      <Link href={href} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold transition-colors mt-1
         ${active ? 'bg-amber-500/30 text-amber-300' : 'text-amber-400/80 hover:bg-amber-500/20 hover:text-amber-300'}`}>
         <Icon className="h-4 w-4 shrink-0 text-amber-400" />
         <span className="truncate">{label}</span>
@@ -268,7 +268,7 @@ function NavItem({ href, icon: Icon, label, active, vip }: { href: string; icon:
     );
   }
   return (
-    <Link href={href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-white/15 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white'}`}>
+    <Link href={href} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${active ? 'bg-white/15 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white'}`}>
       <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-white' : 'text-white/50'}`} />
       <span className="truncate">{label}</span>
     </Link>
