@@ -95,36 +95,14 @@ export default function OnboardingPage() {
       return;
     }
 
-    // No Clerk session yet (email verification pending) — save locally and proceed
-    if (!user) {
-      goToDashboard();
-      return;
+    // Navigate immediately — don't wait for the API
+    goToDashboard();
+
+    // Fire API sync in the background if a session exists
+    if (user) {
+      const apiRole = role === 'tutor' ? ProfileInputRole.tutor : ProfileInputRole.student;
+      upsertMe.mutate({ data: { name: displayName.trim(), role: apiRole } });
     }
-
-    const apiRole = role === 'tutor' ? ProfileInputRole.tutor : ProfileInputRole.student;
-
-    upsertMe.mutate(
-      { data: { name: displayName.trim(), role: apiRole } },
-      {
-        onSuccess: (data) => {
-          sessionStorage.removeItem('tolumor_signup');
-          switch (data.role) {
-            case 'student':     setLocation('/student'); break;
-            case 'tutor':       setLocation('/tutor'); break;
-            case 'admin':       setLocation('/admin'); break;
-            case 'sub_agent':   setLocation('/agent'); break;
-            case 'super_agent': setLocation('/super-agent'); break;
-            case 'support':     setLocation('/crm'); break;
-            default:            setLocation('/');
-          }
-        },
-        onError: () => {
-          // API failed but we can still let them into the dashboard
-          toast({ title: 'Profile saved locally', description: 'We\'ll sync your details once your session is active.' });
-          goToDashboard();
-        },
-      }
-    );
   };
 
   return (
