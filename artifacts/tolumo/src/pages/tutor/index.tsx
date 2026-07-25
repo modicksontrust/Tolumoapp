@@ -205,7 +205,7 @@ const NAV = [
   { href: '/tutor/content', label: 'My Content', icon: BookOpen },
   { href: '/tutor/schedule', label: 'Tutorial Schedule', icon: Calendar },
   { href: '/tutor/analytics', label: 'Student Analytics', icon: BarChart2 },
-  { href: '/tutor/opportunities', label: 'Opportunities', icon: GraduationCap },
+  { href: '/tutor/opportunities', label: 'Access Opportunities', icon: GraduationCap },
   { href: '/tutor/community', label: 'Student Community', icon: Users },
   { href: '/tutor/lounge', label: 'Lecturer Lounge', icon: Shield },
 ];
