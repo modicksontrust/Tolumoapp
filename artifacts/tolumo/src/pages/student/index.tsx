@@ -7,6 +7,7 @@ import {
   Bell, Search, ChevronLeft, ChevronRight, X, Star, Lock,
   CheckCircle2, Clock, MessageCircle, Send, Users,
   Menu, ChevronRight as ArrowRight, Unlock, LibraryBig,
+  Info, Zap, Gift, Trophy,
 } from 'lucide-react';
 import MyModules from './my-modules';
 import TutorialSessions from './tutorial-sessions';
@@ -16,9 +17,115 @@ import Scholarships from './scholarships';
 import MyCertificate from './my-certificate';
 import TriaxLawLibrary from './triax-law-library';
 
+// ── Credits ─────────────────────────────────────────────────────────────────────
+const STUDENT_CREDITS = 340;
+const STUDENT_STREAK_DAYS = 7;
+
+const STUDENT_EARN_ACTIONS = [
+  { action: 'Watch a topic video in full', credits: '+5' },
+  { action: 'Meaningfully engage in the AI Q&A', credits: '+5' },
+  { action: 'Pass Part 1 (MCQ) on first attempt', credits: '+10' },
+  { action: 'Pass Part 2 (written problem) on first attempt', credits: '+15' },
+  { action: 'Pass the full topic test on first try, no restart', credits: '+20 bonus' },
+  { action: 'Leave topic feedback with a star rating and note', credits: '+3' },
+  { action: 'Give platform-level feedback when requested', credits: '+5' },
+  { action: 'Maintain a daily login or study streak (per day)', credits: '+2' },
+  { action: 'Renew your subscription before it lapses', credits: '+25' },
+  { action: 'Refer a friend who subscribes', credits: '+50' },
+  { action: 'Book and complete a tutor session', credits: '+10' },
+];
+
+const STUDENT_REDEEM = [
+  { item: 'Subscription discount', desc: 'Put credits toward your next renewal' },
+  { item: 'Free tutor session', desc: 'Redeem a full 1-on-1 tutorial at no charge' },
+  { item: 'Temporary VIP perks', desc: 'Early access to new modules and features' },
+  { item: 'Raffle entries', desc: 'Enter monthly prize draws' },
+  { item: 'Profile badges', desc: 'Display your achievements on your profile' },
+];
+
+function CreditsExplainerModal({ onClose }: { onClose: () => void }) {
+  const [tab, setTab] = useState<'earn' | 'redeem' | 'expiry'>('earn');
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', h);
+    return () => document.removeEventListener('keydown', h);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div ref={ref} className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[88dvh] overflow-hidden">
+        {/* Header */}
+        <div className="bg-amber-500 px-6 pt-6 pb-4 shrink-0">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-100/80 mb-1">Student Credit System</p>
+              <h2 className="text-xl font-serif font-bold text-white leading-snug">How Credits Work</h2>
+            </div>
+            <button onClick={onClose} className="text-white/60 hover:text-white transition-colors mt-0.5"><X className="h-5 w-5" /></button>
+          </div>
+          <div className="flex items-center gap-2 mt-5">
+            {(['earn','redeem','expiry'] as const).map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors capitalize ${tab === t ? 'bg-white text-amber-600' : 'text-white/70 hover:text-white'}`}>
+                {t === 'earn' ? 'Earn' : t === 'redeem' ? 'Redeem' : 'Expiry'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="overflow-y-auto flex-1 p-5 space-y-3">
+          {tab === 'earn' && (
+            <>
+              <p className="text-xs text-muted-foreground leading-relaxed">Credits are awarded automatically when you complete qualifying actions on the platform.</p>
+              {STUDENT_EARN_ACTIONS.map(({ action, credits }) => (
+                <div key={action} className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3">
+                  <p className="text-sm text-foreground leading-snug">{action}</p>
+                  <span className="shrink-0 text-sm font-bold text-amber-600 font-mono">{credits}</span>
+                </div>
+              ))}
+            </>
+          )}
+          {tab === 'redeem' && (
+            <>
+              <p className="text-xs text-muted-foreground leading-relaxed">Use your credits in the Credits &amp; Redemption section of Settings.</p>
+              {STUDENT_REDEEM.map(({ item, desc }) => (
+                <div key={item} className="rounded-xl border border-stone-100 bg-stone-50 px-4 py-3">
+                  <p className="text-sm font-semibold text-foreground">{item}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                </div>
+              ))}
+            </>
+          )}
+          {tab === 'expiry' && (
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground leading-relaxed">Two independent triggers can cause your credits to expire — either one is enough.</p>
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+                <p className="text-sm font-bold text-amber-900 mb-1">Trigger 1 — Subscription lapse</p>
+                <p className="text-sm text-amber-800 leading-relaxed">If your subscription lapses, a <strong>7-day countdown</strong> begins immediately. Renew within that window and your credits are safe. Let it pass and they expire.</p>
+              </div>
+              <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+                <p className="text-sm font-bold text-red-900 mb-1">Trigger 2 — Account dormancy</p>
+                <p className="text-sm text-red-800 leading-relaxed">Separately, if you make <strong>no logins for 30 days</strong> — regardless of your subscription status — your credits expire. A warm reminder is sent after 2 days of inactivity to give you plenty of notice.</p>
+              </div>
+              <div className="rounded-xl border border-stone-200 bg-stone-50 px-5 py-3">
+                <p className="text-xs text-muted-foreground leading-relaxed">These triggers are <strong>independent</strong> — an active subscription does not protect against dormancy expiry, and a lapsed subscription during an active streak still gives you 7 days.</p>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="px-5 pb-5 pt-2 shrink-0 border-t border-stone-100">
+          <button onClick={onClose} className="w-full py-3 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">Got it</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Notification bell panel ────────────────────────────────────────────────────
 const BELL_NOTIFS = [
-  { id: 1, title: 'Complete Topic 3 to unlock Topic 4', body: 'Fundamental Rights is waiting for you.', time: 'Now', unread: true },
+  { id: 0, title: "You've been away for 2 days — come back!", body: `Your ${STUDENT_STREAK_DAYS}-day streak and ${STUDENT_CREDITS} credits are safe for now, but credits expire after 30 days of inactivity. Don't let them slip.`, time: 'Now', unread: true },
+  { id: 1, title: 'Complete Topic 3 to unlock Topic 4', body: 'Fundamental Rights is waiting for you.', time: '1h ago', unread: true },
   { id: 2, title: 'New topic unlocked in Constitutional Law', body: 'You can now access Topic 4.', time: '2h ago', unread: true },
   { id: 3, title: 'Tutorial confirmed — Mon 14 Jul at 10:00am', body: 'Prof. Adeyemi confirmed your session.', time: '1d ago', unread: true },
   { id: 4, title: 'You scored 88% on Criminal Law Topic 1!', body: 'Great work — keep it up.', time: '3d ago', unread: false },
@@ -270,6 +377,7 @@ function StudentDashboard() {
   const firstName = user?.firstName || 'Chisom';
   const [lawLib, setLawLib] = useState<{ open: boolean; tab: 'home' | 'browse' | 'judgements' | 'saved' | 'notes' }>({ open: false, tab: 'home' });
   const openLib = (tab: typeof lawLib.tab = 'home') => setLawLib({ open: true, tab });
+  const [creditsModalOpen, setCreditsModalOpen] = useState(false);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -282,6 +390,41 @@ function StudentDashboard() {
   return (
     <div className="max-w-5xl mx-auto space-y-5">
       <TriaxLawLibrary open={lawLib.open} onClose={() => setLawLib(s => ({ ...s, open: false }))} initialTab={lawLib.tab} />
+      {creditsModalOpen && <CreditsExplainerModal onClose={() => setCreditsModalOpen(false)} />}
+
+      {/* ── Credit Balance Banner ── */}
+      <div className="relative overflow-hidden rounded-2xl shadow-md" style={{ background: 'linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 85% 40%, rgba(255,255,255,0.18) 0%, transparent 55%)' }} />
+        <div className="relative px-6 py-5 flex items-center justify-between gap-4">
+          {/* Left — balance */}
+          <div className="flex items-center gap-5">
+            <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 border border-white/20 shadow-inner">
+              <Star className="h-8 w-8 text-white fill-white/90" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-100/70 mb-0.5">Your Credit Balance</p>
+              <p className="text-4xl font-bold font-serif text-white leading-none tracking-tight">{STUDENT_CREDITS.toLocaleString()}</p>
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 border border-white/25">
+                  <Zap className="h-3 w-3 text-white" />
+                  <span className="text-[11px] font-bold text-white">{STUDENT_STREAK_DAYS}-day streak</span>
+                </div>
+                <span className="text-[11px] text-amber-100/60">· credits</span>
+              </div>
+            </div>
+          </div>
+          {/* Right — actions */}
+          <div className="flex flex-col items-end gap-2.5 shrink-0">
+            <button onClick={() => setCreditsModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-semibold transition-colors border border-white/20">
+              <Info className="h-4 w-4" /> How credits work
+            </button>
+            <p className="text-[11px] text-amber-100/60 text-right max-w-[200px] leading-snug">
+              Expire 30 days after last login or 7 days after subscription lapse.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Greeting row */}
       <div className="flex items-start justify-between gap-4">

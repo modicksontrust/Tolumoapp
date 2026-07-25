@@ -1,0 +1,15 @@
+Purpose: reward genuine learning engagement and retention for students, and reward quality teaching and platform contribution for lecturers, with both credit balances displayed prominently on their respective dashboards.
+
+Student credit earning actions: watching a topic video in full, engaging meaningfully in the pre-test AI Q&A, passing the multiple choice section on first attempt, passing the written problem question on first attempt, passing the full topic test on the first try without needing a restart, leaving topic feedback with a star rating and note to the lecturer, giving platform-level feedback whenever it’s requested, maintaining a daily login or study streak, renewing their subscription before it lapses, referring a friend who subscribes, and booking and completing a tutor session.
+
+Lecturer credit earning actions: uploading and publishing new content, completing tutorial sessions, maintaining a four point five star or higher average rating, responding to students notes in discussion or notes sent to them for each topic, achieving an eighty percent or higher student course completion rate, referring other lecturers to the platform, receiving positive mentions in student feedback, and promptly starting scheduled or booked tutorials on time.
+
+Redemption: for students, credits redeem for subscription discounts, free tutor sessions, temporary VIP perks, raffle entries, and profile badges. For lecturers, credits redeem for cash payout on a monthly or quarterly basis, featured tutor placement, priority search ranking, promotional credits, or premium platform tools.
+
+Dashboard display: for both students and lecturers, the current credit balance must be displayed boldly and attractively at the very top of their dashboard, immediately visible on login, not buried in settings or a profile page.
+
+How credits work button: placed directly beside the credit balance display on both dashboards, opening a simple explainer tailored separately for students and lecturers, covering how credits are earned, what they’re redeemable for, and the expiry rules below.
+
+Credit expiry, two independent triggers: first, if a subscription lapses, a seven day countdown begins, and credits expire if the subscription is not renewed within that seven day window. Second, separately and regardless of subscription status, if an account goes fully dormant with no logins for thirty days, credits expire on that basis too. Neither trigger depends on the other.
+
+Inactivity reminder: if a student has been inactive for two days, the system automatically sends a reminder notification, warm and encouraging in tone, nudging them to return and protect their streak and credit balance, well ahead of either expiry deadline.

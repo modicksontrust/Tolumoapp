@@ -11,7 +11,8 @@ import {
   ChevronLeft, ChevronRight, Menu, X,
   Edit, Trash2, Plus, Clock, Users, TrendingUp,
   CheckCircle2, Star, Award, Users2,
-  MessageCircle, Send, Bot, Minimize2, Mic, MicOff, PhoneOff
+  MessageCircle, Send, Bot, Minimize2, Mic, MicOff, PhoneOff,
+  Info, Zap, Gift, Trophy,
 } from 'lucide-react';
 import {
   useGetTutorSummary,
@@ -621,6 +622,104 @@ function AIChatWidget() {
   );
 }
 
+// ── Tutor Credits ─────────────────────────────────────────────────────────────
+const TUTOR_CREDITS = 1820;
+
+const TUTOR_EARN_ACTIONS = [
+  { action: 'Upload and publish new content', credits: '+30' },
+  { action: 'Complete a tutorial session', credits: '+20 per session' },
+  { action: 'Maintain 4.5★ or higher average rating', credits: '+50/month' },
+  { action: 'Respond to student notes in discussion', credits: '+3 each' },
+  { action: 'Achieve 80%+ student course completion rate', credits: '+100/month' },
+  { action: 'Refer other lecturers to the platform', credits: '+75' },
+  { action: 'Receive positive mentions in student feedback', credits: '+5 each' },
+  { action: 'Start a scheduled tutorial promptly on time', credits: '+5 each' },
+];
+
+const TUTOR_REDEEM = [
+  { item: 'Cash payout', desc: 'Convert credits to cash on a monthly or quarterly basis' },
+  { item: 'Featured tutor placement', desc: 'Appear at the top of module listings' },
+  { item: 'Priority search ranking', desc: 'Rank higher when students search for tutors' },
+  { item: 'Promotional credits', desc: 'Use credits to promote your modules to students' },
+  { item: 'Premium platform tools', desc: 'Unlock advanced analytics and content tools' },
+];
+
+function TutorCreditsExplainerModal({ onClose }: { onClose: () => void }) {
+  const [tab, setTab] = React.useState<'earn' | 'redeem' | 'expiry'>('earn');
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', h);
+    return () => document.removeEventListener('keydown', h);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div ref={ref} className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[88dvh] overflow-hidden">
+        <div className="bg-[#1a4d35] px-6 pt-6 pb-4 shrink-0">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mb-1">Lecturer Credit System</p>
+              <h2 className="text-xl font-serif font-bold text-white">How Credits Work</h2>
+            </div>
+            <button onClick={onClose} className="text-white/60 hover:text-white transition-colors mt-0.5"><X className="h-5 w-5" /></button>
+          </div>
+          <div className="flex items-center gap-2 mt-5">
+            {(['earn','redeem','expiry'] as const).map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors capitalize ${tab === t ? 'bg-white text-[#1a4d35]' : 'text-white/60 hover:text-white'}`}>
+                {t === 'earn' ? 'Earn' : t === 'redeem' ? 'Redeem' : 'Expiry'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="overflow-y-auto flex-1 p-5 space-y-3">
+          {tab === 'earn' && (
+            <>
+              <p className="text-xs text-muted-foreground leading-relaxed">Credits are awarded automatically as you teach, engage, and grow the platform.</p>
+              {TUTOR_EARN_ACTIONS.map(({ action, credits }) => (
+                <div key={action} className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3">
+                  <p className="text-sm text-foreground leading-snug">{action}</p>
+                  <span className="shrink-0 text-sm font-bold text-[#1a4d35] font-mono">{credits}</span>
+                </div>
+              ))}
+            </>
+          )}
+          {tab === 'redeem' && (
+            <>
+              <p className="text-xs text-muted-foreground leading-relaxed">Redeem credits from your Earnings &amp; Credits settings page.</p>
+              {TUTOR_REDEEM.map(({ item, desc }) => (
+                <div key={item} className="rounded-xl border border-stone-100 bg-stone-50 px-4 py-3">
+                  <p className="text-sm font-semibold text-foreground">{item}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                </div>
+              ))}
+            </>
+          )}
+          {tab === 'expiry' && (
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground leading-relaxed">Two independent triggers apply — either one causes expiry.</p>
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+                <p className="text-sm font-bold text-amber-900 mb-1">Trigger 1 — Subscription lapse</p>
+                <p className="text-sm text-amber-800 leading-relaxed">If your lecturer account lapses, a <strong>7-day countdown</strong> begins. Renew within that window and your credits are preserved.</p>
+              </div>
+              <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+                <p className="text-sm font-bold text-red-900 mb-1">Trigger 2 — Account dormancy</p>
+                <p className="text-sm text-red-800 leading-relaxed">Separately, if there are <strong>no logins for 30 days</strong> — regardless of subscription status — your credits expire. A reminder is sent after 2 days of inactivity.</p>
+              </div>
+              <div className="rounded-xl border border-stone-200 bg-stone-50 px-5 py-3">
+                <p className="text-xs text-muted-foreground leading-relaxed">The two triggers are <strong>independent</strong> — neither protects against the other.</p>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="px-5 pb-5 pt-2 shrink-0 border-t border-stone-100">
+          <button onClick={onClose} className="w-full py-3 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">Got it</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Feedback Inbox + Thread ───────────────────────────────────────────────────
 type ThreadMsg = { id: number; role: 'student' | 'lecturer'; text: string; isVoice?: boolean; time: string };
 type FeedbackItem = {
@@ -863,9 +962,47 @@ function barColor(pct: number) {
 function TutorDashboard() {
   const { user } = useUser();
   const displayName = user?.fullName || 'Prof. Adeyemi';
+  const [creditsModalOpen, setCreditsModalOpen] = React.useState(false);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      {creditsModalOpen && <TutorCreditsExplainerModal onClose={() => setCreditsModalOpen(false)} />}
+
+      {/* ── Credit Balance Banner ── */}
+      <div className="relative overflow-hidden rounded-2xl shadow-md bg-[#1a4d35]">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 80% 50%, rgba(255,255,255,0.07) 0%, transparent 60%)' }} />
+        <div className="absolute right-0 top-0 w-64 h-64 rounded-full bg-white/5 -mr-16 -mt-24 pointer-events-none" />
+        <div className="relative px-6 py-5 flex items-center justify-between gap-4">
+          {/* Left — balance */}
+          <div className="flex items-center gap-5">
+            <div className="h-16 w-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
+              <Trophy className="h-8 w-8 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50 mb-0.5">Lecturer Credit Balance</p>
+              <p className="text-4xl font-bold font-serif text-white leading-none tracking-tight">{TUTOR_CREDITS.toLocaleString()}</p>
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-400/30">
+                  <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
+                  <span className="text-[11px] font-bold text-amber-300">4.9★ avg rating</span>
+                </div>
+                <span className="text-[11px] text-white/40">· credits</span>
+              </div>
+            </div>
+          </div>
+          {/* Right — actions */}
+          <div className="flex flex-col items-end gap-2.5 shrink-0">
+            <button onClick={() => setCreditsModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold transition-colors border border-white/15">
+              <Info className="h-4 w-4" /> How credits work
+            </button>
+            <p className="text-[11px] text-white/40 text-right max-w-[210px] leading-snug">
+              Redeem for cash payouts, featured placement, and premium tools.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Greeting */}
       <div>
         <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground">

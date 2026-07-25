@@ -258,18 +258,90 @@ export default function StudentSettings() {
           {active === 'credits' && (
             <>
               <h2 className="font-serif font-bold text-lg text-foreground">Credits &amp; Redemption</h2>
-              <div className="rounded-xl bg-stone-50 border border-stone-200 p-6 text-center space-y-2">
-                <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto">
-                  <Star className="h-6 w-6 text-amber-500" />
+
+              {/* Balance card */}
+              <div className="relative overflow-hidden rounded-2xl shadow-sm" style={{ background: 'linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)' }}>
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 85% 40%, rgba(255,255,255,0.18) 0%, transparent 55%)' }} />
+                <div className="relative px-6 py-5 flex items-center gap-5">
+                  <div className="h-14 w-14 rounded-2xl bg-white/20 border border-white/20 flex items-center justify-center shrink-0">
+                    <Star className="h-7 w-7 text-white fill-white/90" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-100/70">Current Balance</p>
+                    <p className="text-3xl font-bold font-serif text-white leading-none mt-0.5">340 credits</p>
+                    <p className="text-[11px] text-amber-100/60 mt-1.5">Expire 30 days after last login or 7 days after subscription lapse.</p>
+                  </div>
                 </div>
-                <p className="font-semibold text-foreground">0 Credits</p>
-                <p className="text-sm text-muted-foreground">Credits are earned by completing modules, rating sessions, and referring friends. They can be used to unlock add-on modules or extend your subscription.</p>
               </div>
+
+              {/* How to earn */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">How to Earn Credits</p>
+                <div className="rounded-xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+                  {[
+                    { action: 'Watch a topic video in full', credits: '+5' },
+                    { action: 'Engage meaningfully in the AI Q&A', credits: '+5' },
+                    { action: 'Pass Part 1 (MCQ) on first attempt', credits: '+10' },
+                    { action: 'Pass Part 2 (problem question) on first attempt', credits: '+15' },
+                    { action: 'Pass the full topic test on first try', credits: '+20 bonus' },
+                    { action: 'Leave topic feedback with a rating and note', credits: '+3' },
+                    { action: 'Give platform-level feedback when requested', credits: '+5' },
+                    { action: 'Maintain a daily login or study streak', credits: '+2/day' },
+                    { action: 'Renew subscription before it lapses', credits: '+25' },
+                    { action: 'Refer a friend who subscribes', credits: '+50' },
+                    { action: 'Book and complete a tutor session', credits: '+10' },
+                  ].map(({ action, credits }) => (
+                    <div key={action} className="flex items-center justify-between gap-4 px-4 py-3 bg-white">
+                      <p className="text-sm text-foreground">{action}</p>
+                      <span className="shrink-0 text-sm font-bold text-amber-600 font-mono">{credits}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Redeem */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Redeem Credits For</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { item: 'Subscription discount', desc: 'Put credits toward your next renewal' },
+                    { item: 'Free tutor session', desc: 'A full 1-on-1 tutorial at no charge' },
+                    { item: 'Temporary VIP perks', desc: 'Early access to new modules and features' },
+                    { item: 'Raffle entries', desc: 'Enter monthly prize draws' },
+                    { item: 'Profile badges', desc: 'Showcase your achievements' },
+                  ].map(({ item, desc }) => (
+                    <div key={item} className="rounded-xl border border-stone-200 px-4 py-3 bg-stone-50 flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{item}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                      </div>
+                      <button className="shrink-0 px-3 py-1.5 rounded-xl border border-stone-200 bg-white text-xs font-semibold text-stone-500 hover:border-stone-300 transition-colors cursor-not-allowed opacity-60">Redeem</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Promo code */}
               <div className="rounded-xl border border-stone-200 p-5">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Redeem a Code</p>
                 <div className="flex gap-2">
                   <input placeholder="Enter promo or gift code" className="flex-1 h-10 rounded-xl border border-stone-200 px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20" />
                   <button className="px-4 py-2.5 rounded-xl bg-[#1a4d35] text-white text-sm font-semibold hover:bg-[#1a4d35]/90 transition-colors">Apply</button>
+                </div>
+              </div>
+
+              {/* Expiry rules */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Expiry Rules</p>
+                <div className="space-y-2">
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+                    <p className="text-sm font-bold text-amber-900">Trigger 1 — Subscription lapse</p>
+                    <p className="text-sm text-amber-800 mt-0.5 leading-relaxed">A 7-day countdown begins the moment your subscription lapses. Renew within that window to keep your credits.</p>
+                  </div>
+                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+                    <p className="text-sm font-bold text-red-900">Trigger 2 — 30 days of no logins</p>
+                    <p className="text-sm text-red-800 mt-0.5 leading-relaxed">Separately, if no login is recorded for 30 days, credits expire — regardless of subscription status. A reminder is sent after 2 days of inactivity.</p>
+                  </div>
                 </div>
               </div>
             </>
