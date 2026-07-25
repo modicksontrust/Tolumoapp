@@ -404,56 +404,46 @@ function StudentDashboard() {
       {creditsModalOpen && <CreditsExplainerModal onClose={() => setCreditsModalOpen(false)} />}
 
       {/* ── Credit Balance Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl shadow-md" style={{ background: 'linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 85% 40%, rgba(255,255,255,0.18) 0%, transparent 55%)' }} />
-        <div className="relative px-6 py-5 flex items-center justify-between gap-4">
+      <div className="relative overflow-hidden rounded-xl shadow-sm" style={{ background: 'linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 85% 40%, rgba(255,255,255,0.15) 0%, transparent 55%)' }} />
+        <div className="relative px-4 py-2.5 flex items-center justify-between gap-3">
           {/* Left — balance */}
-          <div className="flex items-center gap-5">
-            <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 border border-white/20 shadow-inner">
-              <Star className="h-8 w-8 text-white fill-white/90" />
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 border border-white/20">
+              <Star className="h-4 w-4 text-white fill-white/90" />
             </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-100/70 mb-0.5">Your Credit Balance</p>
-              <p className="text-4xl font-bold font-serif text-white leading-none tracking-tight">{STUDENT_CREDITS.toLocaleString()}</p>
-              <div className="flex items-center gap-2 mt-1.5">
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 border border-white/25">
-                  <Zap className="h-3 w-3 text-white" />
-                  <span className="text-[11px] font-bold text-white">{STUDENT_STREAK_DAYS}-day streak</span>
-                </div>
-                <span className="text-[11px] text-amber-100/60">· credits</span>
+            <div className="flex items-baseline gap-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-100/70">Credits</p>
+              <p className="text-xl font-bold font-serif text-white leading-none">{STUDENT_CREDITS.toLocaleString()}</p>
+              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/20 border border-white/25">
+                <Zap className="h-2.5 w-2.5 text-white" />
+                <span className="text-[10px] font-bold text-white">{STUDENT_STREAK_DAYS}-day streak</span>
               </div>
             </div>
           </div>
-          {/* Right — actions */}
-          <div className="flex flex-col items-end gap-2.5 shrink-0">
+          {/* Right */}
+          <div className="flex items-center gap-3 shrink-0">
+            <p className="text-[10px] text-amber-100/55 hidden sm:block">Expire after 30 days inactive or 7 days after lapse</p>
             <button onClick={() => setCreditsModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-semibold transition-colors border border-white/20">
-              <Info className="h-4 w-4" /> How credits work
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors border border-white/20">
+              <Info className="h-3 w-3" /> How it works
             </button>
-            <p className="text-[11px] text-amber-100/60 text-right max-w-[200px] leading-snug">
-              Expire 30 days after last login or 7 days after subscription lapse.
-            </p>
           </div>
         </div>
       </div>
 
       {/* ── VIP Teaser Card ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-[#0f2d1e] border border-amber-500/20 shadow-sm">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(245,158,11,0.08) 0%, transparent 60%)' }} />
-        <div className="relative px-5 py-4 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center shrink-0">
-            <Crown className="h-5 w-5 text-amber-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <p className="font-bold text-white text-sm">Tolumor VIP</p>
-              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[9px] font-bold uppercase tracking-wider border border-amber-500/25">New</span>
-            </div>
-            <p className="text-xs text-white/55 leading-snug">Priority bookings · Verified badge · Voice Q&A · Early access · Human career coaching · Double credits</p>
+      <div className="relative overflow-hidden rounded-xl bg-[#0f2d1e] border border-amber-500/20">
+        <div className="relative px-4 py-2.5 flex items-center gap-3">
+          <Crown className="h-4 w-4 text-amber-400 shrink-0" />
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <p className="font-bold text-white text-xs">Tolumor VIP</p>
+            <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[9px] font-bold uppercase tracking-wider border border-amber-500/25">New</span>
+            <p className="text-[11px] text-white/45 truncate hidden sm:block ml-1">Priority bookings · Verified badge · Voice Q&A · Early access · Double credits</p>
           </div>
           <button onClick={() => setLocation('/student/vip')}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold transition-colors whitespace-nowrap shadow-md shadow-amber-500/20">
-            See everything VIP includes <ArrowRight className="h-3.5 w-3.5" />
+            className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold transition-colors whitespace-nowrap">
+            See VIP <ArrowRight className="h-3 w-3" />
           </button>
         </div>
       </div>
