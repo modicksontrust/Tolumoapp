@@ -48,27 +48,27 @@ export default function WelcomePage() {
     <div className="h-[100dvh] bg-[#1a4d35] flex flex-col overflow-hidden">
 
       {/* Logo — centered at top */}
-      <div className="flex justify-center pt-5 pb-1 shrink-0">
-        <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-7 w-auto" />
+      <div className="flex justify-center pt-3 pb-0 shrink-0">
+        <img src={`${BASE}/logo-dark.svg`} alt="Tolumor" className="h-6 w-auto" />
       </div>
 
       {/* "A Letter to You" — centered, standalone */}
-      <div className="flex justify-center pt-2 pb-1 shrink-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
+      <div className="flex justify-center pt-1 pb-0 shrink-0">
+        <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-white/40">
           A letter to you
         </p>
       </div>
 
       {/* "Welcome." — alone, centered */}
-      <div className="flex justify-center pt-1 pb-3 shrink-0">
-        <h1 className="font-serif text-5xl font-bold text-white leading-none">
+      <div className="flex justify-center pt-1 pb-2 shrink-0">
+        <h1 className="font-serif text-4xl font-bold text-white leading-none">
           Welcome.
         </h1>
       </div>
 
       {/* Letter card */}
-      <div className="flex-1 flex flex-col mx-auto w-full max-w-2xl px-6 pb-5 min-h-0">
-        <div className="flex-1 bg-[#F5F2EB] rounded-2xl flex flex-col px-10 pt-6 pb-5 min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col mx-auto w-full max-w-2xl px-5 pb-4 min-h-0">
+        <div className="flex-1 bg-[#F5F2EB] rounded-2xl flex flex-col px-9 pt-6 pb-6 min-h-0">
 
           {/* Opening */}
           <p className="font-serif text-xl font-semibold text-amber-700 mb-4 shrink-0">
