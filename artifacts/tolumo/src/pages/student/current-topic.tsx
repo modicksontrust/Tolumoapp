@@ -108,21 +108,97 @@ const FULL_LIBRARY_FEATURES = [
   'Commercial Law Report',
 ];
 
-const RESEARCH_QUESTIONS = [
-  "How has the Supreme Court applied 'covering the field' after 1982?",
-  'What items are on the Exclusive List relevant to technology and communications?',
-  'How do other federal constitutions handle concurrent-list conflicts?',
-  'What is the effect of Section 315 CFRN on existing laws?',
+// ── Q&A — AI knowledge base (grounded in NOTES_SECTIONS & KEY_CONCEPTS) ────────
+const STUDENT_NAME = 'Chisom'; // will come from auth context once wired
+
+type QaRule = { keywords: RegExp; response: string };
+
+const QA_RULES: QaRule[] = [
+  {
+    keywords: /\bfederal(ism|ist)?\b|federal state|federal system|what is federalism/i,
+    response: `Federalism, as we covered, is the constitutional distribution of legislative and executive powers between a central (federal) government and component units — the States — where each tier derives its authority *directly* from the Constitution, not from the other. Section 2(2) CFRN 1999 expressly declares Nigeria a federation: "Nigeria shall be a Federation consisting of States and a Federal Capital Territory." The key distinguishing feature is that neither tier is subordinate to the other in its own sphere; both draw their legitimacy from the same supreme document.`,
+  },
+  {
+    keywords: /section 2|s\.?\s*2\(2\)|s2|nature of|nigerian federal/i,
+    response: `Section 2(2) CFRN 1999 is the foundational provision — it expressly constitutes Nigeria as a federation: "Nigeria shall be a Federation consisting of States and a Federal Capital Territory." This is significant because it means the federal structure is *entrenched* in the Constitution itself, not created by ordinary legislation. Neither the Federal Government nor any State can unilaterally alter or dissolve the federation.`,
+  },
+  {
+    keywords: /section 4|s\.?\s*4\b|legislative power|power to make law|national assembly.*power|competenc/i,
+    response: `Section 4 is the cornerstone of legislative competence under the CFRN. Section 4(1) vests general federal legislative power in the National Assembly, while Section 4(6) does the same for State Houses of Assembly. The critical division flows from the Second Schedule: the National Assembly has *exclusive* power over Part I items (s. 4(2)), *concurrent* power with States over Part II items (s. 4(4)), and States legislate freely on residual matters. The Federal Supremacy Clause in s. 4(5) resolves any concurrent-list conflicts in favour of federal law.`,
+  },
+  {
+    keywords: /exclusive list|exclusive legislative|part i|part 1|68 items|defence|aviation|currency|petroleum|customs/i,
+    response: `The Exclusive Legislative List is found in Part I of the Second Schedule to the CFRN 1999. It contains 68 items — things like defence, currency, customs and excise, aviation, petroleum, and nuclear energy — on which *only* the National Assembly may legislate. State Houses of Assembly have zero competence on these matters, regardless of how much local interest there might be. If a State purports to legislate on an exclusive-list item, that law is void from the outset.`,
+  },
+  {
+    keywords: /concurrent list|concurrent legislative|part ii|part 2|30 items|education|electricity|health|road traffic/i,
+    response: `The Concurrent Legislative List is in Part II of the Second Schedule. It covers 30 items — education, electricity, health, road traffic, and others — where *both* the National Assembly and State Houses of Assembly may legislate. The catch is Section 4(5): whenever there is a conflict between a valid federal law and a State law on a concurrent-list item, the federal law prevails and the State law is void to the extent of the inconsistency. This is where the "covering the field" doctrine does its work.`,
+  },
+  {
+    keywords: /residual|matters not listed|not on (either|the) list|state.*exclusive|state alone|state only/i,
+    response: `Residual powers are a fascinating feature of Nigerian federalism. Any legislative matter that does *not* appear in either the Exclusive List (Part I) or the Concurrent List (Part II) of the Second Schedule falls *exclusively* to the State Houses of Assembly by virtue of their exclusion from the federal lists. No statute explicitly states this — it flows from the constitutional structure itself. So States actually have a wide sphere of residual competence, which includes many purely local matters the Constitution never bothered to enumerate.`,
+  },
+  {
+    keywords: /4\(5\)|s\.?\s*4\s*\(5\)|inconsisten|federal.*prevail|state law.*void|supremacy clause/i,
+    response: `Section 4(5) is the Federal Supremacy Clause: "If any Law enacted by the House of Assembly of a State is inconsistent with any law validly made by the National Assembly, the law made by the National Assembly shall prevail, and that other Law shall to the extent of its inconsistency be void." Two things to note: (1) the federal law must be *validly* made — a federal law made outside the National Assembly's competence cannot override a State law; (2) the State law is only void "to the extent of its inconsistency" — it may remain operative in parts that do not conflict.`,
+  },
+  {
+    keywords: /cover(ing)? the field|occupied field|impliedly exclud|doctrine.*cover|cover.*doctrine/i,
+    response: `"Covering the field" is one of the two inconsistency tests under s. 4(5). It asks: has the National Assembly legislated so *comprehensively* on a concurrent-list matter that it has impliedly left no room for State legislation? If yes, any State law on the same matter — even one that does not directly contradict the federal law — is void because the federal legislature has occupied the entire field. The leading authority is *A.-G. Ogun State v A.-G. Federation* (1982) 3 NCLR 166, where the Supreme Court applied this doctrine to invalidate a State revenue law that encroached on an area comprehensively covered by federal legislation.`,
+  },
+  {
+    keywords: /impossibility|two tests|test.*inconsisten|inconsisten.*test|simultaneous/i,
+    response: `The two tests for inconsistency under s. 4(5) are: (1) **Impossibility** — is it *impossible* to comply with both the federal and State law simultaneously? If obeying one necessarily means breaking the other, they are inconsistent and the federal law prevails. (2) **Covering the Field** — even without direct conflict, has the National Assembly legislated so comprehensively on a concurrent-list matter that it has impliedly excluded State legislation? Both tests were discussed in *A.-G. Ogun State v A.-G. Federation* (1982). You need to be able to apply both to a hypothetical — expect that in the test.`,
+  },
+  {
+    keywords: /AG ogun|ogun.*federation|federation.*ogun|1982.*nclr|abacha.*fawehinmi|fawehinmi|tukur.*gongola|gongola|cases|leading case|authority/i,
+    response: `We covered three key cases in this topic: (1) *A.-G. Ogun State v A.-G. Federation* (1982) 3 NCLR 166 — the leading authority on the "covering the field" doctrine and the operation of s. 4(5). (2) *Tukur v Government of Gongola State* (1989) 4 NWLR (Pt 117) 517 — on concurrent-list conflicts. (3) *General Sani Abacha v Gani Fawehinmi* (2000) 6 NWLR (Pt 660) 228 — on the domestication of international treaties under s. 12 CFRN, which is relevant to legislative competence in the international sphere. The examiner typically expects you to be precise with citations, so practise those.`,
+  },
+  {
+    keywords: /second schedule|schedule.*cfrn|cfrn.*schedule/i,
+    response: `The Second Schedule to the CFRN 1999 is the backbone of legislative power distribution in Nigeria. Part I contains the Exclusive Legislative List (68 items — federal only). Part II contains the Concurrent Legislative List (30 items — federal and State, with federal supremacy on conflict under s. 4(5)). Anything *outside* both lists is residual — State competence by default. When answering problem questions, always identify which Schedule and Part applies to the subject matter before applying s. 4(5).`,
+  },
+  {
+    keywords: /unitary|difference.*federal|federal.*difference|compar/i,
+    response: `In a *unitary* system, all power originates from the centre and subordinate units exercise only what the centre delegates — it can be withdrawn. In a *federal* system like Nigeria's, both tiers derive their authority *directly* from the Constitution, independently of each other. Neither can abolish or curtail the other's constitutionally guaranteed sphere. That independence is why we say each tier is a "co-ordinate" authority, not a subordinate one. Section 2(2) CFRN locks this in at the constitutional level.`,
+  },
 ];
 
-// ── Q&A ────────────────────────────────────────────────────────────────────────
-const AI_QA = [
-  { q: 'What is the effect of s.4(5) of the 1999 Constitution?', a: 'Section 4(5) provides that where a State law is inconsistent with a valid Act of the National Assembly, the Federal law prevails and the State law is void to the extent of the inconsistency — the Federal Supremacy Clause.' },
-  { q: 'Name the two parts of the Second Schedule.', a: 'Part I: Exclusive Legislative List (68 items — Federal only). Part II: Concurrent Legislative List (30 items — both Federal and State, Federal prevails on conflict).' },
-  { q: 'What are residual powers?', a: 'Legislative matters not listed in either Schedule. They vest exclusively in States by exclusion from the Federal lists — States may legislate freely on these matters.' },
-  { q: "Apply the 'covering the field' doctrine to a State education regulation.", a: "Education is on the Concurrent List. If the National Assembly has enacted a comprehensive education statute occupying the field, a conflicting State education law is void under s.4(5) — the Federal law is deemed to have 'covered the field'." },
-  { q: 'What test is used to determine inconsistency under s.4(5)?', a: 'Two tests: (1) Impossibility — is it impossible to obey both laws simultaneously? (2) Occupied field — has Federal Parliament legislated so comprehensively as to impliedly exclude State legislation?' },
-];
+const QA_CONFUSION_ESCALATION = `I can see you're working through this carefully — that's exactly the right instinct. If this particular concept is still not clicking after the test, I'd strongly encourage you to book a one-on-one session with the lecturer directly. The "Book a Tutor Session" option is in your portal. Sometimes a live explanation makes all the difference.`;
+
+const QA_OFF_TOPIC = `That's an interesting question, but it falls outside what we've covered in this specific topic — and I want to make sure I don't confuse you with material outside the lecturer's notes before your test. Let's stay focused on Federalism and the Distribution of Legislative Powers for now. Is there anything from the lecture — the lists, the cases, Section 4(5), the inconsistency tests — that you'd like to go over?`;
+
+const QA_FALLBACK = `That's a fair question — let me think about how to frame it clearly. The topic covers Nigeria's federal structure under the CFRN 1999, specifically: Section 2(2) and what it establishes, Section 4 and the distribution of legislative powers, the Exclusive List, the Concurrent List, residual powers, Section 4(5) and its two inconsistency tests, and the key cases. Which of these would you like me to unpack further?`;
+
+function getAIResponse(input: string, confusionCount: number): { text: string; isConfused: boolean } {
+  const lower = input.toLowerCase();
+  // Check for confusion signals
+  const confusedSignals = /don'?t (get|understand)|confused|lost|not (sure|clear)|still (don'?t|not)|what do(es)? (that|this) mean|can you (explain|clarify)|huh\b|unclear|i'?m? (stuck|struggling)/i;
+  const isConfused = confusedSignals.test(input);
+
+  // Match against knowledge base
+  for (const rule of QA_RULES) {
+    if (rule.keywords.test(input)) {
+      const base = rule.response;
+      if (isConfused && confusionCount >= 1) {
+        return { text: base + '\n\n' + QA_CONFUSION_ESCALATION, isConfused: true };
+      }
+      return { text: base, isConfused };
+    }
+  }
+
+  // Off-topic check (simple heuristic — asks about something clearly unrelated)
+  const offTopicSignals = /criminal law|tort|contract|land law|equity|evidence|jurisprudence|history of law|roman law|company law|tax|ip |intellectual property|family law|cyber|banking/i;
+  if (offTopicSignals.test(lower)) {
+    return { text: QA_OFF_TOPIC, isConfused: false };
+  }
+
+  // Fallback
+  if (isConfused && confusionCount >= 1) {
+    return { text: QA_FALLBACK + '\n\n' + QA_CONFUSION_ESCALATION, isConfused: true };
+  }
+  return { text: QA_FALLBACK, isConfused };
+}
 
 // ── Quiz ───────────────────────────────────────────────────────────────────────
 const MCQ = [
@@ -187,9 +263,17 @@ export default function CurrentTopic() {
   const [showFullLibrary, setShowFullLibrary] = useState(false);
 
   // Q&A
-  const [qaIndex, setQaIndex] = useState(0);
-  const [showAns, setShowAns] = useState(false);
-  const [completedQA, setCompletedQA] = useState<Set<number>>(new Set());
+  type QaMessage = { role: 'ai' | 'student'; text: string };
+  const qaOpeningMsg: QaMessage = {
+    role: 'ai',
+    text: `Hi ${STUDENT_NAME}, you've made it through this topic — well done. Before we move to the test, this is your moment. Think of me as your lecturer, right after class, just for you. Ask me anything about this topic that you're still unsure about — no question is too small, and no question is a wrong one. Let's clear it up together before you go in and show what you know.`,
+  };
+  const [qaMessages, setQaMessages] = useState<QaMessage[]>([qaOpeningMsg]);
+  const [qaInput, setQaInput] = useState('');
+  const [qaIsTyping, setQaIsTyping] = useState(false);
+  const [qaConfusionCount, setQaConfusionCount] = useState(0);
+  const [voiceMode, setVoiceMode] = useState(false);
+  const qaBottomRef = React.useRef<HTMLDivElement>(null);
 
   // Quiz
   const [selected, setSelected] = useState<Record<number, number>>({});
@@ -603,48 +687,151 @@ export default function CurrentTopic() {
 
       {/* ══ Q&A ══ */}
       {step === 'qa' && (
-        <div className="space-y-4">
+        <div className="space-y-3">
+
+          {/* Header */}
           <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 bg-primary">
-              <div className="flex items-center gap-2 text-white">
-                <MessageCircle className="h-5 w-5" />
-                <span className="font-semibold">AI Q&A Coach — {completedQA.size}/{AI_QA.length} questions</span>
-              </div>
-              <span className="text-xs text-white/60">Answer all to unlock the quiz</span>
-            </div>
-            <div className="p-6 space-y-5">
-              <div className="flex items-center gap-2">
-                {AI_QA.map((_, i) => (
-                  <div key={i} className={`h-2 flex-1 rounded-full transition-colors ${completedQA.has(i) ? 'bg-green-500' : i === qaIndex ? 'bg-primary' : 'bg-stone-200'}`} />
-                ))}
-              </div>
-              <div className="bg-stone-50 rounded-xl p-5 border border-stone-200">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Question {qaIndex + 1} of {AI_QA.length}</p>
-                <p className="font-semibold text-foreground leading-relaxed">{AI_QA[qaIndex].q}</p>
-              </div>
-              {showAns ? (
-                <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 space-y-4">
-                  <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Model Answer</p>
-                  <p className="text-sm text-foreground leading-relaxed">{AI_QA[qaIndex].a}</p>
-                  <button
-                    onClick={() => {
-                      const newDone = new Set([...completedQA, qaIndex]);
-                      setCompletedQA(newDone);
-                      if (qaIndex < AI_QA.length - 1) { setQaIndex(q => q + 1); setShowAns(false); }
-                      else { markDone('qa'); setStep('quiz'); }
-                    }}
-                    className="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">
-                    {qaIndex < AI_QA.length - 1 ? 'Next Question →' : 'Proceed to Quiz →'}
-                  </button>
+            <div className="bg-[#1a4d35] px-5 py-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                  <MessageCircle className="h-4 w-4 text-white" />
                 </div>
-              ) : (
-                <button onClick={() => setShowAns(true)}
-                  className="w-full py-3 rounded-xl border border-primary text-primary font-semibold text-sm hover:bg-primary/5 transition-colors">
-                  Reveal Model Answer
-                </button>
+                <div>
+                  <p className="font-bold text-white text-sm">Pre-Test Q&A Session</p>
+                  <p className="text-xs text-white/60 mt-0.5">Ask anything about this topic · AI-powered</p>
+                </div>
+              </div>
+              {/* VIP voice toggle — shown for premium students */}
+              <button
+                onClick={() => setVoiceMode(v => !v)}
+                title="Switch to voice mode (VIP)"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
+                  voiceMode
+                    ? 'bg-amber-400 border-amber-400 text-[#1a4d35]'
+                    : 'border-white/30 text-white/60 hover:border-white/60 hover:text-white'
+                }`}
+              >
+                <Headphones className="h-3.5 w-3.5" />
+                {voiceMode ? 'Voice On' : 'Voice'}
+              </button>
+            </div>
+
+            {/* Voice mode banner */}
+            {voiceMode && (
+              <div className="flex items-center gap-3 px-5 py-3 bg-amber-50 border-b border-amber-100">
+                <Headphones className="h-4 w-4 text-amber-600 shrink-0" />
+                <p className="text-xs text-amber-700 leading-relaxed">
+                  <span className="font-bold">Voice mode active.</span> Speak your question — AI will respond aloud. Full voice interaction is a VIP feature.
+                </p>
+              </div>
+            )}
+
+            {/* Chat thread */}
+            <div className="flex flex-col gap-4 px-5 py-5 max-h-[420px] overflow-y-auto">
+              {qaMessages.map((msg, i) => (
+                <div key={i} className={`flex items-end gap-2.5 ${msg.role === 'student' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  {/* Avatar */}
+                  {msg.role === 'ai' ? (
+                    <div className="h-8 w-8 rounded-full bg-[#1a4d35] flex items-center justify-center shrink-0 self-start">
+                      <MessageCircle className="h-3.5 w-3.5 text-white" />
+                    </div>
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-stone-200 flex items-center justify-center shrink-0 self-start">
+                      <span className="text-xs font-bold text-stone-600">{STUDENT_NAME[0]}</span>
+                    </div>
+                  )}
+                  {/* Bubble */}
+                  <div className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
+                    msg.role === 'ai'
+                      ? 'bg-stone-50 border border-stone-200 text-foreground rounded-tl-sm'
+                      : 'bg-[#1a4d35] text-white rounded-tr-sm'
+                  }`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+
+              {/* Typing indicator */}
+              {qaIsTyping && (
+                <div className="flex items-end gap-2.5">
+                  <div className="h-8 w-8 rounded-full bg-[#1a4d35] flex items-center justify-center shrink-0">
+                    <MessageCircle className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <div className="bg-stone-50 border border-stone-200 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-stone-400 animate-bounce [animation-delay:0ms]" />
+                    <span className="h-2 w-2 rounded-full bg-stone-400 animate-bounce [animation-delay:150ms]" />
+                    <span className="h-2 w-2 rounded-full bg-stone-400 animate-bounce [animation-delay:300ms]" />
+                  </div>
+                </div>
               )}
+              <div ref={qaBottomRef} />
+            </div>
+
+            {/* Input bar */}
+            <div className="px-4 pb-4 pt-2 border-t border-stone-100">
+              <div className="flex items-end gap-2">
+                <textarea
+                  value={qaInput}
+                  onChange={e => setQaInput(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      if (!qaInput.trim() || qaIsTyping) return;
+                      const userText = qaInput.trim();
+                      setQaInput('');
+                      setQaMessages(prev => [...prev, { role: 'student', text: userText }]);
+                      setQaIsTyping(true);
+                      setTimeout(() => {
+                        const { text, isConfused } = getAIResponse(userText, qaConfusionCount);
+                        if (isConfused) setQaConfusionCount(c => c + 1);
+                        setQaMessages(prev => [...prev, { role: 'ai', text }]);
+                        setQaIsTyping(false);
+                        setTimeout(() => qaBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+                      }, 900 + Math.random() * 600);
+                      setTimeout(() => qaBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+                    }
+                  }}
+                  placeholder="Ask anything about this topic…"
+                  rows={1}
+                  className="flex-1 resize-none rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#1a4d35]/30 focus:border-[#1a4d35]/40 transition-all"
+                  style={{ minHeight: '44px', maxHeight: '120px' }}
+                />
+                <button
+                  disabled={!qaInput.trim() || qaIsTyping}
+                  onClick={() => {
+                    if (!qaInput.trim() || qaIsTyping) return;
+                    const userText = qaInput.trim();
+                    setQaInput('');
+                    setQaMessages(prev => [...prev, { role: 'student', text: userText }]);
+                    setQaIsTyping(true);
+                    setTimeout(() => {
+                      const { text, isConfused } = getAIResponse(userText, qaConfusionCount);
+                      if (isConfused) setQaConfusionCount(c => c + 1);
+                      setQaMessages(prev => [...prev, { role: 'ai', text }]);
+                      setQaIsTyping(false);
+                      setTimeout(() => qaBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+                    }, 900 + Math.random() * 600);
+                    setTimeout(() => qaBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+                  }}
+                  className="h-11 w-11 shrink-0 rounded-xl bg-[#1a4d35] text-white flex items-center justify-center hover:bg-[#1a4d35]/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2 text-center">Press Enter to send · Shift+Enter for new line</p>
             </div>
           </div>
+
+          {/* Exit CTA — always visible, student decides when they're ready */}
+          <button
+            onClick={() => { markDone('qa'); setStep('quiz'); }}
+            className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2"
+          >
+            I'm ready for the test <ChevronRight className="h-4 w-4" />
+          </button>
+          <p className="text-center text-[10px] text-muted-foreground -mt-1">
+            You can end this session whenever you feel ready — there's no minimum number of questions.
+          </p>
         </div>
       )}
 
