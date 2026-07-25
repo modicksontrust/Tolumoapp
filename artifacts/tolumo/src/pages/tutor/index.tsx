@@ -11,7 +11,7 @@ import {
   ChevronLeft, ChevronRight, Menu, X,
   Edit, Trash2, Plus, Clock, Users, TrendingUp,
   CheckCircle2, Star, Award, Users2,
-  MessageCircle, Send, Bot, Minimize2
+  MessageCircle, Send, Bot, Minimize2, Mic, MicOff, PhoneOff
 } from 'lucide-react';
 import {
   useGetTutorSummary,
@@ -621,6 +621,216 @@ function AIChatWidget() {
   );
 }
 
+// ── Feedback Inbox + Thread ───────────────────────────────────────────────────
+type ThreadMsg = { id: number; role: 'student' | 'lecturer'; text: string; isVoice?: boolean; time: string };
+type FeedbackItem = {
+  id: number; student: string; initials: string;
+  topic: string; rating: number; note: string; time: string;
+  thread: ThreadMsg[]; voiceEnabled: boolean; ended: boolean; unread: boolean;
+};
+
+const INITIAL_FEEDBACK: FeedbackItem[] = [
+  {
+    id: 1, student: 'Chisom Nwosu', initials: 'CN',
+    topic: 'Federalism & Devolution of Powers',
+    rating: 5,
+    note: 'Thank you so much, Prof. This topic finally made Section 4(5) click for me. The covering the field doctrine was confusing at first but the problem question helped a lot. I still want to ask about the impossibility test — could we explore that more next time?',
+    time: 'Just now',
+    thread: [],
+    voiceEnabled: false, ended: false, unread: true,
+  },
+];
+
+function nowT() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+
+function FeedbackInbox() {
+  const [items, setItems] = React.useState<FeedbackItem[]>(INITIAL_FEEDBACK);
+  const [openId, setOpenId] = React.useState<number | null>(null);
+  const [replyText, setReplyText] = React.useState('');
+  const threadBottomRef = React.useRef<HTMLDivElement>(null);
+
+  const openItem = items.find(i => i.id === openId) ?? null;
+
+  const openThread = (id: number) => {
+    setItems(prev => prev.map(i => i.id === id ? { ...i, unread: false } : i));
+    setOpenId(id);
+  };
+
+  const sendReply = () => {
+    if (!replyText.trim() || !openId) return;
+    const msg: ThreadMsg = { id: Date.now(), role: 'lecturer', text: replyText.trim(), time: nowT() };
+    setItems(prev => prev.map(i => i.id === openId ? { ...i, thread: [...i.thread, msg] } : i));
+    setReplyText('');
+    setTimeout(() => threadBottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+  };
+
+  const toggleVoice = (id: number) =>
+    setItems(prev => prev.map(i => i.id === id ? { ...i, voiceEnabled: !i.voiceEnabled } : i));
+
+  const endThread = (id: number) =>
+    setItems(prev => prev.map(i => i.id === id ? { ...i, ended: true } : i));
+
+  const unreadCount = items.filter(i => i.unread).length;
+
+  return (
+    <>
+      {/* Inbox card */}
+      <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+          <div className="flex items-center gap-2">
+            <h2 className="font-serif font-bold text-lg text-foreground">Student Feedback</h2>
+            {unreadCount > 0 && (
+              <span className="h-5 px-2 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center">{unreadCount} new</span>
+            )}
+          </div>
+        </div>
+        {items.length === 0 ? (
+          <div className="px-6 py-8 text-center text-sm text-muted-foreground">No feedback yet.</div>
+        ) : (
+          <div className="divide-y divide-stone-100">
+            {items.map(item => (
+              <div key={item.id} className="flex items-start gap-4 px-6 py-4 hover:bg-stone-50 transition-colors cursor-pointer" onClick={() => openThread(item.id)}>
+                <div className="h-10 w-10 rounded-full bg-stone-200 flex items-center justify-center text-sm font-bold text-foreground shrink-0">{item.initials}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-semibold text-sm text-foreground">{item.student}</p>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {item.unread && <span className="h-2.5 w-2.5 rounded-full bg-red-500" />}
+                      <span className="text-xs text-muted-foreground">{item.time}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{item.topic}</p>
+                  <div className="flex items-center gap-0.5 mt-1">
+                    {[1,2,3,4,5].map(s => <Star key={s} className={`h-3 w-3 ${s <= item.rating ? 'fill-amber-400 text-amber-400' : 'text-stone-200'}`} />)}
+                  </div>
+                  <p className="text-xs text-foreground mt-1 line-clamp-2 leading-relaxed">{item.note}</p>
+                  {item.ended && <span className="mt-1 inline-block text-[10px] font-bold uppercase tracking-wider text-stone-400">Thread closed</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Thread modal */}
+      {openItem && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full md:max-w-lg rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col max-h-[90dvh] overflow-hidden">
+
+            {/* Thread header */}
+            <div className="bg-[#1a4d35] px-5 py-4 shrink-0">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-white/15 flex items-center justify-center text-white font-bold text-sm shrink-0">{openItem.initials}</div>
+                  <div>
+                    <p className="font-bold text-white text-sm">{openItem.student}</p>
+                    <p className="text-xs text-white/60 mt-0.5">{openItem.topic}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  {!openItem.ended && (
+                    <>
+                      <button
+                        onClick={() => toggleVoice(openItem.id)}
+                        title={openItem.voiceEnabled ? 'Disable voice notes' : 'Enable voice notes'}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${openItem.voiceEnabled ? 'bg-amber-400 border-amber-400 text-[#1a4d35]' : 'border-white/30 text-white/60 hover:border-white/60 hover:text-white'}`}>
+                        {openItem.voiceEnabled ? <Mic className="h-3 w-3" /> : <MicOff className="h-3 w-3" />}
+                        {openItem.voiceEnabled ? 'Voice On' : 'Voice'}
+                      </button>
+                      <button
+                        onClick={() => { if (confirm('End this conversation? This cannot be undone.')) endThread(openItem.id); }}
+                        title="End conversation"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-bold border border-red-300/50 text-red-300 hover:border-red-300 hover:text-red-200 transition-colors">
+                        <PhoneOff className="h-3 w-3" /> End
+                      </button>
+                    </>
+                  )}
+                  <button onClick={() => setOpenId(null)} className="text-white/60 hover:text-white transition-colors ml-1">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Voice banner */}
+            {openItem.voiceEnabled && !openItem.ended && (
+              <div className="flex items-center gap-2 px-5 py-2.5 bg-amber-50 border-b border-amber-100 shrink-0">
+                <Mic className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                <p className="text-xs text-amber-700">Voice notes enabled — both you and the student can now send voice messages in this thread.</p>
+              </div>
+            )}
+
+            {/* Ended banner */}
+            {openItem.ended && (
+              <div className="flex items-center gap-2 px-5 py-2.5 bg-stone-100 border-b border-stone-200 shrink-0">
+                <PhoneOff className="h-3.5 w-3.5 text-stone-500 shrink-0" />
+                <p className="text-xs text-stone-600 font-semibold">This conversation has been ended and is permanently closed.</p>
+              </div>
+            )}
+
+            {/* Student original feedback */}
+            <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
+              {/* Original feedback bubble */}
+              <div className="flex items-start gap-2.5">
+                <div className="h-8 w-8 rounded-full bg-stone-200 flex items-center justify-center text-xs font-bold text-stone-600 shrink-0">{openItem.initials}</div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    {[1,2,3,4,5].map(s => <Star key={s} className={`h-3 w-3 ${s <= openItem.rating ? 'fill-amber-400 text-amber-400' : 'text-stone-200'}`} />)}
+                    <span className="text-[10px] text-muted-foreground ml-1">{openItem.time}</span>
+                  </div>
+                  <div className="bg-stone-100 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-foreground leading-relaxed">
+                    {openItem.note}
+                  </div>
+                </div>
+              </div>
+
+              {/* Thread messages */}
+              {openItem.thread.map(msg => (
+                <div key={msg.id} className={`flex items-start gap-2.5 ${msg.role === 'lecturer' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${msg.role === 'lecturer' ? 'bg-[#1a4d35] text-white' : 'bg-stone-200 text-stone-600'}`}>
+                    {msg.role === 'lecturer' ? 'P' : openItem.initials}
+                  </div>
+                  <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'lecturer' ? 'bg-[#1a4d35] text-white rounded-tr-sm' : 'bg-stone-100 text-foreground rounded-tl-sm'}`}>
+                    {msg.isVoice ? (
+                      <div className="flex items-center gap-2">
+                        <Mic className="h-4 w-4 opacity-70 shrink-0" />
+                        <span className="text-xs italic opacity-80">Voice note · {msg.text}</span>
+                      </div>
+                    ) : msg.text}
+                  </div>
+                </div>
+              ))}
+              <div ref={threadBottomRef} />
+            </div>
+
+            {/* Reply input */}
+            {!openItem.ended && (
+              <div className="px-4 pb-4 pt-2 border-t border-stone-100 shrink-0">
+                <div className="flex items-end gap-2">
+                  <textarea
+                    value={replyText}
+                    onChange={e => setReplyText(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(); } }}
+                    rows={1}
+                    placeholder="Reply to student…"
+                    className="flex-1 resize-none rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a4d35]/30 focus:border-[#1a4d35]/40 transition-all"
+                    style={{ minHeight: '44px', maxHeight: '120px' }}
+                  />
+                  <button onClick={sendReply} disabled={!replyText.trim()}
+                    className="h-11 w-11 shrink-0 rounded-xl bg-[#1a4d35] text-white flex items-center justify-center hover:bg-[#1a4d35]/90 transition-colors disabled:opacity-40">
+                    <Send className="h-4 w-4" />
+                  </button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1.5 text-center">Only you can end this conversation · Press Enter to send</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 const TOPICS = [
   { label: 'Topic 1: Origins of Nigerian Federalism', pct: 95 },
@@ -750,6 +960,9 @@ function TutorDashboard() {
           ))}
         </div>
       </div>
+
+      {/* Feedback Inbox */}
+      <FeedbackInbox />
     </div>
   );
 }

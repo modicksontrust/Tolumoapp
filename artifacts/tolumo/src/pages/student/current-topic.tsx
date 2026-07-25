@@ -4,8 +4,8 @@ import {
   CheckCircle2, Lock, ChevronLeft, ChevronRight, ChevronDown,
   Play, Pause, SkipBack, SkipForward, Volume2,
   MessageCircle, Search, AlertCircle,
-  Headphones, BookOpen, Scale, FileText, Gavel, Newspaper,
-  Clock, Plus, XCircle, RefreshCw, Info, X,
+  Headphones, BookOpen, Scale, FileText,
+  Clock, Plus, XCircle, RefreshCw, Info, X, Star, Send,
 } from 'lucide-react';
 
 // ── Module & topics ────────────────────────────────────────────────────────────
@@ -229,6 +229,24 @@ const MCQ = [
   },
 ];
 
+// ── Part 2 — Problem question & AI grading ─────────────────────────────────────
+const PROBLEM_QUESTION = {
+  q: `In January 2024, the National Assembly enacted the Digital Communications Harmonisation Act 2024 — a comprehensive statute regulating all aspects of internet service provision, data protection, and digital communications infrastructure across Nigeria. In March 2024, Ogun State enacted the Ogun Digital Economy Regulation Law 2024, which imposes additional data localisation requirements and a state-specific digital tax on internet service providers operating within the State.\n\nAdvise Ogun State on the constitutional validity of its legislation, with specific reference to the relevant provisions of the CFRN 1999 and leading authorities.`,
+  markScheme: [
+    'section 4', 's.4(5)', '4(5)', 'covering the field', 'covered the field',
+    'ogun', 'inconsistency', 'inconsistent', 'concurrent list', 'exclusive list',
+    'second schedule', 'national assembly', 'prevail', 'void', 'impossibility',
+    'federal supremacy', 'occupied field', 'two tests',
+  ],
+  modelAnswer: `The core constitutional issue is whether the Ogun State legislation is valid in light of the National Assembly's comprehensive federal statute.\n\nStep 1 — Identify the legislative item. Digital communications regulation and telecommunications infrastructure likely fall within the Exclusive Legislative List (Part I, Second Schedule, Item 67) or at minimum within the Concurrent Legislative List. If Item 67 (Telecommunications) applies, the State law is void ab initio under s. 4(2) CFRN 1999 without further analysis.\n\nStep 2 — Apply s. 4(5) (if concurrent). Section 4(5) CFRN provides: "If any Law enacted by the House of Assembly of a State is inconsistent with any law validly made by the National Assembly, the law made by the National Assembly shall prevail, and that other Law shall to the extent of its inconsistency be void." Two tests apply:\n\n(a) Impossibility test: Can ISPs simultaneously comply with both the federal Act and the State law's data localisation requirements and digital tax? If dual compliance is impossible, the State law is void to that extent.\n\n(b) Covering the Field: Following A.-G. Ogun State v A.-G. Federation (1982) 3 NCLR 166, where the National Assembly has legislated comprehensively on a concurrent-list matter, any State law on the same subject is void — even without direct conflict. The federal Act is expressly "comprehensive," covering all aspects of digital communications infrastructure, making this doctrine plainly applicable.\n\nConclusion: The Ogun State law is likely void in its entirety — either because digital communications falls on the Exclusive List (void ab initio), or because the federal Act covers the field comprehensively, rendering the State law void under both inconsistency tests.`,
+};
+
+function gradePart2(answer: string): number {
+  const lower = answer.toLowerCase();
+  const hits = PROBLEM_QUESTION.markScheme.filter(kw => lower.includes(kw)).length;
+  return Math.min(10, Math.round((hits / 6) * 10));
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function fmt(s: number) {
   const m = Math.floor(s / 60), ss = s % 60;
@@ -275,18 +293,28 @@ export default function CurrentTopic() {
   const [voiceMode, setVoiceMode] = useState(false);
   const qaBottomRef = React.useRef<HTMLDivElement>(null);
 
-  // Quiz
+  // Quiz — phased flow
+  type QuizPhase = 'part1' | 'part1Results' | 'part2' | 'part2Results' | 'feedback' | 'done';
+  const [quizPhase, setQuizPhase] = useState<QuizPhase>('part1');
   const [selected, setSelected] = useState<Record<number, number>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [quizPassed, setQuizPassed] = useState(false);
-  const [quizSecs, setQuizSecs] = useState(590); // 9:50
+  const [part1Score, setPart1Score] = useState(0);
+  const [part2Answer, setPart2Answer] = useState('');
+  const [part2Grading, setPart2Grading] = useState(false);
+  const [part2Score, setPart2Score] = useState<number | null>(null);
+  const [testPassed, setTestPassed] = useState(false);
+  const [quizSecs, setQuizSecs] = useState(600); // 10:00
 
+  // Feedback
+  const [feedbackRating, setFeedbackRating] = useState(0);
+  const [feedbackNote, setFeedbackNote] = useState('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // Part-1 timer — only runs while in part1 phase
   useEffect(() => {
-    if (step !== 'quiz' || submitted) return;
-    if (quizSecs <= 0) return;
+    if (step !== 'quiz' || quizPhase !== 'part1' || quizSecs <= 0) return;
     const t = setInterval(() => setQuizSecs(s => s - 1), 1000);
     return () => clearInterval(t);
-  }, [step, submitted, quizSecs]);
+  }, [step, quizPhase, quizSecs]);
 
   const markDone = (s: StepId) => setCompletedSteps(prev => new Set([...prev, s]));
 
@@ -303,17 +331,34 @@ export default function CurrentTopic() {
     if (i < stepOrder.length - 1) setStep(stepOrder[i + 1]);
   };
 
-  const submitQuiz = () => {
-    const correct = MCQ.filter((q, i) => selected[i] === q.ans).length;
-    setSubmitted(true);
-    if (correct >= 3) { setQuizPassed(true); markDone('quiz'); }
+  const submitPart1 = () => {
+    const score = MCQ.filter((q, i) => selected[i] === q.ans).length;
+    setPart1Score(score);
+    setQuizPhase('part1Results');
   };
 
+  const submitPart2 = () => {
+    setPart2Grading(true);
+    setTimeout(() => {
+      const score = gradePart2(part2Answer);
+      setPart2Score(score);
+      const passed = part1Score >= 3 && score >= 5;
+      setTestPassed(passed);
+      if (passed) markDone('quiz');
+      setPart2Grading(false);
+      setQuizPhase('part2Results');
+    }, 1800);
+  };
+
+  const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
+
   const resetAll = () => {
-    setSelected({}); setSubmitted(false); setQuizPassed(false);
+    setSelected({}); setPart1Score(0); setPart2Answer(''); setPart2Score(null);
+    setTestPassed(false); setQuizPhase('part1'); setQuizSecs(600);
+    setFeedbackRating(0); setFeedbackNote(''); setFeedbackSubmitted(false);
     setCompletedSteps(new Set()); setStep('watch');
-    setQaIndex(0); setShowAns(false); setCompletedQA(new Set());
-    setNotesRead(false); setPlaying(false); setQuizSecs(590);
+    setQaMessages([qaOpeningMsg]); setQaInput(''); setQaIsTyping(false); setQaConfusionCount(0);
+    setNotesRead(false); setPlaying(false);
   };
 
   const topic = TOPICS.find(t => t.id === currentTopicId) || TOPICS[0];
@@ -838,127 +883,277 @@ export default function CurrentTopic() {
       {/* ══ QUIZ ══ */}
       {step === 'quiz' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            {/* Quiz header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
-              <div>
-                <p className="font-semibold text-foreground">Topic Quiz — Part I: Multiple Choice</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Select the best answer for each question. Once you pass, you can rewatch this topic's video freely.</p>
-              </div>
-              {!submitted && (
-                <div className="flex items-center gap-1.5 text-sm font-mono font-bold text-foreground shrink-0 ml-4">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  {fmt(quizSecs)}
-                </div>
-              )}
-            </div>
 
-            {/* Passed */}
-            {quizPassed && (
-              <div className="p-10 text-center space-y-4">
-                <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-serif font-bold text-foreground">Topic Complete! 🎉</h3>
-                <p className="text-sm text-muted-foreground">You've passed the quiz. Topic {topic.id} is now fully credited to your certificate progress.</p>
-                <div className="flex gap-3 justify-center pt-2">
-                  <button onClick={() => setLocation('/student/modules')} className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors">Back to Module Library</button>
-                  <button onClick={resetAll} className="px-6 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">Revisit Topic</button>
-                </div>
-              </div>
+          {/* ── Part label pill ── */}
+          <div className="flex items-center gap-2">
+            {(['part1','part1Results'] as QuizPhase[]).includes(quizPhase) && (
+              <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-[#1a4d35] text-white">Part 1 — Multiple Choice</span>
             )}
-
-            {/* Failed — detailed review */}
-            {submitted && !quizPassed && (() => {
-              const score = MCQ.filter((q, i) => selected[i] === q.ans).length;
-              return (
-                <div className="p-6 space-y-4">
-                  {/* Score header */}
-                  <div className="flex flex-col items-center gap-2 py-4">
-                    <div className="h-14 w-14 rounded-full bg-red-100 flex items-center justify-center">
-                      <XCircle className="h-7 w-7 text-red-500" />
-                    </div>
-                    <p className="text-2xl font-serif font-bold text-foreground">{score}/5 Correct</p>
-                    <p className="text-sm text-muted-foreground">Not quite — review the answers below and try again.</p>
-                  </div>
-
-                  {/* Per-question result cards */}
-                  <div className="space-y-2">
-                    {MCQ.map((q, qi) => {
-                      const correct = selected[qi] === q.ans;
-                      return (
-                        <div key={qi} className={`rounded-xl px-4 py-3 border ${correct ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
-                          <p className={`text-sm font-semibold mb-1.5 ${correct ? 'text-green-900' : 'text-red-900'}`}>{q.q}</p>
-                          <p className="text-xs text-green-700 flex items-center gap-1">
-                            <CheckCircle2 className="h-3 w-3 shrink-0" />
-                            Correct: {q.opts[q.ans]}
-                          </p>
-                          {!correct && selected[qi] !== undefined && (
-                            <p className="text-xs text-red-600 flex items-center gap-1 mt-0.5">
-                              <XCircle className="h-3 w-3 shrink-0" />
-                              Your answer: {q.opts[selected[qi]]}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Warning */}
-                  <div className="rounded-xl bg-amber-50 border border-amber-100 px-5 py-4 flex items-start gap-3">
-                    <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-                    <p className="text-sm text-amber-800 leading-relaxed text-center">
-                      You need 3/5 to pass. You must retake this topic from the beginning — watch the video, review notes, and complete the Q&A before attempting the test again.
-                    </p>
-                  </div>
-
-                  {/* Retake button */}
-                  <button onClick={resetAll}
-                    className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
-                    <RefreshCw className="h-4 w-4" /> Retake Topic from Beginning
-                  </button>
-                </div>
-              );
-            })()}
-
-            {/* Quiz form */}
-            {!submitted && (
-              <div className="p-6 space-y-7">
-                {MCQ.map((q, qi) => (
-                  <div key={qi} className="space-y-3">
-                    <p className="font-semibold text-foreground text-sm">{qi + 1}. {q.q}</p>
-                    <div className="space-y-2">
-                      {q.opts.map((opt, oi) => (
-                        <button
-                          key={oi}
-                          onClick={() => setSelected(prev => ({ ...prev, [qi]: oi }))}
-                          className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-colors flex items-center gap-3
-                            ${selected[qi] === oi ? 'border-primary bg-primary/5 text-primary font-medium' : 'border-stone-200 text-foreground hover:border-stone-300 hover:bg-stone-50'}`}
-                        >
-                          <span className={`h-4 w-4 rounded-full border-2 shrink-0 flex items-center justify-center
-                            ${selected[qi] === oi ? 'border-primary' : 'border-stone-300'}`}>
-                            {selected[qi] === oi && <span className="h-2 w-2 rounded-full bg-primary block" />}
-                          </span>
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            {(['part2','part2Results'] as QuizPhase[]).includes(quizPhase) && (
+              <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-amber-600 text-white">Part 2 — Problem Question</span>
+            )}
+            {quizPhase === 'feedback' && (
+              <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-stone-700 text-white">Feedback</span>
             )}
           </div>
 
-          {!submitted && (
-            <button
-              onClick={submitQuiz}
-              className="w-full py-4 rounded-2xl bg-stone-200 text-stone-500 font-bold text-sm transition-colors disabled:cursor-not-allowed
-                enabled:bg-[#1a4d35] enabled:text-white enabled:hover:bg-[#1a4d35]/90"
-              disabled={false}
-            >
-              Submit Answers ({Object.keys(selected).length}/5 answered)
-            </button>
+          {/* ══ PART 1 — MCQ FORM ══ */}
+          {quizPhase === 'part1' && (
+            <>
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+                  <div>
+                    <p className="font-semibold text-foreground">Multiple Choice — 5 Questions</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Select the best answer for each question. Pass mark: 3/5.</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm font-mono font-bold text-foreground shrink-0 ml-4">
+                    <Clock className={`h-4 w-4 ${quizSecs <= 60 ? 'text-red-500' : 'text-muted-foreground'}`} />
+                    <span className={quizSecs <= 60 ? 'text-red-500' : ''}>{fmt(quizSecs)}</span>
+                  </div>
+                </div>
+                <div className="p-6 space-y-7">
+                  {MCQ.map((q, qi) => (
+                    <div key={qi} className="space-y-3">
+                      <p className="font-semibold text-foreground text-sm">{qi + 1}. {q.q}</p>
+                      <div className="space-y-2">
+                        {q.opts.map((opt, oi) => (
+                          <button key={oi} onClick={() => setSelected(prev => ({ ...prev, [qi]: oi }))}
+                            className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-colors flex items-center gap-3
+                              ${selected[qi] === oi ? 'border-primary bg-primary/5 text-primary font-medium' : 'border-stone-200 text-foreground hover:border-stone-300 hover:bg-stone-50'}`}>
+                            <span className={`h-4 w-4 rounded-full border-2 shrink-0 flex items-center justify-center ${selected[qi] === oi ? 'border-primary' : 'border-stone-300'}`}>
+                              {selected[qi] === oi && <span className="h-2 w-2 rounded-full bg-primary block" />}
+                            </span>
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button onClick={submitPart1} disabled={Object.keys(selected).length < MCQ.length}
+                className="w-full py-4 rounded-2xl font-bold text-sm transition-colors disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed enabled:bg-[#1a4d35] enabled:text-white enabled:hover:bg-[#1a4d35]/90">
+                Submit Part 1 ({Object.keys(selected).length}/{MCQ.length} answered)
+              </button>
+            </>
           )}
+
+          {/* ══ PART 1 RESULTS ══ */}
+          {quizPhase === 'part1Results' && (
+            <>
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                <div className={`px-6 py-5 flex items-center gap-4 border-b border-stone-100 ${part1Score >= 3 ? 'bg-green-50' : 'bg-red-50'}`}>
+                  <div className={`h-12 w-12 rounded-full flex items-center justify-center shrink-0 ${part1Score >= 3 ? 'bg-green-100' : 'bg-red-100'}`}>
+                    {part1Score >= 3 ? <CheckCircle2 className="h-6 w-6 text-green-600" /> : <XCircle className="h-6 w-6 text-red-500" />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground text-lg">{part1Score}/5 Correct</p>
+                    <p className="text-sm text-muted-foreground">{part1Score >= 3 ? 'Part 1 passed — proceed to Part 2' : 'Part 1 below pass mark — results shown for review'}</p>
+                  </div>
+                </div>
+                <div className="p-5 space-y-2">
+                  {MCQ.map((q, qi) => {
+                    const correct = selected[qi] === q.ans;
+                    return (
+                      <div key={qi} className={`rounded-xl px-4 py-3 border ${correct ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                        <p className={`text-sm font-semibold mb-1.5 ${correct ? 'text-green-900' : 'text-red-900'}`}>{q.q}</p>
+                        <p className="text-xs text-green-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3 shrink-0" />Correct: {q.opts[q.ans]}</p>
+                        {!correct && selected[qi] !== undefined && (
+                          <p className="text-xs text-red-600 flex items-center gap-1 mt-0.5"><XCircle className="h-3 w-3 shrink-0" />Your answer: {q.opts[selected[qi]]}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <button onClick={() => setQuizPhase('part2')}
+                className="w-full py-4 rounded-2xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors flex items-center justify-center gap-2">
+                Proceed to Part 2 — Problem Question <ChevronRight className="h-4 w-4" />
+              </button>
+            </>
+          )}
+
+          {/* ══ PART 2 — PROBLEM QUESTION ══ */}
+          {quizPhase === 'part2' && (
+            <>
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-stone-100 bg-amber-50">
+                  <p className="font-semibold text-foreground text-sm">Problem Question</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Write a full legal answer. Your response is graded by AI against a model answer.</p>
+                </div>
+                <div className="p-6 space-y-5">
+                  <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
+                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{PROBLEM_QUESTION.q}</p>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Your Answer</label>
+                      <span className={`text-xs font-medium ${wordCount(part2Answer) > 900 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                        ~{wordCount(part2Answer)} words
+                      </span>
+                    </div>
+                    <textarea
+                      value={part2Answer}
+                      onChange={e => setPart2Answer(e.target.value)}
+                      rows={10}
+                      placeholder="Begin your answer here. Structure your response clearly — identify the legal issue, cite the relevant provisions, apply the law, and state your conclusion."
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 text-sm text-foreground placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#1a4d35]/30 focus:border-[#1a4d35]/40 resize-y transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button onClick={submitPart2} disabled={part2Answer.trim().length < 50 || part2Grading}
+                className="w-full py-4 rounded-2xl font-bold text-sm transition-colors disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed enabled:bg-amber-600 enabled:text-white enabled:hover:bg-amber-700 flex items-center justify-center gap-2">
+                {part2Grading ? (
+                  <><RefreshCw className="h-4 w-4 animate-spin" /> AI is grading your answer…</>
+                ) : (
+                  <>Submit for AI Grading</>
+                )}
+              </button>
+            </>
+          )}
+
+          {/* ══ PART 2 RESULTS + COMBINED OUTCOME ══ */}
+          {quizPhase === 'part2Results' && part2Score !== null && (
+            <>
+              {/* Combined scorecard */}
+              <div className={`rounded-2xl border-2 p-6 ${testPassed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className={`h-14 w-14 rounded-full flex items-center justify-center shrink-0 ${testPassed ? 'bg-green-100' : 'bg-red-100'}`}>
+                    {testPassed ? <CheckCircle2 className="h-7 w-7 text-green-600" /> : <XCircle className="h-7 w-7 text-red-500" />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground text-xl font-serif">{testPassed ? 'Test Passed' : 'Test Not Passed'}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{testPassed ? 'Well done — you cleared both parts.' : 'You must restart this topic from the beginning.'}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className={`rounded-xl px-4 py-3 border ${part1Score >= 3 ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Part 1 — MCQ</p>
+                    <p className="text-2xl font-bold font-serif text-foreground mt-1">{part1Score}<span className="text-sm text-muted-foreground">/5</span></p>
+                    <p className={`text-xs font-semibold mt-0.5 ${part1Score >= 3 ? 'text-green-600' : 'text-red-500'}`}>{part1Score >= 3 ? 'Passed' : 'Below pass mark'}</p>
+                  </div>
+                  <div className={`rounded-xl px-4 py-3 border ${part2Score >= 5 ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Part 2 — Problem</p>
+                    <p className="text-2xl font-bold font-serif text-foreground mt-1">{part2Score}<span className="text-sm text-muted-foreground">/10</span></p>
+                    <p className={`text-xs font-semibold mt-0.5 ${part2Score >= 5 ? 'text-green-600' : 'text-red-500'}`}>{part2Score >= 5 ? 'Passed' : 'Below pass mark'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Model answer */}
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-stone-100 bg-stone-50">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Model Answer — Part 2</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{PROBLEM_QUESTION.modelAnswer}</p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <button onClick={() => setQuizPhase('feedback')}
+                className={`w-full py-4 rounded-2xl font-bold text-sm transition-colors flex items-center justify-center gap-2 ${testPassed ? 'bg-[#1a4d35] hover:bg-[#1a4d35]/90 text-white' : 'bg-[#1a4d35] hover:bg-[#1a4d35]/90 text-white'}`}>
+                Continue to Feedback <ChevronRight className="h-4 w-4" />
+              </button>
+            </>
+          )}
+
+          {/* ══ MANDATORY FEEDBACK ══ */}
+          {quizPhase === 'feedback' && !feedbackSubmitted && (
+            <>
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                {/* Warm note */}
+                <div className="bg-[#1a4d35] px-6 py-6">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mb-2">A note from the journey</p>
+                  <p className="text-white text-sm leading-relaxed font-serif italic">
+                    {testPassed
+                      ? `"You showed up, you did the work, and you did not skip the hard parts. That is exactly what separates lawyers from people who merely studied law. The next topic is yours — take it."`
+                      : `"The best legal minds you will ever meet are not the ones who passed everything the first time. They are the ones who came back. You came back. That already says something. Rest briefly, then return — the law will still be here, and so will we."`
+                    }
+                  </p>
+                </div>
+
+                <div className="p-6 space-y-5">
+                  {/* Star rating */}
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Rate this topic</p>
+                    <div className="flex items-center gap-2">
+                      {[1,2,3,4,5].map(s => (
+                        <button key={s} onClick={() => setFeedbackRating(s)}
+                          className="transition-transform hover:scale-110 focus:outline-none">
+                          <Star className={`h-8 w-8 ${s <= feedbackRating ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}`} />
+                        </button>
+                      ))}
+                      {feedbackRating > 0 && (
+                        <span className="ml-2 text-sm font-semibold text-foreground">
+                          {['','Poor','Fair','Good','Great','Excellent'][feedbackRating]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Written note */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Note to lecturer</p>
+                      <span className={`text-xs ${wordCount(feedbackNote) > 100 ? 'text-red-500 font-semibold' : 'text-muted-foreground'}`}>
+                        {wordCount(feedbackNote)}/100 words
+                      </span>
+                    </div>
+                    <textarea
+                      value={feedbackNote}
+                      onChange={e => setFeedbackNote(e.target.value)}
+                      rows={4}
+                      maxLength={800}
+                      placeholder="Write a short note to your lecturer — a question, a thought, or simply how this topic made you feel. Max 100 words."
+                      className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 text-sm placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#1a4d35]/30 resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setFeedbackSubmitted(true)}
+                disabled={feedbackRating === 0 || wordCount(feedbackNote) === 0 || wordCount(feedbackNote) > 100}
+                className="w-full py-4 rounded-2xl font-bold text-sm transition-colors disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed enabled:bg-[#1a4d35] enabled:text-white enabled:hover:bg-[#1a4d35]/90 flex items-center justify-center gap-2">
+                <Send className="h-4 w-4" /> Submit Feedback
+              </button>
+            </>
+          )}
+
+          {/* ══ FEEDBACK SUBMITTED ══ */}
+          {quizPhase === 'feedback' && feedbackSubmitted && (
+            <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-10 text-center space-y-4">
+              <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-foreground">
+                {testPassed ? 'Topic Complete! 🎉' : 'Feedback Received'}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                {testPassed
+                  ? `Your feedback has been sent to ${MODULE.tutor}. Topic ${topic.id} is now fully credited to your certificate progress.`
+                  : `Your feedback has been sent to ${MODULE.tutor}. Now restart this topic from the video — no shortcuts.`
+                }
+              </p>
+              {testPassed ? (
+                <div className="flex gap-3 justify-center pt-2">
+                  <button onClick={() => setLocation('/student/modules')} className="px-6 py-2.5 rounded-xl bg-[#1a4d35] text-white font-semibold text-sm hover:bg-[#1a4d35]/90 transition-colors">
+                    Back to Module Library
+                  </button>
+                  <button onClick={resetAll} className="px-6 py-2.5 rounded-xl border border-stone-200 text-foreground font-semibold text-sm hover:bg-stone-50 transition-colors">
+                    Revisit Topic
+                  </button>
+                </div>
+              ) : (
+                <button onClick={resetAll} className="w-full max-w-xs mx-auto flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1a4d35] text-white font-bold text-sm hover:bg-[#1a4d35]/90 transition-colors">
+                  <RefreshCw className="h-4 w-4" /> Retake Topic from Beginning
+                </button>
+              )}
+            </div>
+          )}
+
         </div>
       )}
     </div>
