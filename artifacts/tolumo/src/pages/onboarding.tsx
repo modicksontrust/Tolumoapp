@@ -68,7 +68,7 @@ export default function OnboardingPage() {
   const stored = (() => {
     try { return JSON.parse(sessionStorage.getItem('tolumor_signup') || '{}'); } catch { return {}; }
   })();
-  const role: string = (user?.unsafeMetadata?.role as string) ?? stored.role ?? 'tutor';
+  const role: string = (user?.unsafeMetadata?.role as string) ?? stored.role ?? 'student';
   const isStudent = role !== 'tutor';
 
   const [displayName, setDisplayName] = useState(
