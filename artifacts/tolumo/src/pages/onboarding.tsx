@@ -135,12 +135,12 @@ export default function OnboardingPage() {
         <div className="flex flex-col max-w-lg mx-auto w-full px-8 md:px-12 py-12">
 
           <h2 className="font-serif text-2xl font-bold text-primary mb-1">
-            {isStudent ? 'Your learning profile' : 'Your teaching profile'}
+            {isStudent ? 'Your learning profile' : 'Almost there'}
           </h2>
           <p className="text-sm text-muted-foreground mb-8">
             {isStudent
               ? `Welcome, ${displayName || 'friend'}. Let's get your profile ready.`
-              : `Welcome, ${displayName || 'friend'}. A few details about your teaching.`}
+              : `Tell us a little about your expertise so students can find your modules easily.`}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
