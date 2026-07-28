@@ -295,7 +295,7 @@ export default function StudentSettings() {
                     { action: 'Pass Part 1 (MCQ) on first attempt', credits: '+10' },
                     { action: 'Pass Part 2 (problem question) on first attempt', credits: '+15' },
                     { action: 'Pass the full topic test on first try', credits: '+20 bonus' },
-                    { action: 'Leave topic feedback with a rating and note', credits: '+3' },
+                    { action: 'Leave topic feedback with a rating and note to the lecturer', credits: '+3' },
                     { action: 'Give platform-level feedback when requested', credits: '+5' },
                     { action: 'Maintain a daily login or study streak', credits: '+2/day' },
                     { action: 'Renew subscription before it lapses', credits: '+25' },

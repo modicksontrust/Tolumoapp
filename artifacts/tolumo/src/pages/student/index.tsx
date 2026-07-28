@@ -29,7 +29,7 @@ const STUDENT_EARN_ACTIONS = [
   { action: 'Pass Part 1 (MCQ) on first attempt', credits: '+10' },
   { action: 'Pass Part 2 (written problem) on first attempt', credits: '+15' },
   { action: 'Pass the full topic test on first try, no restart', credits: '+20 bonus' },
-  { action: 'Leave topic feedback with a star rating and note', credits: '+3' },
+  { action: 'Leave topic feedback with a star rating and note to the lecturer', credits: '+3' },
   { action: 'Give platform-level feedback when requested', credits: '+5' },
   { action: 'Maintain a daily login or study streak (per day)', credits: '+2' },
   { action: 'Renew your subscription before it lapses', credits: '+25' },
