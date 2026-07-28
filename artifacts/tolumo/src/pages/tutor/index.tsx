@@ -208,7 +208,6 @@ const NAV = [
   { href: '/tutor/analytics', label: 'Student Analytics', icon: BarChart2 },
   { href: '/tutor/opportunities', label: 'Access Opportunities', icon: GraduationCap },
   { href: '/tutor/skills-hub', label: 'Skills Hub', icon: Zap },
-  { href: '/tutor/community', label: 'Student Community', icon: Users },
   { href: '/tutor/lounge', label: 'Lecturer Lounge', icon: Shield },
 ];
 
