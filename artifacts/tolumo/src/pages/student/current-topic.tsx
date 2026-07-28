@@ -454,6 +454,12 @@ export default function CurrentTopic() {
   const [feedbackNote, setFeedbackNote] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
+  // Standalone lecturer feedback modal
+  const [lecturerFeedbackOpen, setLecturerFeedbackOpen] = useState(false);
+  const [lecturerFeedbackRating, setLecturerFeedbackRating] = useState(0);
+  const [lecturerFeedbackNote, setLecturerFeedbackNote] = useState('');
+  const [lecturerFeedbackDone, setLecturerFeedbackDone] = useState(false);
+
   // Part-1 timer — only runs while in part1 phase
   useEffect(() => {
     if (step !== 'quiz' || quizPhase !== 'part1' || quizSecs <= 0) return;
@@ -521,9 +527,17 @@ export default function CurrentTopic() {
       </div>
 
       {/* Page title */}
-      <div>
-        <h1 className="text-xl font-serif font-bold text-foreground">Topic {topic.id}: {topic.title}</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">{MODULE.tutor} · {MODULE.name}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-serif font-bold text-foreground">Topic {topic.id}: {topic.title}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{MODULE.tutor} · {MODULE.name}</p>
+        </div>
+        <button
+          onClick={() => { setLecturerFeedbackOpen(true); setLecturerFeedbackDone(false); setLecturerFeedbackRating(0); setLecturerFeedbackNote(''); }}
+          className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 text-xs font-semibold hover:bg-amber-100 transition-colors"
+        >
+          <Star className="h-3.5 w-3.5" /> Leave Feedback
+        </button>
       </div>
 
       {/* Topic navigator */}
@@ -1662,6 +1676,93 @@ export default function CurrentTopic() {
 
         </div>
       )}
+
+      {/* ── Lecturer Feedback Modal ── */}
+      {lecturerFeedbackOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setLecturerFeedbackOpen(false)}>
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="bg-[#1a4d35] px-6 py-5 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mb-1">Topic {topic.id}</p>
+                <h2 className="font-serif text-lg font-bold text-white leading-snug">Leave Feedback to Lecturer</h2>
+                <p className="text-xs text-white/60 mt-0.5">{MODULE.tutor}</p>
+              </div>
+              <button onClick={() => setLecturerFeedbackOpen(false)} className="text-white/50 hover:text-white mt-0.5">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {!lecturerFeedbackDone ? (
+              <div className="p-6 space-y-5">
+                {/* Star rating */}
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Your rating</p>
+                  <div className="flex items-center gap-2">
+                    {[1,2,3,4,5].map(s => (
+                      <button key={s} onClick={() => setLecturerFeedbackRating(s)} className="transition-transform hover:scale-110 focus:outline-none">
+                        <Star className={`h-9 w-9 ${s <= lecturerFeedbackRating ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}`} />
+                      </button>
+                    ))}
+                    {lecturerFeedbackRating > 0 && (
+                      <span className="ml-2 text-sm font-semibold text-foreground">
+                        {['','Poor','Fair','Good','Great','Excellent'][lecturerFeedbackRating]}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Note */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Note to {MODULE.tutor.split(' ')[0]}</p>
+                    <span className={`text-xs ${wordCount(lecturerFeedbackNote) > 100 ? 'text-red-500 font-semibold' : 'text-muted-foreground'}`}>
+                      {wordCount(lecturerFeedbackNote)}/100 words
+                    </span>
+                  </div>
+                  <textarea
+                    value={lecturerFeedbackNote}
+                    onChange={e => setLecturerFeedbackNote(e.target.value)}
+                    rows={4}
+                    maxLength={800}
+                    placeholder="A question, a thought, or how this topic made you feel. Max 100 words."
+                    className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 text-sm placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#1a4d35]/30 resize-none"
+                  />
+                </div>
+
+                <button
+                  onClick={() => setLecturerFeedbackDone(true)}
+                  disabled={lecturerFeedbackRating === 0 || wordCount(lecturerFeedbackNote) === 0 || wordCount(lecturerFeedbackNote) > 100}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm transition-colors disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed enabled:bg-[#1a4d35] enabled:text-white enabled:hover:bg-[#1a4d35]/90 flex items-center justify-center gap-2"
+                >
+                  <Send className="h-4 w-4" /> Send Feedback
+                </button>
+              </div>
+            ) : (
+              <div className="p-8 text-center space-y-4">
+                <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="h-7 w-7 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-foreground">Feedback Sent</h3>
+                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                    Your note has been delivered to {MODULE.tutor}. Thank you for helping improve this topic.
+                  </p>
+                </div>
+                <div className="flex items-center justify-center gap-1 pt-1">
+                  {[1,2,3,4,5].map(s => (
+                    <Star key={s} className={`h-5 w-5 ${s <= lecturerFeedbackRating ? 'fill-amber-400 text-amber-400' : 'text-stone-200'}`} />
+                  ))}
+                </div>
+                <button onClick={() => setLecturerFeedbackOpen(false)} className="mt-2 text-sm font-semibold text-primary hover:underline">
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
